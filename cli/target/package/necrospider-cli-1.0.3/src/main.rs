@@ -234,14 +234,14 @@ fn run_python_mode() {
         let mut pip_cmd = Command::new("pip3");
         let req_file = format!("{}/requirements.txt", repo_dir);
         pip_cmd.args(["install", "-r", &req_file]);
-        let _ = run_installation_task(&mut pip_cmd, "Python Packages");
-
-        let mut npm_cmd = Command::new("npm");
-        npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
-        npm_cmd.args(["install"]);
-        let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
-        
-        let _ = File::create(marker_file);
+        if run_installation_task(&mut pip_cmd, "Python Packages") {
+            let mut npm_cmd = Command::new("npm");
+            npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
+            npm_cmd.args(["install"]);
+            let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
+            
+            let _ = File::create(marker_file);
+        }
     }
 
     let mut sf_cmd = Command::new("python3");
