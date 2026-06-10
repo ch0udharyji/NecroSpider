@@ -29,7 +29,7 @@ If you are coming from the original SpiderFoot project, **NecroSpider** introduc
 
 1. **Complete UI Overhaul**: The legacy web UI has been entirely replaced with a premium, responsive, hacker-themed dark mode (`#1a1a1a` and `#d72a05`). This includes custom pill navigation, glassmorphism headers, glowing active states, and a modern "Stat Card" dashboard layout.
 2. **Interactive Rust CLI (`necrospider`)**: We replaced the manual python scripts with a blazing-fast, globally installed Rust TUI. When you type `necrospider` in your terminal, you are greeted with an interactive menu, a red glowing ASCII splash screen, and automated dependency handling.
-3. **Automated Dependency Management**: The new Rust launcher will automatically check your system for Python or Docker. If they are missing, it will install them, build your dependencies (`requirements.txt`), and launch the server for you.
+3. **Automated Dependency Management**: The new Rust launcher will automatically check your system for Python. If it is missing, it will install it, build your dependencies (`requirements.txt`), and launch the server for you.
 4. **Live Background Previews**: The Rust CLI streams `stdout` and `stderr` directly to your terminal with color-coded tags (`[PREVIEW]`, `[ERROR]`) while it installs dependencies or runs the server.
 5. **Modernized Visuals**: Interactive graphs, settings tables, and logs have been stripped of clunky borders and replaced with sleek `.table-hover` floating panels.
 
@@ -46,7 +46,7 @@ If you are coming from the original SpiderFoot project, **NecroSpider** introduc
 
 ## How to Install & Run
 
-NecroSpider now features a bulletproof **Rust TUI Launcher** published on `crates.io`. It manages the entire project setup, Python dependencies, and Docker containers automatically from anywhere on your system!
+NecroSpider now features a bulletproof **Rust TUI Launcher** published on `crates.io`. It manages the entire project setup and Python dependencies automatically from anywhere on your system!
 
 ### 1. Install via Cargo
 Make sure you have [Rust](https://rustup.rs/) installed on your machine. Then, install the CLI globally:
@@ -65,7 +65,6 @@ necrospider-cli
 ### 3. Interactive Setup
 The CLI will display a stunning hacker splash screen and ask you which engine to use:
 - **Python (Local)**: Automatically installs Python 3, pip, and `requirements.txt` if missing, then launches the NecroSpider web server natively.
-- **Docker**: Automatically fetches Docker if missing, builds the `necrospider` docker image locally, and runs it mapped to port `5001`.
 
 Once the server is booted, the CLI will present a professional double-lined dashboard. Select **Launch Browser Dashboard** to access the beautiful dark UI at `http://127.0.0.1:5001`!
 

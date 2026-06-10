@@ -128,15 +128,6 @@ fn check_and_install_python() {
     }
 }
 
-fn check_and_install_docker() {
-    let docker_check = Command::new("docker").arg("--version").output();
-    if docker_check.is_err() || !docker_check.unwrap().status.success() {
-        println!("  \x1b[33m[!] Docker is not installed. Initiating setup...\x1b[0m");
-        let mut cmd = Command::new("sh");
-        cmd.args(["-c", "curl -fsSL https://get.docker.com | sudo sh"]);
-        run_installation_task(&mut cmd, "Docker Daemon");
-    }
-}
 
 fn get_necrospider_dir() -> String {
     if Path::new("../sf.py").exists() {
@@ -172,7 +163,6 @@ fn ensure_repo_ready() -> String {
             if output.status.success() && !stdout.contains("Already up to date.") {
                 println!("  \x1b[32m✔ NecroSpider has been updated successfully.\x1b[0m");
                 let _ = std::fs::remove_file(format!("{}/.python_deps_installed", repo_dir));
-                let _ = std::fs::remove_file(format!("{}/.docker_img_built", repo_dir));
             }
         }
     }
@@ -243,7 +233,7 @@ fn run_python_mode() {
         
         let mut pip_cmd = Command::new("pip3");
         let req_file = format!("{}/requirements.txt", repo_dir);
-        pip_cmd.args(["install", "-r", &req_file, "--break-system-packages"]);
+        pip_cmd.args(["install", "-r", &req_file]);
         if run_installation_task(&mut pip_cmd, "Python Packages") {
             let mut npm_cmd = Command::new("npm");
             npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
@@ -256,30 +246,11 @@ fn run_python_mode() {
 
     let mut sf_cmd = Command::new("python3");
     sf_cmd.current_dir(&repo_dir);
-    sf_cmd.args(["sf.py", "-l", "127.0.0.1:5001"]);
+    sf_cmd.args(["./sf.py", "-l", "127.0.0.1:5001"]);
     
     spawn_server(sf_cmd, "Python (Local)");
 }
 
-fn run_docker_mode() {
-    let repo_dir = ensure_repo_ready();
-    let marker_file = format!("{}/.docker_img_built", repo_dir);
-    if !Path::new(&marker_file).exists() {
-        check_and_install_docker();
-        
-        let mut build_cmd = Command::new("sudo");
-        build_cmd.args(["docker", "build", "-t", "necrospider", &repo_dir]);
-        if run_installation_task(&mut build_cmd, "Docker Image Build") {
-            let _ = File::create(marker_file);
-        }
-    }
-
-    let mut run_cmd = Command::new("sudo");
-    run_cmd.current_dir(&repo_dir);
-    run_cmd.args(["docker", "run", "--rm", "-p", "5001:5001", "necrospider"]);
-    
-    spawn_server(run_cmd, "Docker Container");
-}
 
 fn run_uninstall() {
     let ans = Confirm::new("Are you sure you want to completely uninstall NecroSpider and delete all data?")
@@ -310,12 +281,6 @@ fn run_uninstall() {
                 }
             }
 
-            println!("  \x1b[90mRemoving Docker image (if exists)...\x1b[0m");
-            let mut docker_cmd = Command::new("sudo");
-            docker_cmd.args(["docker", "rmi", "-f", "necrospider"]);
-            docker_cmd.stdout(Stdio::null());
-            docker_cmd.stderr(Stdio::null());
-            let _ = docker_cmd.status();
 
             println!("  \x1b[32m✔ Uninstallation complete.\x1b[0m");
             println!("  \x1b[90mNote: You can remove the CLI itself by running `cargo uninstall necrospider-cli`.\x1b[0m\n");
@@ -329,7 +294,7 @@ fn run_uninstall() {
 fn main() {
     splash_screen();
 
-    let options = vec!["Python (Local)", "Docker", "Uninstall"];
+    let options = vec!["Python (Local)", "Uninstall"];
     
     let ans = Select::new("Engine:", options.clone())
         .with_render_config(get_render_config())
@@ -339,8 +304,6 @@ fn main() {
         Ok(choice) => {
             if choice == "Python (Local)" {
                 run_python_mode();
-            } else if choice == "Docker" {
-                run_docker_mode();
             } else if choice == "Uninstall" {
                 run_uninstall();
             }

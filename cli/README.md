@@ -17,7 +17,7 @@ This package provides the blazing-fast interactive **Rust TUI Launcher** for [Ne
 Instead of manually configuring environments or dealing with massive requirement lists, the `necrospider-cli` handles everything for you natively. When you run the CLI for the first time, it will automatically clone the NecroSpider Python engine into `~/.necrospider` and configure the complete environment.
 
 ### Features
-- **Zero-Touch Setup**: Automatically installs Python 3, pip, or Docker if they are missing from your system.
+- **Zero-Touch Setup**: Automatically installs Python 3 and pip if they are missing from your system.
 - **Progress Tracking**: Features a beautiful `indicatif` spinner that tracks background compilation and setup directly in your terminal.
 - **Premium Interface**: Replaces raw logging with an ultra-clean, double-lined interactive dashboard.
 
@@ -37,7 +37,6 @@ necrospider-cli
 
 You will be greeted by the hacker splash screen and prompted to choose an engine:
 1. **Python (Local)**: Runs the engine directly on your host machine.
-2. **Docker Container**: Builds the image and sandboxes the OSINT process.
 
 Select an option and watch as the CLI prepares the dashboard!
 
