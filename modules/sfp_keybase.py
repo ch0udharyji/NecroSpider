@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_keybase
-# Purpose:     Spiderfoot plugin to query KeyBase API
+# Purpose:     Necrospider plugin to query KeyBase API
 #              to gather additional information about domain names and identified
 #              usernames.
 #
@@ -18,10 +18,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_keybase(SpiderFootPlugin):
+class sfp_keybase(NecroSpiderPlugin):
 
     meta = {
         'name': "Keybase",
@@ -190,13 +190,13 @@ class sfp_keybase(SpiderFootPlugin):
                     self.debug(f"Skipping {userName}, already checked.")
                     continue
 
-                source_event = SpiderFootEvent("USERNAME", username, self.__name__, event)
+                source_event = NecroSpiderEvent("USERNAME", username, self.__name__, event)
                 self.notifyListeners(source_event)
                 self.results[username] = True
             else:
                 source_event = event
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(user), self.__name__, source_event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(user), self.__name__, source_event)
             self.notifyListeners(evt)
 
             # Profile information about the username
@@ -205,13 +205,13 @@ class sfp_keybase(SpiderFootPlugin):
                 # Get and report full name of user
                 fullName = profile.get('full_name')
                 if fullName:
-                    evt = SpiderFootEvent("RAW_RIR_DATA", f"Possible full name: {fullName}", self.__name__, source_event)
+                    evt = NecroSpiderEvent("RAW_RIR_DATA", f"Possible full name: {fullName}", self.__name__, source_event)
                     self.notifyListeners(evt)
 
                 # Get and report location of user
                 location = profile.get('location')
                 if location:
-                    evt = SpiderFootEvent("GEOINFO", location, self.__name__, source_event)
+                    evt = NecroSpiderEvent("GEOINFO", location, self.__name__, source_event)
                     self.notifyListeners(evt)
 
             # Extract social media information
@@ -227,7 +227,7 @@ class sfp_keybase(SpiderFootPlugin):
 
                         if socialMediaSite and socialMediaURL:
                             socialMedia = socialMediaSite + ": " + "<SFURL>" + socialMediaURL + "</SFURL>"
-                            evt = SpiderFootEvent("SOCIAL_MEDIA", socialMedia, self.__name__, source_event)
+                            evt = NecroSpiderEvent("SOCIAL_MEDIA", socialMedia, self.__name__, source_event)
                             self.notifyListeners(evt)
 
             # Get cryptocurrency addresses
@@ -244,7 +244,7 @@ class sfp_keybase(SpiderFootPlugin):
                         if not btcAddress:
                             continue
 
-                        evt = SpiderFootEvent("BITCOIN_ADDRESS", btcAddress, self.__name__, source_event)
+                        evt = NecroSpiderEvent("BITCOIN_ADDRESS", btcAddress, self.__name__, source_event)
                         self.notifyListeners(evt)
 
             # Extract PGP Keys
@@ -268,7 +268,7 @@ class sfp_keybase(SpiderFootPlugin):
 
                 self.results[pgpKeyHash] = True
 
-                evt = SpiderFootEvent("PGP_KEY", pgpKey, self.__name__, source_event)
+                evt = NecroSpiderEvent("PGP_KEY", pgpKey, self.__name__, source_event)
                 self.notifyListeners(evt)
 
 # End of sfp_keybase class

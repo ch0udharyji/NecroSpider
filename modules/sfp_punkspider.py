@@ -12,10 +12,10 @@
 import hashlib
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_punkspider(SpiderFootPlugin):
+class sfp_punkspider(NecroSpiderPlugin):
 
     meta = {
         'name': "PunkSpider",
@@ -124,7 +124,7 @@ class sfp_punkspider(SpiderFootPlugin):
             for vuln in res[rec]['vulns']:
                 if res[rec]['vulns'][vuln] == 0:
                     continue
-                e = SpiderFootEvent("VULNERABILITY_GENERAL", f"{vuln}: {res[rec]['vulns'][vuln]}", self.__name__, event)
+                e = NecroSpiderEvent("VULNERABILITY_GENERAL", f"{vuln}: {res[rec]['vulns'][vuln]}", self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_punkspider class

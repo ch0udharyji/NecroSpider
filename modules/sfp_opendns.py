@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_opendns
-# Purpose:      SpiderFoot plug-in for looking up whether hosts are blocked by
+# Purpose:      NecroSpider plug-in for looking up whether hosts are blocked by
 #               OpenDNS.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_opendns(SpiderFootPlugin):
+class sfp_opendns(NecroSpiderPlugin):
 
     meta = {
         'name': "OpenDNS",
@@ -133,11 +133,11 @@ class sfp_opendns(SpiderFootPlugin):
             if k not in self.checks:
                 continue
 
-            evt = SpiderFootEvent(blacklist_type, f"{self.checks[k]} [{eventData}]", self.__name__, event)
+            evt = NecroSpiderEvent(blacklist_type, f"{self.checks[k]} [{eventData}]", self.__name__, event)
             self.notifyListeners(evt)
 
             if k in ['146.112.61.105', '146.112.61.107', '146.112.61.108', '146.112.61.110']:
-                evt = SpiderFootEvent(malicious_type, f"{self.checks[k]} [{eventData}]", self.__name__, event)
+                evt = NecroSpiderEvent(malicious_type, f"{self.checks[k]} [{eventData}]", self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_opendns class

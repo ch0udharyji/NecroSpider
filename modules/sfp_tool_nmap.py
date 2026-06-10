@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_tool_nmap
-# Purpose:      SpiderFoot plug-in for using nmap to perform OS fingerprinting.
+# Purpose:      NecroSpider plug-in for using nmap to perform OS fingerprinting.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
 #
@@ -15,10 +15,10 @@ from subprocess import PIPE, Popen
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_tool_nmap(SpiderFootPlugin):
+class sfp_tool_nmap(NecroSpiderPlugin):
 
     meta = {
         'name': "Tool - Nmap",
@@ -167,7 +167,7 @@ class sfp_tool_nmap(SpiderFootPlugin):
                     if "OS details:" in line:
                         junk, opsys = line.split(": ")
                 if opsys:
-                    evt = SpiderFootEvent("OPERATING_SYSTEM", opsys, self.__name__, event)
+                    evt = NecroSpiderEvent("OPERATING_SYSTEM", opsys, self.__name__, event)
                     self.notifyListeners(evt)
             except Exception as e:
                 self.error("Couldn't parse the output of Nmap: " + str(e))
@@ -184,10 +184,10 @@ class sfp_tool_nmap(SpiderFootPlugin):
                         junk, opsys = line.split(": ")
 
                     if opsys and currentIp:
-                        ipevent = SpiderFootEvent("IP_ADDRESS", currentIp, self.__name__, event)
+                        ipevent = NecroSpiderEvent("IP_ADDRESS", currentIp, self.__name__, event)
                         self.notifyListeners(ipevent)
 
-                        evt = SpiderFootEvent("OPERATING_SYSTEM", opsys, self.__name__, ipevent)
+                        evt = NecroSpiderEvent("OPERATING_SYSTEM", opsys, self.__name__, ipevent)
                         self.notifyListeners(evt)
                         currentIp = None
             except Exception as e:

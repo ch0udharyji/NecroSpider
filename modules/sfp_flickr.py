@@ -18,10 +18,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_flickr(SpiderFootPlugin):
+class sfp_flickr(NecroSpiderPlugin):
 
     meta = {
         'name': "Flickr",
@@ -203,7 +203,7 @@ class sfp_flickr(SpiderFootPlugin):
 
             # Extract data
             for photo in photos.get('photo', list()):
-                emails = SpiderFootHelpers.extractEmailsFromText(str(photo))
+                emails = NecroSpiderHelpers.extractEmailsFromText(str(photo))
                 for email in emails:
                     if email in self.results:
                         continue
@@ -220,11 +220,11 @@ class sfp_flickr(SpiderFootPlugin):
                     else:
                         evttype = "EMAILADDR"
 
-                    evt = SpiderFootEvent(evttype, email, self.__name__, event)
+                    evt = NecroSpiderEvent(evttype, email, self.__name__, event)
                     self.notifyListeners(evt)
                     self.results[email] = True
 
-                links = SpiderFootHelpers.extractUrlsFromText(str(photo))
+                links = NecroSpiderHelpers.extractUrlsFromText(str(photo))
                 for link in links:
                     if link in self.results:
                         continue
@@ -238,7 +238,7 @@ class sfp_flickr(SpiderFootPlugin):
                     hosts.append(host)
 
                     self.debug(f"Found a URL: {link}")
-                    evt = SpiderFootEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
+                    evt = NecroSpiderEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
                     self.notifyListeners(evt)
                     self.results[link] = True
 
@@ -253,14 +253,14 @@ class sfp_flickr(SpiderFootPlugin):
 
             if self.opts['dns_resolve'] and not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
                 self.debug(f"Host {host} could not be resolved")
-                evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                 self.notifyListeners(evt)
                 continue
 
-            evt = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+            evt = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
             self.notifyListeners(evt)
             if self.sf.isDomain(host, self.opts["_internettlds"]):
-                evt = SpiderFootEvent("DOMAIN_NAME", host, self.__name__, event)
+                evt = NecroSpiderEvent("DOMAIN_NAME", host, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_flickr class

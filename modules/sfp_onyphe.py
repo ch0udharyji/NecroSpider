@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_onyphe
-# Purpose:      SpiderFoot plug-in to check if the IP is included on Onyphe
+# Purpose:      NecroSpider plug-in to check if the IP is included on Onyphe
 #               data (threat list, geo-location, pastries, vulnerabilities)
 #
 # Author:      Filip Aleksić <faleksicdev@gmail.com>
@@ -15,10 +15,10 @@ import json
 import time
 from datetime import datetime
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_onyphe(SpiderFootPlugin):
+class sfp_onyphe(NecroSpiderPlugin):
 
     meta = {
         "name": "Onyphe",
@@ -178,7 +178,7 @@ class sfp_onyphe(SpiderFootPlugin):
             return
         self.info(f"Found location for {eventData}: {location}")
 
-        evt = SpiderFootEvent("PHYSICAL_COORDINATES", location, self.__name__, event)
+        evt = NecroSpiderEvent("PHYSICAL_COORDINATES", location, self.__name__, event)
         self.notifyListeners(evt)
 
     def emitDomainData(self, response, eventData, event):
@@ -199,13 +199,13 @@ class sfp_onyphe(SpiderFootPlugin):
             if self.getTarget().matches(domain):
                 if self.opts['verify']:
                     if self.sf.resolveHost(domain) or self.sf.resolveHost6(domain):
-                        evt = SpiderFootEvent('INTERNET_NAME', domain, self.__name__, event)
+                        evt = NecroSpiderEvent('INTERNET_NAME', domain, self.__name__, event)
                     else:
-                        evt = SpiderFootEvent('INTERNET_NAME_UNRESOLVED', domain, self.__name__, event)
+                        evt = NecroSpiderEvent('INTERNET_NAME_UNRESOLVED', domain, self.__name__, event)
                     self.notifyListeners(evt)
 
                 if self.sf.isDomain(domain, self.opts['_internettlds']):
-                    evt = SpiderFootEvent('DOMAIN_NAME', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('DOMAIN_NAME', domain, self.__name__, event)
                     self.notifyListeners(evt)
                 continue
 
@@ -218,7 +218,7 @@ class sfp_onyphe(SpiderFootPlugin):
                     self.debug(f"Skipping {domain} because it is on the same domain.")
                     continue
 
-                evt = SpiderFootEvent("CO_HOSTED_SITE", domain, self.__name__, event)
+                evt = NecroSpiderEvent("CO_HOSTED_SITE", domain, self.__name__, event)
                 self.notifyListeners(evt)
                 self.cohostcount += 1
 
@@ -268,7 +268,7 @@ class sfp_onyphe(SpiderFootPlugin):
         geoLocDataArr = self.query("geoloc", eventData)
 
         if geoLocDataArr is not None:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", str(geoLocDataArr), self.__name__, event
             )
             self.notifyListeners(evt)
@@ -299,7 +299,7 @@ class sfp_onyphe(SpiderFootPlugin):
 
                     sentData.add(location)
 
-                    evt = SpiderFootEvent("GEOINFO", location, self.__name__, event)
+                    evt = NecroSpiderEvent("GEOINFO", location, self.__name__, event)
                     self.notifyListeners(evt)
 
                     coordinates = result.get("location")
@@ -318,7 +318,7 @@ class sfp_onyphe(SpiderFootPlugin):
         pastriesDataArr = self.query("pastries", eventData)
 
         if pastriesDataArr is not None:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", str(pastriesDataArr), self.__name__, event
             )
             self.notifyListeners(evt)
@@ -340,7 +340,7 @@ class sfp_onyphe(SpiderFootPlugin):
                     if not self.isFreshEnough(result):
                         continue
 
-                    evt = SpiderFootEvent(
+                    evt = NecroSpiderEvent(
                         "LEAKSITE_CONTENT", pastry, self.__name__, event
                     )
                     self.notifyListeners(evt)
@@ -348,7 +348,7 @@ class sfp_onyphe(SpiderFootPlugin):
         threatListDataArr = self.query("threatlist", eventData)
 
         if threatListDataArr is not None:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", str(threatListDataArr), self.__name__, event
             )
             self.notifyListeners(evt)
@@ -371,7 +371,7 @@ class sfp_onyphe(SpiderFootPlugin):
                     if not self.isFreshEnough(result):
                         continue
 
-                    evt = SpiderFootEvent(
+                    evt = NecroSpiderEvent(
                         "MALICIOUS_IPADDR",
                         result.get("threatlist"),
                         self.__name__,
@@ -382,7 +382,7 @@ class sfp_onyphe(SpiderFootPlugin):
         vulnerabilityDataArr = self.query("vulnscan", eventData)
 
         if vulnerabilityDataArr is not None:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", str(vulnerabilityDataArr), self.__name__, event
             )
             self.notifyListeners(evt)
@@ -409,7 +409,7 @@ class sfp_onyphe(SpiderFootPlugin):
                         sentData.add(cve)
 
                         etype, cvetext = self.sf.cveInfo(cve)
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             etype,
                             cvetext,
                             self.__name__,

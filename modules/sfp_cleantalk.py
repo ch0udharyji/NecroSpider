@@ -12,10 +12,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_cleantalk(SpiderFootPlugin):
+class sfp_cleantalk(NecroSpiderPlugin):
 
     meta = {
         'name': "CleanTalk Spam List",
@@ -188,10 +188,10 @@ class sfp_cleantalk(SpiderFootPlugin):
 
         text = f"CleanTalk Spam List [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_cleantalk class

@@ -18,10 +18,10 @@ import time
 from queue import Empty as QueueEmpty
 from queue import Queue
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_accounts(SpiderFootPlugin):
+class sfp_accounts(NecroSpiderPlugin):
 
     meta = {
         'name': "Account Finder",
@@ -73,13 +73,13 @@ class sfp_accounts(SpiderFootPlugin):
         for opt in list(userOpts.keys()):
             self.opts[opt] = userOpts[opt]
 
-        self.commonNames = SpiderFootHelpers.humanNamesFromWordlists()
-        self.words = SpiderFootHelpers.dictionaryWordsFromWordlists()
+        self.commonNames = NecroSpiderHelpers.humanNamesFromWordlists()
+        self.words = NecroSpiderHelpers.dictionaryWordsFromWordlists()
 
         content = self.sf.cacheGet("sfaccountsv2", 48)
         if content is None:
             url = "https://raw.githubusercontent.com/WebBreacher/WhatsMyName/main/wmn-data.json"
-            data = self.sf.fetchUrl(url, useragent="SpiderFoot")
+            data = self.sf.fetchUrl(url, useragent="NecroSpider")
 
             if data['content'] is None:
                 self.error(f"Unable to fetch {url}")
@@ -375,7 +375,7 @@ class sfp_accounts(SpiderFootPlugin):
                     self.debug(f"{user} is too short, skipping.")
                     continue
 
-                evt = SpiderFootEvent("USERNAME", user, self.__name__, event)
+                evt = NecroSpiderEvent("USERNAME", user, self.__name__, event)
                 self.notifyListeners(evt)
                 self.reportedUsers.append(user)
 
@@ -386,7 +386,7 @@ class sfp_accounts(SpiderFootPlugin):
         if eventName == "USERNAME":
             res = self.checkSites(user)
             for site in res:
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "ACCOUNT_EXTERNAL_OWNED",
                     site,
                     self.__name__,
@@ -399,7 +399,7 @@ class sfp_accounts(SpiderFootPlugin):
                 for puser in permutations:
                     res = self.checkSites(puser)
                     for site in res:
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             "SIMILAR_ACCOUNT_EXTERNAL",
                             site,
                             self.__name__,

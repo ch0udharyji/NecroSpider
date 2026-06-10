@@ -13,10 +13,10 @@
 import json
 import urllib.parse
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ipregistry(SpiderFootPlugin):
+class sfp_ipregistry(NecroSpiderPlugin):
     meta = {
         "name": "ipregistry",
         "summary": "Query the ipregistry.co database for reputation and geo-location.",
@@ -72,7 +72,7 @@ class sfp_ipregistry(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.ipregistry.co/{qry}?{qs}",
             timeout=self.opts["_fetchtimeout"],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
 
         if res["content"] is None:
@@ -89,7 +89,7 @@ class sfp_ipregistry(SpiderFootPlugin):
         return None
 
     def emit(self, etype, data, pevent):
-        evt = SpiderFootEvent(etype, data, self.__name__, pevent)
+        evt = NecroSpiderEvent(etype, data, self.__name__, pevent)
         self.notifyListeners(evt)
         return evt
 

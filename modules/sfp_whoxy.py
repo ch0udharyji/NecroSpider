@@ -12,10 +12,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_whoxy(SpiderFootPlugin):
+class sfp_whoxy(NecroSpiderPlugin):
 
     meta = {
         'name': "Whoxy",
@@ -88,7 +88,7 @@ class sfp_whoxy(SpiderFootPlugin):
         url += "&" + querytype + "=" + qry + "&page=" + str(page)
 
         res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'],
-                               useragent="SpiderFoot")
+                               useragent="NecroSpider")
 
         if res['code'] in ["400", "429", "500", "403"]:
             self.error("Whoxy API key seems to have been rejected or you have exceeded usage limits.")
@@ -157,11 +157,11 @@ class sfp_whoxy(SpiderFootPlugin):
                     else:
                         continue
 
-                    e = SpiderFootEvent("AFFILIATE_INTERNET_NAME", h, self.__name__, event)
+                    e = NecroSpiderEvent("AFFILIATE_INTERNET_NAME", h, self.__name__, event)
                     self.notifyListeners(e)
 
                     if self.sf.isDomain(h, self.opts['_internettlds']):
-                        evt = SpiderFootEvent('AFFILIATE_DOMAIN_NAME', h, self.__name__, event)
+                        evt = NecroSpiderEvent('AFFILIATE_DOMAIN_NAME', h, self.__name__, event)
                         self.notifyListeners(evt)
 
 # End of sfp_whoxy class

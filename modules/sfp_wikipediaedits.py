@@ -18,10 +18,10 @@ import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_wikipediaedits(SpiderFootPlugin):
+class sfp_wikipediaedits(NecroSpiderPlugin):
 
     meta = {
         'name': "Wikipedia Edits",
@@ -82,7 +82,7 @@ class sfp_wikipediaedits(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://en.wikipedia.org/w/api.php?{urllib.parse.urlencode(params)}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['code'] in ["404", "403", "500"]:
@@ -129,7 +129,7 @@ class sfp_wikipediaedits(SpiderFootPlugin):
             return
 
         for link in data:
-            evt = SpiderFootEvent("WIKIPEDIA_PAGE_EDIT", link, self.__name__, event)
+            evt = NecroSpiderEvent("WIKIPEDIA_PAGE_EDIT", link, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_wikipediaedits class

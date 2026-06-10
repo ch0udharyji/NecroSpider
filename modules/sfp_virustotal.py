@@ -18,10 +18,10 @@ import urllib.request
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_virustotal(SpiderFootPlugin):
+class sfp_virustotal(NecroSpiderPlugin):
 
     meta = {
         'name': "VirusTotal",
@@ -63,7 +63,7 @@ class sfp_virustotal(SpiderFootPlugin):
 
     optdescs = {
         'api_key': 'VirusTotal API Key.',
-        'publicapi': 'Are you using a public key? If so SpiderFoot will pause for 15 seconds after each query to avoid VirusTotal dropping requests.',
+        'publicapi': 'Are you using a public key? If so NecroSpider will pause for 15 seconds after each query to avoid VirusTotal dropping requests.',
         'checkcohosts': 'Check co-hosted sites?',
         'checkaffiliates': 'Check affiliates?',
         'netblocklookup': 'Look up all IPs on netblocks deemed to be owned by your target for possible hosts on the same target subdomain/domain?',
@@ -117,7 +117,7 @@ class sfp_virustotal(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://www.virustotal.com/vtapi/v2/ip-address/report?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         # Public API is limited to 4 queries per minute
@@ -145,7 +145,7 @@ class sfp_virustotal(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://www.virustotal.com/vtapi/v2/domain/report?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['code'] == "204":
@@ -263,7 +263,7 @@ class sfp_virustotal(SpiderFootPlugin):
 
                 infourl = f"<SFURL>https://www.virustotal.com/en/{infotype}/{addr}/information/</SFURL>"
 
-                e = SpiderFootEvent(
+                e = NecroSpiderEvent(
                     evt, f"VirusTotal [{addr}]\n{infourl}",
                     self.__name__,
                     event
@@ -297,15 +297,15 @@ class sfp_virustotal(SpiderFootPlugin):
                     self.debug(f"Host {domain} could not be resolved")
                     evt_type += '_UNRESOLVED'
 
-                evt = SpiderFootEvent(evt_type, domain, self.__name__, event)
+                evt = NecroSpiderEvent(evt_type, domain, self.__name__, event)
                 self.notifyListeners(evt)
 
                 if self.sf.isDomain(domain, self.opts['_internettlds']):
                     if evt_type.startswith('AFFILIATE'):
-                        evt = SpiderFootEvent('AFFILIATE_DOMAIN_NAME', domain, self.__name__, event)
+                        evt = NecroSpiderEvent('AFFILIATE_DOMAIN_NAME', domain, self.__name__, event)
                         self.notifyListeners(evt)
                     else:
-                        evt = SpiderFootEvent('DOMAIN_NAME', domain, self.__name__, event)
+                        evt = NecroSpiderEvent('DOMAIN_NAME', domain, self.__name__, event)
                         self.notifyListeners(evt)
 
 # End of sfp_virustotal class

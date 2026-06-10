@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_multiproxy import sfp_multiproxy
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModuleMultiproxy(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_multiproxy()
         module.setup(sf, dict())
 

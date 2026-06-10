@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_tool_nuclei
-# Purpose:      SpiderFoot plug-in for using the 'Nuclei' tool.
+# Purpose:      NecroSpider plug-in for using the 'Nuclei' tool.
 #               Tool: https://github.com/EnableSecurity/nuclei
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -18,10 +18,10 @@ import json
 from netaddr import IPNetwork
 from subprocess import Popen, PIPE, TimeoutExpired
 
-from spiderfoot import SpiderFootPlugin, SpiderFootEvent, SpiderFootHelpers
+from necrospider import NecroSpiderPlugin, NecroSpiderEvent, NecroSpiderHelpers
 
 
-class sfp_tool_nuclei(SpiderFootPlugin):
+class sfp_tool_nuclei(NecroSpiderPlugin):
 
     meta = {
         "name": "Tool - Nuclei",
@@ -110,7 +110,7 @@ class sfp_tool_nuclei(SpiderFootPlugin):
             self.errorState = True
             return
 
-        if not SpiderFootHelpers.sanitiseInput(eventData, extra=['/']):
+        if not NecroSpiderHelpers.sanitiseInput(eventData, extra=['/']):
             self.debug("Invalid input, skipping.")
             return
 
@@ -202,14 +202,14 @@ class sfp_tool_nuclei(SpiderFootPlugin):
                         srctype = "IP_ADDRESS"
                     else:
                         srctype = "INTERNET_NAME"
-                    srcevent = SpiderFootEvent(srctype, host, self.__name__, event)
+                    srcevent = NecroSpiderEvent(srctype, host, self.__name__, event)
                     self.notifyListeners(srcevent)
 
                 matches = re.findall(r"CVE-\d{4}-\d{4,7}", line)
                 if matches:
                     for cve in matches:
                         etype, cvetext = self.sf.cveInfo(cve)
-                        e = SpiderFootEvent(
+                        e = NecroSpiderEvent(
                             etype, cvetext, self.__name__, srcevent
                         )
                         self.notifyListeners(e)
@@ -225,7 +225,7 @@ class sfp_tool_nuclei(SpiderFootPlugin):
                         if data['info'].get('reference'):
                             datatext += f"Reference: <SFURL>{data['info']['reference'][0]}</SFURL>"
 
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             etype,
                             datatext,
                             self.__name__,

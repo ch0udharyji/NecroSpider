@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_intfiles(SpiderFootPlugin):
+class sfp_intfiles(NecroSpiderPlugin):
 
     meta = {
         'name': "Interesting File Finder",
@@ -68,7 +68,7 @@ class sfp_intfiles(SpiderFootPlugin):
 
         for fileExt in self.opts['fileexts']:
             if "." + fileExt.lower() in eventData.lower():
-                evt = SpiderFootEvent("INTERESTING_FILE", eventData,
+                evt = NecroSpiderEvent("INTERESTING_FILE", eventData,
                                       self.__name__, event)
                 self.notifyListeners(evt)
 

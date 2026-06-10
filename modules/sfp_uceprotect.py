@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_uceprotect
-# Purpose:      SpiderFoot plug-in for looking up whether IPs/Netblocks/Domains
+# Purpose:      NecroSpider plug-in for looking up whether IPs/Netblocks/Domains
 #               appear in the UCEPROTECT blacklist, indicating potential open-relays,
 #               open proxies, malicious servers, vulnerable servers, etc.
 #
@@ -14,10 +14,10 @@
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_uceprotect(SpiderFootPlugin):
+class sfp_uceprotect(NecroSpiderPlugin):
 
     meta = {
         'name': "UCEPROTECT",
@@ -200,19 +200,19 @@ class sfp_uceprotect(SpiderFootPlugin):
 
             if level1:
                 description = f"UCEPROTECT - Level 1 (high likelihood) [{addr}]\n<SFURL>{url}</SFURL>"
-                evt = SpiderFootEvent(blacklist_type, description, self.__name__, event)
+                evt = NecroSpiderEvent(blacklist_type, description, self.__name__, event)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent(malicious_type, description, self.__name__, event)
+                evt = NecroSpiderEvent(malicious_type, description, self.__name__, event)
                 self.notifyListeners(evt)
 
             if level2:
                 description = f"UCEPROTECT - Level 2 (some false positives) [{addr}]\n<SFURL>{url}</SFURL>"
 
-                evt = SpiderFootEvent(blacklist_type, description, self.__name__, event)
+                evt = NecroSpiderEvent(blacklist_type, description, self.__name__, event)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent(malicious_type, description, self.__name__, event)
+                evt = NecroSpiderEvent(malicious_type, description, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_uceprotect class

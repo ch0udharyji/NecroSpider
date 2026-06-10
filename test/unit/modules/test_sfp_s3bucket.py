@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_s3bucket import sfp_s3bucket
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModuleS3bucket(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_s3bucket()
         module.setup(sf, dict())
 

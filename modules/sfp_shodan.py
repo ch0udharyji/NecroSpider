@@ -18,10 +18,10 @@ import urllib.request
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_shodan(SpiderFootPlugin):
+class sfp_shodan(NecroSpiderPlugin):
 
     meta = {
         'name': "SHODAN",
@@ -92,7 +92,7 @@ class sfp_shodan(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.shodan.io/shodan/host/{qry}?key={self.opts['api_key']}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
         time.sleep(1)
 
@@ -126,7 +126,7 @@ class sfp_shodan(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.shodan.io/shodan/host/search?{urllib.parse.urlencode(params)}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
         time.sleep(1)
 
@@ -160,7 +160,7 @@ class sfp_shodan(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.shodan.io/shodan/host/search?{urllib.parse.urlencode(params)}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
         time.sleep(1)
 
@@ -215,7 +215,7 @@ class sfp_shodan(SpiderFootPlugin):
             if hosts is None:
                 return
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(hosts), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(hosts), self.__name__, event)
             self.notifyListeners(evt)
 
         if eventName == 'WEB_ANALYTICS_ID':
@@ -235,7 +235,7 @@ class sfp_shodan(SpiderFootPlugin):
             if rec is None:
                 return
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rec), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rec), self.__name__, event)
             self.notifyListeners(evt)
             return
 
@@ -263,28 +263,28 @@ class sfp_shodan(SpiderFootPlugin):
             # For netblocks, we need to create the IP address event so that
             # the threat intel event is more meaningful.
             if eventName == 'NETBLOCK_OWNER':
-                pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             else:
                 pevent = event
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rec), self.__name__, pevent)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rec), self.__name__, pevent)
             self.notifyListeners(evt)
 
             if self.checkForStop():
                 return
 
             if rec.get('os') is not None:
-                evt = SpiderFootEvent("OPERATING_SYSTEM", f"{rec.get('os')} ({addr})", self.__name__, pevent)
+                evt = NecroSpiderEvent("OPERATING_SYSTEM", f"{rec.get('os')} ({addr})", self.__name__, pevent)
                 self.notifyListeners(evt)
 
             if rec.get('devtype') is not None:
-                evt = SpiderFootEvent("DEVICE_TYPE", f"{rec.get('devtype')} ({addr})", self.__name__, pevent)
+                evt = NecroSpiderEvent("DEVICE_TYPE", f"{rec.get('devtype')} ({addr})", self.__name__, pevent)
                 self.notifyListeners(evt)
 
             if rec.get('country_name') is not None:
                 location = ', '.join([_f for _f in [rec.get('city'), rec.get('country_name')] if _f])
-                evt = SpiderFootEvent("GEOINFO", location, self.__name__, pevent)
+                evt = NecroSpiderEvent("GEOINFO", location, self.__name__, pevent)
                 self.notifyListeners(evt)
 
             if 'data' not in rec:
@@ -307,25 +307,25 @@ class sfp_shodan(SpiderFootPlugin):
                     cp = addr + ":" + port
                     if cp not in ports:
                         ports.append(cp)
-                        evt = SpiderFootEvent("TCP_PORT_OPEN", cp, self.__name__, pevent)
+                        evt = NecroSpiderEvent("TCP_PORT_OPEN", cp, self.__name__, pevent)
                         self.notifyListeners(evt)
 
                 if banner is not None:
                     if banner not in banners:
                         banners.append(banner)
-                        evt = SpiderFootEvent("TCP_PORT_OPEN_BANNER", banner, self.__name__, pevent)
+                        evt = NecroSpiderEvent("TCP_PORT_OPEN_BANNER", banner, self.__name__, pevent)
                         self.notifyListeners(evt)
 
                 if product is not None:
                     if product not in products:
                         products.append(product)
-                        evt = SpiderFootEvent("SOFTWARE_USED", product, self.__name__, pevent)
+                        evt = NecroSpiderEvent("SOFTWARE_USED", product, self.__name__, pevent)
                         self.notifyListeners(evt)
 
                 if asn is not None:
                     if asn not in asns:
                         asns.append(asn)
-                        evt = SpiderFootEvent("BGP_AS_MEMBER", asn.replace("AS", ""), self.__name__, pevent)
+                        evt = NecroSpiderEvent("BGP_AS_MEMBER", asn.replace("AS", ""), self.__name__, pevent)
                         self.notifyListeners(evt)
 
                 if vulns is not None:
@@ -333,7 +333,7 @@ class sfp_shodan(SpiderFootPlugin):
                         if vuln not in vulnlist:
                             vulnlist.append(vuln)
                             etype, cvetext = self.sf.cveInfo(vuln)
-                            evt = SpiderFootEvent(etype, cvetext, self.__name__, pevent)
+                            evt = NecroSpiderEvent(etype, cvetext, self.__name__, pevent)
                             self.notifyListeners(evt)
 
 # End of sfp_shodan class

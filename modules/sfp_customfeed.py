@@ -15,7 +15,7 @@ import re
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 malchecks = {
     'Custom Threat Data': {
@@ -26,7 +26,7 @@ malchecks = {
 }
 
 
-class sfp_customfeed(SpiderFootPlugin):
+class sfp_customfeed(NecroSpiderPlugin):
 
     meta = {
         'name': "Custom Threat Feed",
@@ -241,7 +241,7 @@ class sfp_customfeed(SpiderFootPlugin):
             # Notify other modules of what you've found
             if url is not None:
                 text = f"{check} [{eventData}]\n<SFURL>{url}</SFURL>"
-                evt = SpiderFootEvent(evtType, text, self.__name__, event)
+                evt = NecroSpiderEvent(evtType, text, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_customfeed class

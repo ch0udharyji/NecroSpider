@@ -14,10 +14,10 @@ import json
 import time
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_abstractapi(SpiderFootPlugin):
+class sfp_abstractapi(NecroSpiderPlugin):
 
     meta = {
         'name': "AbstractAPI",
@@ -254,17 +254,17 @@ class sfp_abstractapi(SpiderFootPlugin):
             if name == 'To Be Confirmed':
                 return
 
-            e = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            e = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(e)
 
-            e = SpiderFootEvent("COMPANY_NAME", name, self.__name__, event)
+            e = NecroSpiderEvent("COMPANY_NAME", name, self.__name__, event)
             self.notifyListeners(e)
 
             linkedin_url = data.get('linkedin_url')
             if linkedin_url:
                 if linkedin_url.startswith('linkedin.com'):
                     linkedin_url = f"https://{linkedin_url}"
-                e = SpiderFootEvent("SOCIAL_MEDIA", f"LinkedIn (Company): <SFURL>{linkedin_url}</SFURL>", self.__name__, event)
+                e = NecroSpiderEvent("SOCIAL_MEDIA", f"LinkedIn (Company): <SFURL>{linkedin_url}</SFURL>", self.__name__, event)
                 self.notifyListeners(e)
 
             locality = data.get('locality')
@@ -274,7 +274,7 @@ class sfp_abstractapi(SpiderFootPlugin):
             )
 
             if geoinfo:
-                e = SpiderFootEvent("GEOINFO", geoinfo, self.__name__, event)
+                e = NecroSpiderEvent("GEOINFO", geoinfo, self.__name__, event)
                 self.notifyListeners(e)
 
         elif eventName == "PHONE_NUMBER":
@@ -293,12 +293,12 @@ class sfp_abstractapi(SpiderFootPlugin):
             if not valid:
                 return
 
-            e = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            e = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(e)
 
             carrier = data.get('carrier')
             if carrier:
-                e = SpiderFootEvent("PROVIDER_TELCO", carrier, self.__name__, event)
+                e = NecroSpiderEvent("PROVIDER_TELCO", carrier, self.__name__, event)
                 self.notifyListeners(e)
 
             location = data.get('location')
@@ -312,7 +312,7 @@ class sfp_abstractapi(SpiderFootPlugin):
             )
 
             if geoinfo:
-                e = SpiderFootEvent("GEOINFO", geoinfo, self.__name__, event)
+                e = NecroSpiderEvent("GEOINFO", geoinfo, self.__name__, event)
                 self.notifyListeners(e)
 
         elif eventName in ['IP_ADDRESS', 'IPV6_ADDRESS']:
@@ -327,7 +327,7 @@ class sfp_abstractapi(SpiderFootPlugin):
             if not data:
                 return
 
-            e = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            e = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(e)
 
             geoinfo = ', '.join(
@@ -343,13 +343,13 @@ class sfp_abstractapi(SpiderFootPlugin):
             )
 
             if geoinfo:
-                e = SpiderFootEvent("GEOINFO", geoinfo, self.__name__, event)
+                e = NecroSpiderEvent("GEOINFO", geoinfo, self.__name__, event)
                 self.notifyListeners(e)
 
             latitude = data.get('latitude')
             longitude = data.get('longitude')
             if latitude and longitude:
-                e = SpiderFootEvent("PHYSICAL_COORDINATES", f"{latitude}, {longitude}", self.__name__, event)
+                e = NecroSpiderEvent("PHYSICAL_COORDINATES", f"{latitude}, {longitude}", self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_abstractapi class

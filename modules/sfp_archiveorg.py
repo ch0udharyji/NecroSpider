@@ -14,10 +14,10 @@
 import datetime
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_archiveorg(SpiderFootPlugin):
+class sfp_archiveorg(NecroSpiderPlugin):
 
     meta = {
         'name': "Archive.org",
@@ -181,7 +181,7 @@ class sfp_archiveorg(SpiderFootPlugin):
             name = eventName + "_HISTORIC"
 
             self.info("Found a historic file: " + wbmlink)
-            evt = SpiderFootEvent(name, wbmlink, self.__name__, event)
+            evt = NecroSpiderEvent(name, wbmlink, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_archiveorg class

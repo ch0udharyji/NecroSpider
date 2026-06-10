@@ -14,10 +14,10 @@
 import json
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_gleif(SpiderFootPlugin):
+class sfp_gleif(NecroSpiderPlugin):
 
     meta = {
         'name': "GLEIF",
@@ -206,7 +206,7 @@ class sfp_gleif(SpiderFootPlugin):
                 self.debug(f"Found no results for {eventData}")
                 return
 
-            e = SpiderFootEvent("RAW_RIR_DATA", str(res), self.__name__, event)
+            e = NecroSpiderEvent("RAW_RIR_DATA", str(res), self.__name__, event)
             self.notifyListeners(e)
 
             for record in res:
@@ -223,7 +223,7 @@ class sfp_gleif(SpiderFootPlugin):
                     continue
 
                 lei = data.get('id')
-                if not SpiderFootHelpers.validLEI(lei):
+                if not NecroSpiderHelpers.validLEI(lei):
                     continue
 
                 leis.append(lei)
@@ -234,12 +234,12 @@ class sfp_gleif(SpiderFootPlugin):
             if lei in self.results:
                 continue
 
-            if not SpiderFootHelpers.validLEI(lei):
+            if not NecroSpiderHelpers.validLEI(lei):
                 continue
 
             self.results[lei] = True
 
-            e = SpiderFootEvent("LEI", lei, self.__name__, event)
+            e = NecroSpiderEvent("LEI", lei, self.__name__, event)
             self.notifyListeners(e)
 
             self.results[lei] = True
@@ -261,7 +261,7 @@ class sfp_gleif(SpiderFootPlugin):
             if legal_name:
                 entity_name = legal_name.get('value')
                 if entity_name:
-                    e = SpiderFootEvent("COMPANY_NAME", entity_name, self.__name__, event)
+                    e = NecroSpiderEvent("COMPANY_NAME", entity_name, self.__name__, event)
                     self.notifyListeners(e)
 
             addresses = list()
@@ -305,7 +305,7 @@ class sfp_gleif(SpiderFootPlugin):
                     addresses.append(location)
 
             for address in set(addresses):
-                e = SpiderFootEvent("PHYSICAL_ADDRESS", address, self.__name__, event)
+                e = NecroSpiderEvent("PHYSICAL_ADDRESS", address, self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_gleif class

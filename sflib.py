@@ -1,7 +1,7 @@
 #  -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sflib
-# Purpose:      Common functions used by SpiderFoot modules.
+# Purpose:      Common functions used by NecroSpider modules.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
 #
@@ -35,18 +35,18 @@ import OpenSSL
 import requests
 import urllib3
 from publicsuffixlist import PublicSuffixList
-from spiderfoot import SpiderFootHelpers
+from necrospider import NecroSpiderHelpers
 
 # For hiding the SSL warnings coming from the requests lib
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
-class SpiderFoot:
-    """SpiderFoot
+class NecroSpider:
+    """NecroSpider
 
     Attributes:
-        dbh (SpiderFootDb): database handle
-        scanId (str): scan ID this instance of SpiderFoot is being used in
+        dbh (NecroSpiderDb): database handle
+        scanId (str): scan ID this instance of NecroSpider is being used in
         socksProxy (str): SOCKS proxy
         opts (dict): configuration options
     """
@@ -56,7 +56,7 @@ class SpiderFoot:
     opts = dict()
 
     def __init__(self, options: dict) -> None:
-        """Initialize SpiderFoot object.
+        """Initialize NecroSpider object.
 
         Args:
             options (dict): dictionary of configuration options.
@@ -68,7 +68,7 @@ class SpiderFoot:
             raise TypeError(f"options is {type(options)}; expected dict()")
 
         self.opts = deepcopy(options)
-        self.log = logging.getLogger(f"spiderfoot.{__name__}")
+        self.log = logging.getLogger(f"necrospider.{__name__}")
 
         # This is ugly but we don't want any fetches to fail - we expect
         # to encounter unverified SSL certs!
@@ -84,7 +84,7 @@ class SpiderFoot:
         """Database handle
 
         Returns:
-            SpiderFootDb: database handle
+            NecroSpiderDb: database handle
         """
         return self._dbh
 
@@ -113,13 +113,13 @@ class SpiderFoot:
         for logging events to the database about a scan.
 
         Args:
-            dbh (SpiderFootDb): database handle
+            dbh (NecroSpiderDb): database handle
         """
         self._dbh = dbh
 
     @scanId.setter
     def scanId(self, scanId: str) -> str:
-        """Set the scan ID this instance of SpiderFoot is being used in.
+        """Set the scan ID this instance of NecroSpider is being used in.
 
         Args:
             scanId (str): scan instance ID
@@ -259,7 +259,7 @@ class SpiderFoot:
             data (str): Data to cache
         """
         pathLabel = hashlib.sha224(label.encode('utf-8')).hexdigest()
-        cacheFile = SpiderFootHelpers.cachePath() + "/" + pathLabel
+        cacheFile = NecroSpiderHelpers.cachePath() + "/" + pathLabel
         with io.open(cacheFile, "w", encoding="utf-8", errors="ignore") as fp:
             if isinstance(data, list):
                 for line in data:
@@ -288,7 +288,7 @@ class SpiderFoot:
             return None
 
         pathLabel = hashlib.sha224(label.encode('utf-8')).hexdigest()
-        cacheFile = SpiderFootHelpers.cachePath() + "/" + pathLabel
+        cacheFile = NecroSpiderHelpers.cachePath() + "/" + pathLabel
         try:
             cache_stat = os.stat(cacheFile)
         except OSError:
@@ -307,7 +307,7 @@ class SpiderFoot:
         """Convert a Python dictionary to something storable in the database.
 
         Args:
-            opts (dict): Dictionary of SpiderFoot configuration options
+            opts (dict): Dictionary of NecroSpider configuration options
             filterSystem (bool): TBD
 
         Returns:
@@ -372,7 +372,7 @@ class SpiderFoot:
         to a dictionary for Python to process.
 
         Args:
-            opts (dict): SpiderFoot configuration options
+            opts (dict): NecroSpider configuration options
             referencePoint (dict): needed to know the actual types the options are supposed to be.
             filterSystem (bool): Ignore global "system" configuration options
 
@@ -600,7 +600,7 @@ class SpiderFoot:
             self.error(f"Invalid URL: {url}")
             return None
 
-        baseurl = SpiderFootHelpers.urlBaseUrl(url)
+        baseurl = NecroSpiderHelpers.urlBaseUrl(url)
         if '://' in baseurl:
             count = 2
         else:
@@ -1193,7 +1193,7 @@ class SpiderFoot:
         url: str,
         cookies: str = None,
         timeout: int = 30,
-        useragent: str = "SpiderFoot",
+        useragent: str = "NecroSpider",
         headers: dict = None,
         noLog: bool = False,
         postData: str = None,
@@ -1297,7 +1297,7 @@ class SpiderFoot:
 
             # Relative re-direct
             if newloc.startswith("/") or newloc.startswith("../"):
-                newloc = SpiderFootHelpers.urlBaseUrl(url) + newloc
+                newloc = NecroSpiderHelpers.urlBaseUrl(url) + newloc
             result['realurl'] = newloc
             result['code'] = str(hdr.status_code)
 
@@ -1661,4 +1661,4 @@ class SpiderFoot:
 
         return None
 
-# end of SpiderFoot class
+# end of NecroSpider class

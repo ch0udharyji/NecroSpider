@@ -13,10 +13,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_multiproxy(SpiderFootPlugin):
+class sfp_multiproxy(NecroSpiderPlugin):
 
     meta = {
         'name': "multiproxy.org Open Proxies",
@@ -205,10 +205,10 @@ class sfp_multiproxy(SpiderFootPlugin):
         url = "http://multiproxy.org/txt_all/proxy.txt"
         text = f"multiproxy.org Open Proxies [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_multiproxy class

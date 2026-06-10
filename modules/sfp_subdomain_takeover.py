@@ -14,10 +14,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_subdomain_takeover(SpiderFootPlugin):
+class sfp_subdomain_takeover(NecroSpiderPlugin):
 
     meta = {
         'name': "Subdomain Takeover Checker",
@@ -51,7 +51,7 @@ class sfp_subdomain_takeover(SpiderFootPlugin):
         content = self.sf.cacheGet("subjack-fingerprints", 48)
         if content is None:
             url = "https://raw.githubusercontent.com/haccer/subjack/master/fingerprints.json"
-            res = self.sf.fetchUrl(url, useragent="SpiderFoot")
+            res = self.sf.fetchUrl(url, useragent="NecroSpider")
 
             if res['content'] is None:
                 self.error(f"Unable to fetch {url}")
@@ -120,7 +120,7 @@ class sfp_subdomain_takeover(SpiderFootPlugin):
                         for fingerprint in fingerprints:
                             if fingerprint in res['content']:
                                 self.info(f"{eventData} appears to be vulnerable to takeover on {service}")
-                                evt = SpiderFootEvent("AFFILIATE_INTERNET_NAME_HIJACKABLE", eventData, self.__name__, event)
+                                evt = NecroSpiderEvent("AFFILIATE_INTERNET_NAME_HIJACKABLE", eventData, self.__name__, event)
                                 self.notifyListeners(evt)
                                 break
 
@@ -137,7 +137,7 @@ class sfp_subdomain_takeover(SpiderFootPlugin):
                     if cname.lower() not in eventData.lower():
                         continue
                     self.info(f"{eventData} appears to be vulnerable to takeover on {service}")
-                    evt = SpiderFootEvent("AFFILIATE_INTERNET_NAME_HIJACKABLE", eventData, self.__name__, event)
+                    evt = NecroSpiderEvent("AFFILIATE_INTERNET_NAME_HIJACKABLE", eventData, self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_subdomain_takeover class

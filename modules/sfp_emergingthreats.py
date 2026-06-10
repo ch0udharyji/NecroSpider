@@ -13,10 +13,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_emergingthreats(SpiderFootPlugin):
+class sfp_emergingthreats(NecroSpiderPlugin):
 
     meta = {
         'name': "Emerging Threats",
@@ -177,10 +177,10 @@ class sfp_emergingthreats(SpiderFootPlugin):
 
         text = f"EmergingThreats.net [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_emergingthreats class

@@ -13,10 +13,10 @@
 import json
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_focsec(SpiderFootPlugin):
+class sfp_focsec(NecroSpiderPlugin):
 
     meta = {
         'name': "Focsec",
@@ -169,27 +169,27 @@ class sfp_focsec(SpiderFootPlugin):
             self.debug(f"Found no results for {eventData}")
             return
 
-        e = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+        e = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
         self.notifyListeners(e)
 
         is_bot = data.get('is_bot')
         if is_bot:
-            e = SpiderFootEvent("MALICIOUS_IPADDR", f"Focsec [{eventData}]", self.__name__, event)
+            e = NecroSpiderEvent("MALICIOUS_IPADDR", f"Focsec [{eventData}]", self.__name__, event)
             self.notifyListeners(e)
 
         is_tor = data.get('is_tor')
         if is_tor:
-            e = SpiderFootEvent("TOR_EXIT_NODE", eventData, self.__name__, event)
+            e = NecroSpiderEvent("TOR_EXIT_NODE", eventData, self.__name__, event)
             self.notifyListeners(e)
 
         is_vpn = data.get('is_vpn')
         if is_vpn:
-            e = SpiderFootEvent("VPN_HOST", eventData, self.__name__, event)
+            e = NecroSpiderEvent("VPN_HOST", eventData, self.__name__, event)
             self.notifyListeners(e)
 
         is_proxy = data.get('is_proxy')
         if is_proxy:
-            e = SpiderFootEvent("PROXY_HOST", eventData, self.__name__, event)
+            e = NecroSpiderEvent("PROXY_HOST", eventData, self.__name__, event)
             self.notifyListeners(e)
 
         location = ', '.join(
@@ -203,7 +203,7 @@ class sfp_focsec(SpiderFootPlugin):
         )
 
         if location:
-            e = SpiderFootEvent("GEOINFO", location, self.__name__, event)
+            e = NecroSpiderEvent("GEOINFO", location, self.__name__, event)
             self.notifyListeners(e)
 
 # End of sfp_focsec class

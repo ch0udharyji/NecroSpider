@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_sociallinks
-# Purpose:     Spiderfoot plugin to query SocialLinks.io to gather intelligence
+# Purpose:     Necrospider plugin to query SocialLinks.io to gather intelligence
 #              from social media platforms and dark web.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_sociallinks(SpiderFootPlugin):
+class sfp_sociallinks(NecroSpiderPlugin):
 
     meta = {
         'name': "Social Links",
@@ -167,13 +167,13 @@ class sfp_sociallinks(SpiderFootPlugin):
             resultSet = data.get('result')
             if resultSet:
                 if resultSet.get('first_name') and resultSet.get('last_name'):
-                    evt = SpiderFootEvent("HUMAN_NAME", f"{resultSet.get('first_name')} {resultSet.get('last_name')}", self.__name__, event)
+                    evt = NecroSpiderEvent("HUMAN_NAME", f"{resultSet.get('first_name')} {resultSet.get('last_name')}", self.__name__, event)
                     self.notifyListeners(evt)
                 if resultSet.get('username'):
-                    evt = SpiderFootEvent("USERNAME", resultSet.get('username'), self.__name__, event)
+                    evt = NecroSpiderEvent("USERNAME", resultSet.get('username'), self.__name__, event)
                     self.notifyListeners(evt)
 
-                evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                 self.notifyListeners(evt)
 
         elif eventName == "USERNAME":
@@ -184,13 +184,13 @@ class sfp_sociallinks(SpiderFootPlugin):
             resultSet = data.get('result')
             if resultSet:
                 if resultSet.get('first_name') and resultSet.get('last_name'):
-                    evt = SpiderFootEvent("HUMAN_NAME", f"{resultSet.get('first_name')} {resultSet.get('last_name')}", self.__name__, event)
+                    evt = NecroSpiderEvent("HUMAN_NAME", f"{resultSet.get('first_name')} {resultSet.get('last_name')}", self.__name__, event)
                     self.notifyListeners(evt)
                 if resultSet.get('phone_number'):
-                    evt = SpiderFootEvent("PHONE_NUMBER", resultSet.get('phone_number'), self.__name__, event)
+                    evt = NecroSpiderEvent("PHONE_NUMBER", resultSet.get('phone_number'), self.__name__, event)
                     self.notifyListeners(evt)
 
-                evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                 self.notifyListeners(evt)
 
         elif eventName == "EMAILADDR":
@@ -208,10 +208,10 @@ class sfp_sociallinks(SpiderFootPlugin):
                     if resultSet.get('location').get('_content'):
                         geoInfos.add(resultSet.get('location').get('_content'))
                     if resultSet.get('profileurl').get('_content'):
-                        evt = SpiderFootEvent("SOCIAL_MEDIA", f"Flickr: <SFURL>{resultSet.get('profileurl').get('_content')}</SFURL>", self.__name__, event)
+                        evt = NecroSpiderEvent("SOCIAL_MEDIA", f"Flickr: <SFURL>{resultSet.get('profileurl').get('_content')}</SFURL>", self.__name__, event)
                         self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
             data = self.querySkype(eventData)
@@ -224,14 +224,14 @@ class sfp_sociallinks(SpiderFootPlugin):
                     if resultSet.get('name'):
                         humanNames.add(resultSet.get('name'))
                     if resultSet.get('skypeId'):
-                        evt = SpiderFootEvent("ACCOUNT_EXTERNAL_OWNED", f"Skype [{resultSet.get('skypeId')}]", self.__name__, event)
+                        evt = NecroSpiderEvent("ACCOUNT_EXTERNAL_OWNED", f"Skype [{resultSet.get('skypeId')}]", self.__name__, event)
                         self.notifyListeners(evt)
-                        evt = SpiderFootEvent("USERNAME", resultSet.get('skypeId'), self.__name__, event)
+                        evt = NecroSpiderEvent("USERNAME", resultSet.get('skypeId'), self.__name__, event)
                         self.notifyListeners(evt)
                     if resultSet.get('address'):
                         geoInfos.add(resultSet.get('address'))
 
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
             data = self.queryLinkedin(eventData)
@@ -246,24 +246,24 @@ class sfp_sociallinks(SpiderFootPlugin):
                     if resultSet.get('location'):
                         geoInfos.add(resultSet.get('location'))
                     if resultSet.get('companyName'):
-                        evt = SpiderFootEvent("COMPANY_NAME", resultSet.get('companyName'), self.__name__, event)
+                        evt = NecroSpiderEvent("COMPANY_NAME", resultSet.get('companyName'), self.__name__, event)
                         self.notifyListeners(evt)
                     if resultSet.get('headline'):
-                        evt = SpiderFootEvent("JOB_TITLE", resultSet.get('headline'), self.__name__, event)
+                        evt = NecroSpiderEvent("JOB_TITLE", resultSet.get('headline'), self.__name__, event)
                         self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent("SOCIAL_MEDIA", f"LinkedIn: <SFURL>{resultSet.get('linkedInUrl')}</SFURL>", self.__name__, event)
+                    evt = NecroSpiderEvent("SOCIAL_MEDIA", f"LinkedIn: <SFURL>{resultSet.get('linkedInUrl')}</SFURL>", self.__name__, event)
                     self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
             for humanName in humanNames:
-                evt = SpiderFootEvent("HUMAN_NAME", humanName, self.__name__, event)
+                evt = NecroSpiderEvent("HUMAN_NAME", humanName, self.__name__, event)
                 self.notifyListeners(evt)
 
             for geoInfo in geoInfos:
-                evt = SpiderFootEvent("GEOINFO", geoInfo, self.__name__, event)
+                evt = NecroSpiderEvent("GEOINFO", geoInfo, self.__name__, event)
                 self.notifyListeners(evt)
 
             if failedModules == 3:

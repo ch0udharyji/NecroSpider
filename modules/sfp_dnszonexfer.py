@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_dnszonexfer
-# Purpose:      SpiderFoot plug-in for attempting a DNS zone transfer.
+# Purpose:      NecroSpider plug-in for attempting a DNS zone transfer.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
 #
@@ -15,10 +15,10 @@ import re
 import dns.query
 import dns.zone
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnszonexfer(SpiderFootPlugin):
+class sfp_dnszonexfer(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Zone Transfer",
@@ -103,7 +103,7 @@ class sfp_dnszonexfer(SpiderFootPlugin):
                 for n in names:
                     ret.append(z[n].to_text(n))
 
-                evt = SpiderFootEvent("RAW_DNS_RECORDS", "\n".join(ret), self.__name__, parentEvent)
+                evt = NecroSpiderEvent("RAW_DNS_RECORDS", "\n".join(ret), self.__name__, parentEvent)
                 self.notifyListeners(evt)
 
                 # Try and pull out individual records
@@ -118,7 +118,7 @@ class sfp_dnszonexfer(SpiderFootPlugin):
                             else:
                                 strdata = strdata + "." + name
 
-                            evt = SpiderFootEvent("INTERNET_NAME", strdata, self.__name__, parentEvent)
+                            evt = NecroSpiderEvent("INTERNET_NAME", strdata, self.__name__, parentEvent)
                             self.notifyListeners(evt)
 
             except Exception as e:

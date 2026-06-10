@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------
 # Name:        sfp_numverify
-# Purpose:     SpiderFoot plug-in to search numverify.com API for a phone number
+# Purpose:     NecroSpider plug-in to search numverify.com API for a phone number
 #              and retrieve location and carrier information.
 #
 # Author:      <bcoles@gmail.com>
@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_numverify(SpiderFootPlugin):
+class sfp_numverify(NecroSpiderPlugin):
 
     meta = {
         'name': "numverify",
@@ -156,19 +156,19 @@ class sfp_numverify(SpiderFootPlugin):
             self.debug("No phone information found for " + eventData)
             return
 
-        evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+        evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
         self.notifyListeners(evt)
 
         if data.get('country_code'):
-            country = SpiderFootHelpers.countryNameFromCountryCode(data.get('country_code'))
+            country = NecroSpiderHelpers.countryNameFromCountryCode(data.get('country_code'))
             location = ', '.join([_f for _f in [data.get('location'), country] if _f])
-            evt = SpiderFootEvent("GEOINFO", location, self.__name__, event)
+            evt = NecroSpiderEvent("GEOINFO", location, self.__name__, event)
             self.notifyListeners(evt)
         else:
             self.debug("No location information found for " + eventData)
 
         if data.get('carrier'):
-            evt = SpiderFootEvent("PROVIDER_TELCO", data.get('carrier'), self.__name__, event)
+            evt = NecroSpiderEvent("PROVIDER_TELCO", data.get('carrier'), self.__name__, event)
             self.notifyListeners(evt)
         else:
             self.debug("No carrier information found for " + eventData)

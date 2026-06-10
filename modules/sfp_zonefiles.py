@@ -13,10 +13,10 @@
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_zonefiles(SpiderFootPlugin):
+class sfp_zonefiles(NecroSpiderPlugin):
 
     meta = {
         'name': "ZoneFile.io",
@@ -164,23 +164,23 @@ class sfp_zonefiles(SpiderFootPlugin):
             self.debug(f"No information found for domain {eventData}")
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
         self.notifyListeners(evt)
 
         ip = data.get('ip')
         if ip:
             if self.opts['verify']:
                 if self.sf.validateIP(eventData, str(ip)):
-                    evt = SpiderFootEvent('IP_ADDRESS', str(ip), self.__name__, event)
+                    evt = NecroSpiderEvent('IP_ADDRESS', str(ip), self.__name__, event)
                     self.notifyListeners(evt)
             else:
-                evt = SpiderFootEvent('IP_ADDRESS', str(ip), self.__name__, event)
+                evt = NecroSpiderEvent('IP_ADDRESS', str(ip), self.__name__, event)
                 self.notifyListeners(evt)
 
         dns = data.get('dns')
         if dns:
             for nameserver in set(dns.split(',')):
-                evt = SpiderFootEvent('PROVIDER_DNS', nameserver, self.__name__, event)
+                evt = NecroSpiderEvent('PROVIDER_DNS', nameserver, self.__name__, event)
                 self.notifyListeners(evt)
 
         emails = data.get('emails')
@@ -196,20 +196,20 @@ class sfp_zonefiles(SpiderFootPlugin):
                 evt_type = "EMAILADDR"
                 if email.split("@")[0] in self.opts['_genericusers'].split(","):
                     evt_type = "EMAILADDR_GENERIC"
-                evt = SpiderFootEvent(evt_type, email, self.__name__, event)
+                evt = NecroSpiderEvent(evt_type, email, self.__name__, event)
                 self.notifyListeners(evt)
 
         phones = data.get('phones')
         if phones:
             for phone in set(phones.split(',')):
-                if SpiderFootHelpers.validPhoneNumber(phone):
-                    evt = SpiderFootEvent('PHONE_NUMBER', phone, self.__name__, event)
+                if NecroSpiderHelpers.validPhoneNumber(phone):
+                    evt = NecroSpiderEvent('PHONE_NUMBER', phone, self.__name__, event)
                     self.notifyListeners(evt)
 
         technologies = data.get('technologies')
         if technologies and isinstance(technologies, dict):
             for tech in technologies.keys():
-                evt = SpiderFootEvent('SOFTWARE_USED', tech, self.__name__, event)
+                evt = NecroSpiderEvent('SOFTWARE_USED', tech, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_zonefiles class

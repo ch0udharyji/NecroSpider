@@ -16,10 +16,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_threatminer(SpiderFootPlugin):
+class sfp_threatminer(NecroSpiderPlugin):
 
     meta = {
         'name': "ThreatMiner",
@@ -108,7 +108,7 @@ class sfp_threatminer(SpiderFootPlugin):
 
         threatminerurl = "https://api.threatminer.org"
         url = threatminerurl + queryurl.format(qry)
-        res = self.sf.fetchUrl(url, timeout=10, useragent="SpiderFoot")
+        res = self.sf.fetchUrl(url, timeout=10, useragent="NecroSpider")
 
         if res['content'] is None:
             self.info("No ThreatMiner info found for " + qry)
@@ -197,15 +197,15 @@ class sfp_threatminer(SpiderFootPlugin):
                     continue
                 if self.getTarget().matches(host, includeParents=True):
                     if self.opts['verify'] and not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
-                        evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                        evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                     else:
-                        evt = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+                        evt = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
                     self.notifyListeners(evt)
                     self.reportedhosts[host] = True
                     continue
 
                 if self.cohostcount < self.opts['maxcohost']:
-                    e = SpiderFootEvent(evtType, host, self.__name__, event)
+                    e = NecroSpiderEvent(evtType, host, self.__name__, event)
                     self.notifyListeners(e)
                     self.cohostcount += 1
 
@@ -229,10 +229,10 @@ class sfp_threatminer(SpiderFootPlugin):
                 self.reportedhosts[host] = True
 
                 if self.opts['verify'] and not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
-                    evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                 else:
-                    evt = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
-                evt = SpiderFootEvent(evtType, host, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
+                evt = NecroSpiderEvent(evtType, host, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_threatminer class

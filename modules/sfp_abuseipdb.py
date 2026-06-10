@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_abuseipdb(SpiderFootPlugin):
+class sfp_abuseipdb(NecroSpiderPlugin):
 
     meta = {
         'name': "AbuseIPDB",
@@ -322,7 +322,7 @@ class sfp_abuseipdb(SpiderFootPlugin):
 
         url = f"https://www.abuseipdb.com/check/{eventData}"
 
-        evt = SpiderFootEvent(
+        evt = NecroSpiderEvent(
             malicious_type,
             f"AbuseIPDB [{eventData}]\n<SFURL>{url}</SFURL>",
             self.__name__,
@@ -330,7 +330,7 @@ class sfp_abuseipdb(SpiderFootPlugin):
         )
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(
+        evt = NecroSpiderEvent(
             blacklist_type,
             f"AbuseIPDB [{eventData}]\n<SFURL>{url}</SFURL>",
             self.__name__,

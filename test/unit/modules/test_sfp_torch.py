@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_torch import sfp_torch
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModuleTorch(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_torch()
         module.setup(sf, dict())
 

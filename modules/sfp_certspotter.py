@@ -17,10 +17,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_certspotter(SpiderFootPlugin):
+class sfp_certspotter(NecroSpiderPlugin):
     meta = {
         'name': "CertSpotter",
         'summary': "Gather information about SSL certificates from SSLMate CertSpotter API.",
@@ -180,7 +180,7 @@ class sfp_certspotter(SpiderFootPlugin):
 
             page += 1
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
             self.notifyListeners(evt)
 
             for result in data:
@@ -208,27 +208,27 @@ class sfp_certspotter(SpiderFootPlugin):
                     self.info("Failed to parse the SSL certificate")
                     continue
 
-                evt = SpiderFootEvent('SSL_CERTIFICATE_RAW', cert['text'], self.__name__, event)
+                evt = NecroSpiderEvent('SSL_CERTIFICATE_RAW', cert['text'], self.__name__, event)
                 self.notifyListeners(evt)
 
                 if cert.get('issuer'):
-                    evt = SpiderFootEvent('SSL_CERTIFICATE_ISSUER', cert['issuer'], self.__name__, event)
+                    evt = NecroSpiderEvent('SSL_CERTIFICATE_ISSUER', cert['issuer'], self.__name__, event)
                     self.notifyListeners(evt)
 
                 if cert.get('issued'):
-                    evt = SpiderFootEvent('SSL_CERTIFICATE_ISSUED', cert['issued'], self.__name__, event)
+                    evt = NecroSpiderEvent('SSL_CERTIFICATE_ISSUED', cert['issued'], self.__name__, event)
                     self.notifyListeners(evt)
 
                 for san in set(cert.get('altnames', list())):
                     hosts.append(san.replace("*.", ""))
 
                 if cert.get('expired'):
-                    evt = SpiderFootEvent("SSL_CERTIFICATE_EXPIRED", cert.get('expirystr', 'Unknown'), self.__name__, event)
+                    evt = NecroSpiderEvent("SSL_CERTIFICATE_EXPIRED", cert.get('expirystr', 'Unknown'), self.__name__, event)
                     self.notifyListeners(evt)
                     continue
 
                 if cert.get('expiring'):
-                    evt = SpiderFootEvent("SSL_CERTIFICATE_EXPIRING", cert.get('expirystr', 'Unknown'), self.__name__, event)
+                    evt = NecroSpiderEvent("SSL_CERTIFICATE_EXPIRING", cert.get('expirystr', 'Unknown'), self.__name__, event)
                     self.notifyListeners(evt)
                     continue
 
@@ -259,15 +259,15 @@ class sfp_certspotter(SpiderFootPlugin):
             else:
                 evt_type = 'CO_HOSTED_SITE'
 
-            evt = SpiderFootEvent(evt_type, domain, self.__name__, event)
+            evt = NecroSpiderEvent(evt_type, domain, self.__name__, event)
             self.notifyListeners(evt)
 
             if self.sf.isDomain(domain, self.opts['_internettlds']):
                 if evt_type == 'CO_HOSTED_SITE':
-                    evt = SpiderFootEvent('CO_HOSTED_SITE_DOMAIN', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('CO_HOSTED_SITE_DOMAIN', domain, self.__name__, event)
                     self.notifyListeners(evt)
                 else:
-                    evt = SpiderFootEvent('DOMAIN_NAME', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('DOMAIN_NAME', domain, self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_certspotter class

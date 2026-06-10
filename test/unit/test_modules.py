@@ -3,24 +3,24 @@ import os
 import pytest
 import unittest
 
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootDb
-from spiderfoot import SpiderFootHelpers
+from sflib import NecroSpider
+from necrospider import NecroSpiderDb
+from necrospider import NecroSpiderHelpers
 
 
 @pytest.mark.usefixtures
-class TestSpiderFootModuleLoading(unittest.TestCase):
+class TestNecroSpiderModuleLoading(unittest.TestCase):
     """
-    Test SpiderFoot module loading
+    Test NecroSpider module loading
     """
 
     @staticmethod
     def load_modules(sf):
         mod_dir = os.path.dirname(os.path.abspath(__file__)) + '/../../modules/'
-        return SpiderFootHelpers.loadModulesAsDict(mod_dir, ['sfp_template.py'])
+        return NecroSpiderHelpers.loadModulesAsDict(mod_dir, ['sfp_template.py'])
 
     def test_module_use_cases_are_valid(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         valid_use_cases = ["Footprint", "Passive", "Investigate"]
 
         sfModules = self.load_modules(sf)
@@ -31,7 +31,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertIn(group, valid_use_cases)
 
     def test_module_labels_are_valid(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         valid_labels = ["errorprone", "tor", "slow", "invasive", "apikey", "tool"]
 
         sfModules = self.load_modules(sf)
@@ -42,7 +42,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertIn(label, valid_labels)
 
     def test_module_categories_are_valid(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         valid_categories = ["Content Analysis", "Crawling and Scanning", "DNS",
                             "Leaks, Dumps and Breaches", "Passive DNS",
                             "Public Registries", "Real World", "Reputation Systems",
@@ -62,7 +62,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertIn(cat, valid_categories)
 
     def test_module_model_is_valid(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         valid_models = [
             "COMMERCIAL_ONLY",
             "FREE_AUTH_LIMITED",
@@ -92,7 +92,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
             self.assertIn(model, valid_models)
 
     def test_modules_with_api_key_have_apiKeyInstructions(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         sfModules = self.load_modules(sf)
         for module in sfModules:
             m = sfModules[module]
@@ -108,7 +108,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertTrue(meta.get('dataSource').get('apiKeyInstructions'))
 
     def test_modules_with_api_key_options_have_apikey_label(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         sfModules = self.load_modules(sf)
         for module in sfModules:
             m = sfModules[module]
@@ -118,7 +118,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                     self.assertIn("apikey", m.get('labels'))
 
     def test_modules_with_invasive_flag_are_not_in_passive_use_case(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         sfModules = self.load_modules(sf)
         for module in sfModules:
             m = sfModules[module]
@@ -127,8 +127,8 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertNotIn("invasive", m.get('labels', list()))
 
     def test_module_watched_events_are_valid(self):
-        sf = SpiderFoot(self.default_options)
-        sf.dbh = SpiderFootDb(self.default_options, True)
+        sf = NecroSpider(self.default_options)
+        sf.dbh = NecroSpiderDb(self.default_options, True)
 
         valid_events = []
         for event in sf.dbh.eventTypes():
@@ -144,8 +144,8 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertIn(watched_event, valid_events)
 
     def test_module_produced_events_are_valid(self):
-        sf = SpiderFoot(self.default_options)
-        sf.dbh = SpiderFootDb(self.default_options, True)
+        sf = NecroSpider(self.default_options)
+        sf.dbh = NecroSpiderDb(self.default_options, True)
 
         valid_events = []
         for event in sf.dbh.eventTypes():
@@ -163,7 +163,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertIn(produced_event, valid_events)
 
     def test_each_module_option_has_a_description(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         sfModules = self.load_modules(sf)
         for module in sfModules:
             m = sfModules[module]
@@ -176,7 +176,7 @@ class TestSpiderFootModuleLoading(unittest.TestCase):
                 self.assertEqual(f"{module} opts: {len(m.get('opts').keys())}", f"{module} opts: {len(m.get('optdescs').keys())}")
 
     def test_required_module_properties_are_present_and_valid(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         sfModules = self.load_modules(sf)
         for module in sfModules:
             m = sfModules[module]

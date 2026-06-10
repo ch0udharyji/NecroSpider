@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_names import sfp_names
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleNames(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_names()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModuleNames(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_event_data_email_address_containing_human_names_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_names()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -54,13 +54,13 @@ class TestModuleNames(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'EMAILADDR'
-        event_data = 'firstname.lastname@spiderfoot.net'
+        event_data = 'firstname.lastname@necrospider.net'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -68,14 +68,14 @@ class TestModuleNames(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_email_address_containing_human_names_containing_numbers_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_names()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -87,27 +87,27 @@ class TestModuleNames(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'EMAILADDR'
-        event_data = 'firstname.lastname1@spiderfoot.net'
+        event_data = 'firstname.lastname1@necrospider.net'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)
 
     def test_handleEvent_event_data_email_address_not_containing_names_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_names()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -119,13 +119,13 @@ class TestModuleNames(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'EMAILADDR'
-        event_data = 'lastname@spiderfoot.net'
+        event_data = 'lastname@necrospider.net'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         result = module.handleEvent(evt)
 

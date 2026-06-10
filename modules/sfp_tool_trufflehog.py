@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_tool_trufflehog
-# Purpose:     SpiderFoot plug-in for using the trufflehog tool.
+# Purpose:     NecroSpider plug-in for using the trufflehog tool.
 #              Tool: https://github.com/trufflesecurity/truffleHog
 #
 # Author:      <steve@binarypool.com>
@@ -16,10 +16,10 @@ import json
 import os
 from subprocess import PIPE, Popen, TimeoutExpired
 
-from spiderfoot import SpiderFootPlugin, SpiderFootEvent
+from necrospider import NecroSpiderPlugin, NecroSpiderEvent
 
 
-class sfp_tool_trufflehog(SpiderFootPlugin):
+class sfp_tool_trufflehog(NecroSpiderPlugin):
 
     meta = {
         'name': "Tool - TruffleHog",
@@ -165,7 +165,7 @@ class sfp_tool_trufflehog(SpiderFootPlugin):
                 for k in rowjson
                 if k not in ["diff", "printDiff"]
             )
-            evt = SpiderFootEvent('PASSWORD_COMPROMISED', descr, self.__name__, event)
+            evt = NecroSpiderEvent('PASSWORD_COMPROMISED', descr, self.__name__, event)
             self.notifyListeners(evt)
 
         return

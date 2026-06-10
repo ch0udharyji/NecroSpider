@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>NecroSpider v${version}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="${docroot}/static/img/necrospider-icon.png">
+
+    <script type='text/javascript' src='${docroot}/static/js/necrospider.js'></script>
+    <script type='text/javascript' src='${docroot}/static/js/viz.js'></script>
+
+    <link href="${docroot}/static/css/necrospider.css" rel="stylesheet">
+    <link href="${docroot}/static/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${docroot}/static/node_modules/tablesorter/dist/css/jquery.tablesorter.pager.min.css" rel="stylesheet">
+    <link href="${docroot}/static/node_modules/alertifyjs/build/css/alertify.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="${docroot}/static/css/dark.css" rel="stylesheet">
+    <style>
+      body { 
+        font-family: 'Inter', sans-serif !important; 
+        background-color: #0d0d0d !important;
+        color: #eaeaea !important;
+      }
+      .brand-logo.light { display: none !important; }
+      .brand-logo.dark { display: block !important; padding: 10px 15px !important; }
+      .necrospider-header-image {
+        max-height: 35px !important;
+        width: auto !important;
+        filter: drop-shadow(0 2px 5px rgba(215, 42, 5, 0.4));
+      }
+      
+      /* Beautiful Navbar */
+      .navbar-default {
+        background: rgba(15, 15, 15, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border: none !important;
+        border-bottom: 1px solid #222 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+      }
+      .navbar-default .navbar-nav > li > a {
+        color: #bbb !important;
+        font-weight: 500 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 18px 20px !important;
+        transition: all 0.3s ease;
+      }
+      .navbar-default .navbar-nav > li > a:hover {
+        color: #fff !important;
+        background: rgba(215, 42, 5, 0.15) !important;
+      }
+      .navbar-default .navbar-nav > .active > a {
+        color: #fff !important;
+        background: linear-gradient(135deg, #d72a05, #b0210a) !important;
+        border-radius: 6px !important;
+        margin: 8px 10px !important;
+        padding: 10px 15px !important;
+        box-shadow: 0 4px 12px rgba(215, 42, 5, 0.4) !important;
+        border: none !important;
+      }
+      .navbar-brand {
+        height: auto !important;
+      }
+      /* Ensure icons look good */
+      .glyphicon { margin-right: 5px; }
+    </style>
+  </head>
+
+  <body>
+
+<!-- Hacker Splash Screen -->
+<div id="hacker-splash" style="display: none;">
+  <div class="splash-content">
+    <img src="${docroot}/static/img/necrospider-header-dark.png" class="splash-logo" />
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+    <div class="splash-text">INITIALIZING SYSTEM...</div>
+  </div>
+</div>
+
+<script>
+  if (!sessionStorage.getItem('splashShown')) {
+    // Only show the splash screen if it hasn't been shown in this session
+    document.getElementById('hacker-splash').style.display = 'flex';
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var splash = document.getElementById('hacker-splash');
+        if (splash) {
+          splash.style.opacity = '0';
+          splash.style.visibility = 'hidden';
+          setTimeout(function() { splash.remove(); }, 500); // Remove from DOM after fade out
+          sessionStorage.setItem('splashShown', 'true');
+        }
+      }, 1200); // 1.2s minimum high-tech loading screen
+    });
+  } else {
+    // Immediately remove it if already shown
+    document.getElementById('hacker-splash').remove();
+  }
+</script>
+
+<nav class="navbar navbar-fixed-top navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <span data-toggle="" data-target="switcher4">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar-collapse" aria-expanded="false">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </span>
+      <a class="navbar-brand brand-logo light" href="${docroot}/"><img class="necrospider-header-image" src="${docroot}/static/img/necrospider-header.png" /></a>
+      <a class="navbar-brand brand-logo dark" href="${docroot}/"><img class="necrospider-header-image" src="${docroot}/static/img/necrospider-header-dark.png" /></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li
+% if pageid == "NEWSCAN":
+    class="active"
+% endif
+class="nav-item"
+><a id="nav-link-newscan" href="${docroot}/newscan"><i class="glyphicon glyphicon-screenshot"></i>&nbsp;New Scan</a></li>
+        <li 
+% if pageid == "SCANLIST": 
+    class="active"
+% endif
+class="nav-item"
+><a id="nav-link-scans" href="${docroot}/"><i class="glyphicon glyphicon-list"></i>&nbsp;Scans</a></li>
+        <li
+% if pageid == "SETTINGS":
+    class="active"
+%endif
+class="nav-item"><a id="nav-link-settings" href="${docroot}/opts" class="nav-link"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Settings</a></li>
+ 
+      </ul>
+
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        <!-- Theme toggler removed -->
+      </li>
+
+        <li class="nav-item"><a href="#aboutmodal" data-toggle="modal" data-target="#aboutmodal"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;About</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+    <div id="aboutmodal" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <div class="modal-header">
+      <h3 class="modal-title">NecroSpider ${version}</h3>
+    </div>
+
+    <div class="modal-body">
+    <p>NecroSpider is a modern, minimal footprinting and OSINT automation tool.</p>
+    <p>You are running version <b>${version}</b>.</p>
+    <p> Visit the author's portfolio at <a href='https://ch0udharyji.com' target=_new>https://ch0udharyji.com</a>.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>var docroot = '${docroot}';</script>
+    <script src="${docroot}/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="${docroot}/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="${docroot}/static/node_modules/alertifyjs/build/alertify.min.js"></script>
+    <script src="${docroot}/static/node_modules/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
+    <script src='${docroot}/static/node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js'></script>
+    <script src='${docroot}/static/node_modules/tablesorter/dist/js/jquery.tablesorter.widgets.min.js'></script>
+    <script src="${docroot}/static/node_modules/d3/d3.min.js"></script>
+    <script type='text/javascript' hash="sha256-0kTZzWMEh3cdgCMVytlY1E8rg7oO13eyLa+kvyAhRmo=">sf.updateTooltips();</script>
+
+    <div class="container" id="mainbody" style='padding-bottom: 50px'>
+

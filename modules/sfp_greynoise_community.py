@@ -16,10 +16,10 @@ import json
 import time
 from datetime import datetime
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_greynoise_community(SpiderFootPlugin):
+class sfp_greynoise_community(NecroSpiderPlugin):
 
     meta = {
         "name": "GreyNoise Community",
@@ -98,7 +98,7 @@ class sfp_greynoise_community(SpiderFootPlugin):
             ip_response = self.sf.fetchUrl(
                 gn_community_url + qry,
                 timeout=self.opts["_fetchtimeout"],
-                useragent="greynoise-spiderfoot-community-v1.2.0",
+                useragent="greynoise-necrospider-community-v1.2.0",
                 headers=headers,
             )
             if ip_response["code"] == "200":
@@ -158,12 +158,12 @@ class sfp_greynoise_community(SpiderFootPlugin):
                 if self.opts["age_limit_days"] > 0 and lastseen_ts < age_limit_ts:
                     self.debug("Record found but too old, skipping.")
                     return
-                e = SpiderFootEvent("RAW_RIR_DATA", str(ret), self.__name__, event)
+                e = NecroSpiderEvent("RAW_RIR_DATA", str(ret), self.__name__, event)
                 self.notifyListeners(e)
 
                 # Only report meta data about the target, not affiliates
                 if ret.get("name", "unknown") != "unknown":
-                    e = SpiderFootEvent("COMPANY_NAME", ret.get("name"), self.__name__, event)
+                    e = NecroSpiderEvent("COMPANY_NAME", ret.get("name"), self.__name__, event)
                     self.notifyListeners(e)
 
                 if ret.get("classification"):
@@ -174,7 +174,7 @@ class sfp_greynoise_community(SpiderFootPlugin):
                         + ret.get("classification")
                     )
                     descr += "\n<SFURL>https://viz.greynoise.io/ip/" + ret.get("ip") + "</SFURL>"
-                    e = SpiderFootEvent(evtType, descr, self.__name__, event)
+                    e = NecroSpiderEvent(evtType, descr, self.__name__, event)
                     self.notifyListeners(e)
 
 # End of sfp_greynoise_community class

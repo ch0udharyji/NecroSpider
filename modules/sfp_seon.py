@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_seon
-# Purpose:      Spiderfoot plugin to query seon.io to gather intelligence about
+# Purpose:      Necrospider plugin to query seon.io to gather intelligence about
 #               IP Addresses, email addresses, and phone numbers.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_seon(SpiderFootPlugin):
+class sfp_seon(NecroSpiderPlugin):
 
     meta = {
         'name': "Seon",
@@ -164,55 +164,55 @@ class sfp_seon(SpiderFootPlugin):
             if resultSet:
                 if resultSet.get('score', 0) >= self.opts['fraud_threshold']:
                     maliciousDesc = f"SEON [{eventData}]\n - FRAUD SCORE: {resultSet.get('score')}"
-                    evt = SpiderFootEvent("MALICIOUS_IPADDR", maliciousDesc, self.__name__, event)
+                    evt = NecroSpiderEvent("MALICIOUS_IPADDR", maliciousDesc, self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                     if resultSet.get('tor'):
-                        evt = SpiderFootEvent("WEBSERVER_TECHNOLOGY", f"Server is TOR node: {resultSet.get('tor')}", self.__name__, event)
+                        evt = NecroSpiderEvent("WEBSERVER_TECHNOLOGY", f"Server is TOR node: {resultSet.get('tor')}", self.__name__, event)
                         self.notifyListeners(evt)
 
-                        evt = SpiderFootEvent("TOR_EXIT_NODE", eventData, self.__name__, event)
+                        evt = NecroSpiderEvent("TOR_EXIT_NODE", eventData, self.__name__, event)
                         self.notifyListeners(evt)
 
                     if resultSet.get('vpn'):
-                        evt = SpiderFootEvent("WEBSERVER_TECHNOLOGY", f"Server is VPN: {resultSet.get('vpn')}", self.__name__, event)
+                        evt = NecroSpiderEvent("WEBSERVER_TECHNOLOGY", f"Server is VPN: {resultSet.get('vpn')}", self.__name__, event)
                         self.notifyListeners(evt)
 
-                        evt = SpiderFootEvent("VPN_HOST", eventData, self.__name__, event)
+                        evt = NecroSpiderEvent("VPN_HOST", eventData, self.__name__, event)
                         self.notifyListeners(evt)
 
                     if resultSet.get('web_proxy'):
-                        evt = SpiderFootEvent("WEBSERVER_TECHNOLOGY", f"Server is Web Proxy: {resultSet.get('web_proxy')}", self.__name__, event)
+                        evt = NecroSpiderEvent("WEBSERVER_TECHNOLOGY", f"Server is Web Proxy: {resultSet.get('web_proxy')}", self.__name__, event)
                         self.notifyListeners(evt)
 
-                        evt = SpiderFootEvent("PROXY_HOST", eventData, self.__name__, event)
+                        evt = NecroSpiderEvent("PROXY_HOST", eventData, self.__name__, event)
                         self.notifyListeners(evt)
 
                     if resultSet.get('public_proxy'):
-                        evt = SpiderFootEvent("WEBSERVER_TECHNOLOGY", f"Server is Public Proxy: {resultSet.get('public_proxy')}", self.__name__, event)
+                        evt = NecroSpiderEvent("WEBSERVER_TECHNOLOGY", f"Server is Public Proxy: {resultSet.get('public_proxy')}", self.__name__, event)
                         self.notifyListeners(evt)
 
-                        evt = SpiderFootEvent("PROXY_HOST", eventData, self.__name__, event)
+                        evt = NecroSpiderEvent("PROXY_HOST", eventData, self.__name__, event)
                         self.notifyListeners(evt)
 
                 if resultSet.get('country'):
                     location = ', '.join(filter(None, [resultSet.get('city'), resultSet.get('state_prov'), resultSet.get('country')]))
-                    evt = SpiderFootEvent('GEOINFO', location, self.__name__, event)
+                    evt = NecroSpiderEvent('GEOINFO', location, self.__name__, event)
                     self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent('PHYSICAL_COORDINATES', f"{resultSet.get('latitude')}, {resultSet.get('longitude')}", self.__name__, event)
+                    evt = NecroSpiderEvent('PHYSICAL_COORDINATES', f"{resultSet.get('latitude')}, {resultSet.get('longitude')}", self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                 if resultSet.get('open_ports'):
                     for port in resultSet.get('open_ports'):
-                        evt = SpiderFootEvent('TCP_PORT_OPEN', f"{eventData}:{port}", self.__name__, event)
+                        evt = NecroSpiderEvent('TCP_PORT_OPEN', f"{eventData}:{port}", self.__name__, event)
                         self.notifyListeners(evt)
                         dataFound = True
 
                 if dataFound:
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
         elif eventName == "EMAILADDR":
@@ -224,22 +224,22 @@ class sfp_seon(SpiderFootPlugin):
             if resultSet:
                 if resultSet.get('score') >= self.opts['fraud_threshold']:
                     maliciousDesc = f"SEON [{eventData}]\n - FRAUD SCORE: {resultSet.get('score')}"
-                    evt = SpiderFootEvent("MALICIOUS_EMAILADDR", maliciousDesc, self.__name__, event)
+                    evt = NecroSpiderEvent("MALICIOUS_EMAILADDR", maliciousDesc, self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                 if resultSet.get('deliverable'):
-                    evt = SpiderFootEvent("EMAILADDR_DELIVERABLE", eventData, self.__name__, event)
+                    evt = NecroSpiderEvent("EMAILADDR_DELIVERABLE", eventData, self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
                 else:
-                    evt = SpiderFootEvent("EMAILADDR_UNDELIVERABLE", eventData, self.__name__, event)
+                    evt = NecroSpiderEvent("EMAILADDR_UNDELIVERABLE", eventData, self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                 if resultSet.get('domain_details'):
                     if resultSet.get('domain_details').get('disposable'):
-                        evt = SpiderFootEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
+                        evt = NecroSpiderEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
                         self.notifyListeners(evt)
                         dataFound = True
 
@@ -248,33 +248,33 @@ class sfp_seon(SpiderFootPlugin):
                     for site in socialMediaList:
                         if resultSet.get('account_details').get(site):
                             if resultSet.get('account_details').get(site).get('url'):
-                                evt = SpiderFootEvent("SOCIAL_MEDIA", f"{site}: <SFURL>{resultSet.get('account_details').get(site).get('url')}</SFURL>", self.__name__, event)
+                                evt = NecroSpiderEvent("SOCIAL_MEDIA", f"{site}: <SFURL>{resultSet.get('account_details').get(site).get('url')}</SFURL>", self.__name__, event)
                                 self.notifyListeners(evt)
                             elif resultSet.get('account_details').get(site).get('registered'):
-                                evt = SpiderFootEvent("SOCIAL_MEDIA", f"Registered on {site}", self.__name__, event)
+                                evt = NecroSpiderEvent("SOCIAL_MEDIA", f"Registered on {site}", self.__name__, event)
                                 self.notifyListeners(evt)
                             dataFound = True
 
                             if site == 'linkedin':
                                 if resultSet.get('account_details').get(site).get('company'):
-                                    evt = SpiderFootEvent("COMPANY_NAME", resultSet.get('account_details').get(site).get('company'), self.__name__, event)
+                                    evt = NecroSpiderEvent("COMPANY_NAME", resultSet.get('account_details').get(site).get('company'), self.__name__, event)
                                     self.notifyListeners(evt)
                                     dataFound = True
 
                                 if resultSet.get('account_details').get(site).get('name'):
-                                    evt = SpiderFootEvent("HUMAN_NAME", resultSet.get('account_details').get(site).get('name'), self.__name__, event)
+                                    evt = NecroSpiderEvent("HUMAN_NAME", resultSet.get('account_details').get(site).get('name'), self.__name__, event)
                                     self.notifyListeners(evt)
                                     dataFound = True
 
                 if resultSet.get('breach_details').get('breaches'):
                     breachList = resultSet.get('breach_details').get('breaches')
                     for breachSet in breachList:
-                        evt = SpiderFootEvent("EMAILADDR_COMPROMISED", f"{eventData} [{breachSet.get('name', 'Unknown')}]", self.__name__, event)
+                        evt = NecroSpiderEvent("EMAILADDR_COMPROMISED", f"{eventData} [{breachSet.get('name', 'Unknown')}]", self.__name__, event)
                         self.notifyListeners(evt)
                         dataFound = True
 
                 if dataFound:
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
         elif eventName == "PHONE_NUMBER":
@@ -286,7 +286,7 @@ class sfp_seon(SpiderFootPlugin):
             if resultSet:
                 if resultSet.get('score') >= self.opts['fraud_threshold']:
                     maliciousDesc = f"SEON [{eventData}]\n - FRAUD SCORE: {resultSet.get('score')}"
-                    evt = SpiderFootEvent("MALICIOUS_PHONE_NUMBER", maliciousDesc, self.__name__, event)
+                    evt = NecroSpiderEvent("MALICIOUS_PHONE_NUMBER", maliciousDesc, self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
@@ -294,22 +294,22 @@ class sfp_seon(SpiderFootPlugin):
                     socialMediaList = resultSet.get('account_details').keys()
                     for site in socialMediaList:
                         if resultSet.get('account_details').get(site).get('registered'):
-                            evt = SpiderFootEvent("SOCIAL_MEDIA", f"Registered on {site}", self.__name__, event)
+                            evt = NecroSpiderEvent("SOCIAL_MEDIA", f"Registered on {site}", self.__name__, event)
                             self.notifyListeners(evt)
                             dataFound = True
 
                 if resultSet.get('type'):
-                    evt = SpiderFootEvent("PHONE_NUMBER_TYPE", resultSet.get('type'), self.__name__, event)
+                    evt = NecroSpiderEvent("PHONE_NUMBER_TYPE", resultSet.get('type'), self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                 if resultSet.get('carrier'):
-                    evt = SpiderFootEvent("PROVIDER_TELCO", resultSet.get('carrier'), self.__name__, event)
+                    evt = NecroSpiderEvent("PROVIDER_TELCO", resultSet.get('carrier'), self.__name__, event)
                     self.notifyListeners(evt)
                     dataFound = True
 
                 if dataFound:
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(resultSet), self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_seon class

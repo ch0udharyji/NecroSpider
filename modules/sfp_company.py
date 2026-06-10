@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_company
-# Purpose:      SpiderFoot plug-in for scanning retrieved content by other
+# Purpose:      NecroSpider plug-in for scanning retrieved content by other
 #               modules (such as sfp_spider) and identifying company names.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_company(SpiderFootPlugin):
+class sfp_company(NecroSpiderPlugin):
 
     meta = {
         'name': "Company Name Extractor",
@@ -152,7 +152,7 @@ class sfp_company(SpiderFootPlugin):
                     else:
                         etype = "COMPANY_NAME"
 
-                    evt = SpiderFootEvent(etype, fullcompany, self.__name__, event)
+                    evt = NecroSpiderEvent(etype, fullcompany, self.__name__, event)
                     if event.moduleDataSource:
                         evt.moduleDataSource = event.moduleDataSource
                     else:

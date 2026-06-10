@@ -36,12 +36,12 @@ meta:
 collections:
 
   # Each 'collect' block represents a collection of data from
-  # the SpiderFoot database. You need at least one 'collect'
+  # the NecroSpider database. You need at least one 'collect'
   # block for the rule to actually do something.
   - collect:
       # Each 'collect' block may contain multiple blocks
       # for collecting and analyzing data. The first pulls
-      # data from the SpiderFoot database, and subsequent
+      # data from the NecroSpider database, and subsequent
       # blocks further refine that data down to what you are
       # interested in. You need at least one for the 'collect'
       # block to have data.

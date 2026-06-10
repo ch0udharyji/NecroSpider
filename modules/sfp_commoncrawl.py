@@ -14,10 +14,10 @@
 import json
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_commoncrawl(SpiderFootPlugin):
+class sfp_commoncrawl(NecroSpiderPlugin):
 
     meta = {
         'name': "CommonCrawl",
@@ -70,7 +70,7 @@ class sfp_commoncrawl(SpiderFootPlugin):
         for index in self.indexBase:
             url = f"https://index.commoncrawl.org/{index}-index?url={target}/*&output=json"
             res = self.sf.fetchUrl(url, timeout=60,
-                                   useragent="SpiderFoot")
+                                   useragent="NecroSpider")
 
             if res['code'] in ["400", "401", "402", "403", "404"]:
                 self.error("CommonCrawl search doesn't seem to be available.")
@@ -89,7 +89,7 @@ class sfp_commoncrawl(SpiderFootPlugin):
     def getLatestIndexes(self):
         url = "https://index.commoncrawl.org/"
         res = self.sf.fetchUrl(url, timeout=60,
-                               useragent="SpiderFoot")
+                               useragent="NecroSpider")
 
         if res['code'] in ["400", "401", "402", "403", "404"]:
             self.error("CommonCrawl index collection doesn't seem to be available.")
@@ -182,7 +182,7 @@ class sfp_commoncrawl(SpiderFootPlugin):
                         continue
                     sent.append(link['url'])
 
-                    evt = SpiderFootEvent("LINKED_URL_INTERNAL", link['url'],
+                    evt = NecroSpiderEvent("LINKED_URL_INTERNAL", link['url'],
                                           self.__name__, event)
                     self.notifyListeners(evt)
             except Exception as e:

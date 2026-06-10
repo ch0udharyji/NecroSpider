@@ -14,10 +14,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_hunter(SpiderFootPlugin):
+class sfp_hunter(NecroSpiderPlugin):
 
     meta = {
         'name': "Hunter.io",
@@ -92,7 +92,7 @@ class sfp_hunter(SpiderFootPlugin):
 
         url = f"https://api.hunter.io/v2/domain-search?{urllib.parse.urlencode(params)}"
 
-        res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'], useragent="SpiderFoot")
+        res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'], useragent="NecroSpider")
 
         if res['code'] == "404":
             return None
@@ -155,13 +155,13 @@ class sfp_hunter(SpiderFootPlugin):
                 else:
                     evttype = "EMAILADDR"
 
-                e = SpiderFootEvent(evttype, em, self.__name__, event)
+                e = NecroSpiderEvent(evttype, em, self.__name__, event)
                 self.notifyListeners(e)
 
                 if 'first_name' in email and 'last_name' in email:
                     if email['first_name'] is not None and email['last_name'] is not None:
                         n = email['first_name'] + " " + email['last_name']
-                        e = SpiderFootEvent("RAW_RIR_DATA", "Possible full name: " + n,
+                        e = NecroSpiderEvent("RAW_RIR_DATA", "Possible full name: " + n,
                                             self.__name__, event)
                         self.notifyListeners(e)
 

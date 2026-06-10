@@ -1,81 +1,81 @@
-# SpiderFoot specific #
+# NecroSpider specific #
 #######################
 /cache/
 /log/
-/spiderfoot.db*
+/necrospider.db*
 passwd
-spiderfoot.crt
-spiderfoot.key
+necrospider.crt
+necrospider.key
 
-spiderfoot/static/node_modules/*
+necrospider/static/node_modules/*
 
-spiderfoot/static/node_modules/alertifyjs/*
-spiderfoot/static/node_modules/alertifyjs/build/*
-spiderfoot/static/node_modules/alertifyjs/build/css/*
+necrospider/static/node_modules/alertifyjs/*
+necrospider/static/node_modules/alertifyjs/build/*
+necrospider/static/node_modules/alertifyjs/build/css/*
 
-!spiderfoot/static/node_modules/alertifyjs/
-!spiderfoot/static/node_modules/alertifyjs/build/
-!spiderfoot/static/node_modules/alertifyjs/build/alertify.min.js
-!spiderfoot/static/node_modules/alertifyjs/build/css/
-!spiderfoot/static/node_modules/alertifyjs/build/css/alertify.min.css
+!necrospider/static/node_modules/alertifyjs/
+!necrospider/static/node_modules/alertifyjs/build/
+!necrospider/static/node_modules/alertifyjs/build/alertify.min.js
+!necrospider/static/node_modules/alertifyjs/build/css/
+!necrospider/static/node_modules/alertifyjs/build/css/alertify.min.css
 
-spiderfoot/static/node_modules/bootstrap/*
-spiderfoot/static/node_modules/bootstrap/dist/*
-spiderfoot/static/node_modules/bootstrap/dist/js/*
-spiderfoot/static/node_modules/bootstrap/dist/css/*
-spiderfoot/static/node_modules/bootstrap/dist/fonts/*
+necrospider/static/node_modules/bootstrap/*
+necrospider/static/node_modules/bootstrap/dist/*
+necrospider/static/node_modules/bootstrap/dist/js/*
+necrospider/static/node_modules/bootstrap/dist/css/*
+necrospider/static/node_modules/bootstrap/dist/fonts/*
 
-!spiderfoot/static/node_modules/bootstrap/
-!spiderfoot/static/node_modules/bootstrap/dist/
-!spiderfoot/static/node_modules/bootstrap/dist/js/
-!spiderfoot/static/node_modules/bootstrap/dist/js/bootstrap.min.js
-!spiderfoot/static/node_modules/bootstrap/dist/css/
-!spiderfoot/static/node_modules/bootstrap/dist/css/bootstrap.min.css
-!spiderfoot/static/node_modules/bootstrap/dist/fonts/
-!spiderfoot/static/node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff
-!spiderfoot/static/node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2
+!necrospider/static/node_modules/bootstrap/
+!necrospider/static/node_modules/bootstrap/dist/
+!necrospider/static/node_modules/bootstrap/dist/js/
+!necrospider/static/node_modules/bootstrap/dist/js/bootstrap.min.js
+!necrospider/static/node_modules/bootstrap/dist/css/
+!necrospider/static/node_modules/bootstrap/dist/css/bootstrap.min.css
+!necrospider/static/node_modules/bootstrap/dist/fonts/
+!necrospider/static/node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff
+!necrospider/static/node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2
 
-spiderfoot/static/node_modules/jquery/*
-spiderfoot/static/node_modules/jquery/dist/*
+necrospider/static/node_modules/jquery/*
+necrospider/static/node_modules/jquery/dist/*
 
-!spiderfoot/static/node_modules/jquery/
-!spiderfoot/static/node_modules/jquery/dist/
-!spiderfoot/static/node_modules/jquery/dist/jquery.min.js
+!necrospider/static/node_modules/jquery/
+!necrospider/static/node_modules/jquery/dist/
+!necrospider/static/node_modules/jquery/dist/jquery.min.js
 
-spiderfoot/static/node_modules/sigma/*
-spiderfoot/static/node_modules/sigma/build/*
-spiderfoot/static/node_modules/sigma/build/plugins/*
+necrospider/static/node_modules/sigma/*
+necrospider/static/node_modules/sigma/build/*
+necrospider/static/node_modules/sigma/build/plugins/*
 
-!spiderfoot/static/node_modules/sigma/
-!spiderfoot/static/node_modules/sigma/build/
-!spiderfoot/static/node_modules/sigma/build/sigma.min.js
-!spiderfoot/static/node_modules/sigma/build/plugins/
-!spiderfoot/static/node_modules/sigma/build/plugins/sigma.parsers.json.min.js
-!spiderfoot/static/node_modules/sigma/build/plugins/sigma.plugins.dragNodes.min.js
-!spiderfoot/static/node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js
-!spiderfoot/static/node_modules/sigma/build/plugins/sigma.renderers.snapshot.min.js
+!necrospider/static/node_modules/sigma/
+!necrospider/static/node_modules/sigma/build/
+!necrospider/static/node_modules/sigma/build/sigma.min.js
+!necrospider/static/node_modules/sigma/build/plugins/
+!necrospider/static/node_modules/sigma/build/plugins/sigma.parsers.json.min.js
+!necrospider/static/node_modules/sigma/build/plugins/sigma.plugins.dragNodes.min.js
+!necrospider/static/node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js
+!necrospider/static/node_modules/sigma/build/plugins/sigma.renderers.snapshot.min.js
 
-spiderfoot/static/node_modules/tablesorter/*
-spiderfoot/static/node_modules/tablesorter/dist/*
-spiderfoot/static/node_modules/tablesorter/dist/js/*
-spiderfoot/static/node_modules/tablesorter/dist/css/*
-spiderfoot/static/node_modules/tablesorter/dist/js/extras/*
+necrospider/static/node_modules/tablesorter/*
+necrospider/static/node_modules/tablesorter/dist/*
+necrospider/static/node_modules/tablesorter/dist/js/*
+necrospider/static/node_modules/tablesorter/dist/css/*
+necrospider/static/node_modules/tablesorter/dist/js/extras/*
 
-!spiderfoot/static/node_modules/tablesorter/
-!spiderfoot/static/node_modules/tablesorter/dist/
-!spiderfoot/static/node_modules/tablesorter/dist/css/
-!spiderfoot/static/node_modules/tablesorter/dist/css/jquery.tablesorter.pager.min.css
-!spiderfoot/static/node_modules/tablesorter/dist/css/theme.default.min.css
-!spiderfoot/static/node_modules/tablesorter/dist/js/
-!spiderfoot/static/node_modules/tablesorter/dist/js/jquery.tablesorter.min.js
-!spiderfoot/static/node_modules/tablesorter/dist/js/jquery.tablesorter.widgets.min.js
-!spiderfoot/static/node_modules/tablesorter/dist/js/extras/
-!spiderfoot/static/node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js
+!necrospider/static/node_modules/tablesorter/
+!necrospider/static/node_modules/tablesorter/dist/
+!necrospider/static/node_modules/tablesorter/dist/css/
+!necrospider/static/node_modules/tablesorter/dist/css/jquery.tablesorter.pager.min.css
+!necrospider/static/node_modules/tablesorter/dist/css/theme.default.min.css
+!necrospider/static/node_modules/tablesorter/dist/js/
+!necrospider/static/node_modules/tablesorter/dist/js/jquery.tablesorter.min.js
+!necrospider/static/node_modules/tablesorter/dist/js/jquery.tablesorter.widgets.min.js
+!necrospider/static/node_modules/tablesorter/dist/js/extras/
+!necrospider/static/node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js
 
-spiderfoot/static/node_modules/d3/*
+necrospider/static/node_modules/d3/*
 
-!spiderfoot/static/node_modules/d3/
-!spiderfoot/static/node_modules/d3/d3.min.js
+!necrospider/static/node_modules/d3/
+!necrospider/static/node_modules/d3/d3.min.js
 
 # Compiled source #
 ###################

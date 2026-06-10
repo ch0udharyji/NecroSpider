@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_arin(SpiderFootPlugin):
+class sfp_arin(NecroSpiderPlugin):
 
     meta = {
         'name': "ARIN",
@@ -115,7 +115,7 @@ class sfp_arin(SpiderFootPlugin):
             self.debug(f"Error processing JSON response: {e}")
             return None
 
-        evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, self.currentEventSrc)
+        evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, self.currentEventSrc)
         self.notifyListeners(evt)
         return data
 
@@ -153,7 +153,7 @@ class sfp_arin(SpiderFootPlugin):
                             sname = name.split(", ", 1)
                             name = sname[1] + " " + sname[0]
 
-                        evt = SpiderFootEvent("HUMAN_NAME", name,
+                        evt = NecroSpiderEvent("HUMAN_NAME", name,
                                               self.__name__, self.currentEventSrc)
                         self.notifyListeners(evt)
 

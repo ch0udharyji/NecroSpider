@@ -116,7 +116,7 @@ Main navigation pages should render correctly
     Settings page should render
 
 Scan info page should render correctly
-    Create a module scan                 test scan info       spiderfoot.net           sfp_countryname
+    Create a module scan                 test scan info       necrospider.net           sfp_countryname
     Wait Until Page Contains             Browse               timeout=5s
     Wait Until Element Contains          scanstatusbadge      FINISHED                 timeout=10s
     Click Element                        id:btn-status
@@ -131,12 +131,12 @@ Scan info page should render correctly
     Scan info Log tab should render
 
 Scan list page should list scans
-    Create a module scan                 test scan list       spiderfoot.net           sfp_countryname
+    Create a module scan                 test scan list       necrospider.net           sfp_countryname
     Click Element                        id:nav-link-scans
     Wait Until Page Contains             test scan list       timeout=5s
 
 A sfp_dnsresolve scan should resolve INTERNET_NAME to IP_ADDRESS
-    Create a module scan                 dns resolve          spiderfoot.net           sfp_dnsresolve
+    Create a module scan                 dns resolve          necrospider.net           sfp_dnsresolve
     Wait Until Page Contains             Browse               timeout=5s
     Wait Until Element Contains          scanstatusbadge      FINISHED                 timeout=10s
     Click Element                        id:btn-browse

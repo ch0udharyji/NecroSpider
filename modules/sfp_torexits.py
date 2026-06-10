@@ -15,10 +15,10 @@ import json
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_torexits(SpiderFootPlugin):
+class sfp_torexits(NecroSpiderPlugin):
 
     meta = {
         'name': "TOR Exit Nodes",
@@ -213,16 +213,16 @@ class sfp_torexits(SpiderFootPlugin):
 
             # For netblocks, we need to create the associated IP address event first.
             if eventName == 'NETBLOCK_OWNER':
-                pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             if eventName == 'NETBLOCKV6_OWNER':
-                pevent = SpiderFootEvent("IPV6_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IPV6_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             else:
                 pevent = event
 
             self.debug(f"IP address {addr} found in TOR exit node list.")
-            evt = SpiderFootEvent("TOR_EXIT_NODE", addr, self.__name__, pevent)
+            evt = NecroSpiderEvent("TOR_EXIT_NODE", addr, self.__name__, pevent)
             self.notifyListeners(evt)
 
 # End of sfp_torexits class

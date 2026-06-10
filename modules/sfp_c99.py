@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_c99
-# Purpose:      SpiderFoot plug-in that queries c99 API
+# Purpose:      NecroSpider plug-in that queries c99 API
 #
 # Author:      Filip Aleksić <faleksicdev@gmail.com>
 #
@@ -12,10 +12,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_c99(SpiderFootPlugin):
+class sfp_c99(NecroSpiderPlugin):
     meta = {
         "name": "C99",
         "summary": "Queries the C99 API which offers various data (geo location, proxy detection, phone lookup, etc).",
@@ -99,7 +99,7 @@ class sfp_c99(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.c99.nl/{path}?key={self.opts['api_key']}&{queryParam}={queryData}&json",
             timeout=self.opts["_fetchtimeout"],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
 
         if res["code"] == "429":
@@ -129,7 +129,7 @@ class sfp_c99(SpiderFootPlugin):
         return info
 
     def emitRawRirData(self, data, event):
-        evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+        evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
         self.notifyListeners(evt)
 
     def emitPhoneData(self, phoneData, event):
@@ -141,7 +141,7 @@ class sfp_c99(SpiderFootPlugin):
         found = False
 
         if provider or carrier:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "PROVIDER_TELCO",
                 f"Provider: {provider}, Carrier: {carrier}",
                 self.__name__,
@@ -151,7 +151,7 @@ class sfp_c99(SpiderFootPlugin):
             found = True
 
         if city or countryName or region:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "PHYSICAL_ADDRESS",
                 f"Country: {countryName}, Region: {region}, City: {city}",
                 self.__name__,
@@ -189,7 +189,7 @@ class sfp_c99(SpiderFootPlugin):
             ip = domainHistoryElem.get("ip_address")
 
             if self.sf.validIP(ip):
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "IP_ADDRESS",
                     ip,
                     self.__name__,
@@ -205,7 +205,7 @@ class sfp_c99(SpiderFootPlugin):
         skype = data.get("skype")
 
         if skype:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "ACCOUNT_EXTERNAL_OWNED",
                 f"Skype [{skype}]",
                 self.__name__,
@@ -213,7 +213,7 @@ class sfp_c99(SpiderFootPlugin):
             )
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "USERNAME",
                 skype,
                 self.__name__,
@@ -244,7 +244,7 @@ class sfp_c99(SpiderFootPlugin):
         isProxy = data.get("proxy")
 
         if isProxy:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "WEBSERVER_TECHNOLOGY",
                 f"Server is proxy: {isProxy}",
                 self.__name__,
@@ -273,7 +273,7 @@ class sfp_c99(SpiderFootPlugin):
             provider = record.get("isp")
 
             if provider:
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "PROVIDER_HOSTING",
                     provider,
                     self.__name__,
@@ -283,7 +283,7 @@ class sfp_c99(SpiderFootPlugin):
                 found = True
 
             if latitude and longitude:
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "PHYSICAL_COORDINATES",
                     f"{latitude}, {longitude}",
                     self.__name__,
@@ -293,7 +293,7 @@ class sfp_c99(SpiderFootPlugin):
                 found = True
 
             if region or country or city or postalCode:
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "GEOINFO",
                     f"Country: {country}, Region: {region}, City: {city}, Postal code: {postalCode}",
                     self.__name__,
@@ -311,7 +311,7 @@ class sfp_c99(SpiderFootPlugin):
         found = False
 
         if ip and ip not in ips:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "IP_ADDRESS",
                 ip,
                 self.__name__,
@@ -326,7 +326,7 @@ class sfp_c99(SpiderFootPlugin):
                 if self.checkForStop():
                     return
 
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "IP_ADDRESS",
                     ipElem.strip(),
                     self.__name__,
@@ -341,7 +341,7 @@ class sfp_c99(SpiderFootPlugin):
         firewall = data.get("result")
 
         if firewall:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "WEBSERVER_TECHNOLOGY",
                 f"Firewall detected: {firewall}",
                 self.__name__,
@@ -357,15 +357,15 @@ class sfp_c99(SpiderFootPlugin):
         if self.opts["verify"] and not self.sf.resolveHost(data) and not self.sf.resolveHost6(data):
             self.debug(f"Host {data} could not be resolved.")
             if self.getTarget().matches(data):
-                evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", data, self.__name__, event)
+                evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", data, self.__name__, event)
                 self.notifyListeners(evt)
             return
 
         if self.getTarget().matches(data):
-            evt = SpiderFootEvent('INTERNET_NAME', data, self.__name__, event)
+            evt = NecroSpiderEvent('INTERNET_NAME', data, self.__name__, event)
             self.notifyListeners(evt)
             if self.sf.isDomain(data, self.opts['_internettlds']):
-                evt = SpiderFootEvent('DOMAIN_NAME', data, self.__name__, event)
+                evt = NecroSpiderEvent('DOMAIN_NAME', data, self.__name__, event)
                 self.notifyListeners(evt)
             return
 
@@ -382,7 +382,7 @@ class sfp_c99(SpiderFootPlugin):
                     return
 
             if self.cohostcount < self.opts["maxcohost"]:
-                evt = SpiderFootEvent("CO_HOSTED_SITE", data, self.__name__, event)
+                evt = NecroSpiderEvent("CO_HOSTED_SITE", data, self.__name__, event)
                 self.notifyListeners(evt)
                 self.cohostcount += 1
 

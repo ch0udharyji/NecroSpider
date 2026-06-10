@@ -19,10 +19,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_alienvault(SpiderFootPlugin):
+class sfp_alienvault(NecroSpiderPlugin):
 
     meta = {
         'name': "AlienVault OTX",
@@ -188,7 +188,7 @@ class sfp_alienvault(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://otx.alienvault.com/api/v1/indicators/{target_type}/{qry}/reputation",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers)
 
         return self.parseApiResponse(res)
@@ -210,7 +210,7 @@ class sfp_alienvault(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://otx.alienvault.com/api/v1/indicators/{target_type}/{qry}/passive_dns",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers)
 
         return self.parseApiResponse(res)
@@ -228,7 +228,7 @@ class sfp_alienvault(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://otx.alienvault.com/api/v1/indicators/domain/{qry}/url_list?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers)
 
         return self.parseApiResponse(res)
@@ -246,7 +246,7 @@ class sfp_alienvault(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://otx.alienvault.com/api/v1/indicators/hostname/{qry}/url_list?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers)
 
         return self.parseApiResponse(res)
@@ -336,7 +336,7 @@ class sfp_alienvault(SpiderFootPlugin):
 
                 if url not in self.results:
                     self.results[url] = True
-                    evt = SpiderFootEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
+                    evt = NecroSpiderEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
                     self.notifyListeners(evt)
 
             return
@@ -395,7 +395,7 @@ class sfp_alienvault(SpiderFootPlugin):
                             evtType = "INTERNET_NAME"
                             if not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
                                 evtType = "INTERNET_NAME_UNRESOVLED"
-                            evt = SpiderFootEvent(evtType, host, self.__name__, event)
+                            evt = NecroSpiderEvent(evtType, host, self.__name__, event)
                             self.notifyListeners(evt)
                             continue
 
@@ -416,7 +416,7 @@ class sfp_alienvault(SpiderFootPlugin):
                             continue
 
                         if self.cohostcount < self.opts['maxcohost']:
-                            e = SpiderFootEvent("CO_HOSTED_SITE", host, self.__name__, event)
+                            e = NecroSpiderEvent("CO_HOSTED_SITE", host, self.__name__, event)
                             self.notifyListeners(e)
                             self.cohostcount += 1
                         else:
@@ -478,21 +478,21 @@ class sfp_alienvault(SpiderFootPlugin):
                 # For netblocks, we need to create the IP address event so that
                 # the threat intel event is more meaningful.
                 if eventName == 'NETBLOCK_OWNER':
-                    pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                    pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                     self.notifyListeners(pevent)
                 if eventName == 'NETBLOCKV6_OWNER':
-                    pevent = SpiderFootEvent("IPV6_ADDRESS", addr, self.__name__, event)
+                    pevent = NecroSpiderEvent("IPV6_ADDRESS", addr, self.__name__, event)
                     self.notifyListeners(pevent)
                 elif eventName == 'NETBLOCK_MEMBER':
-                    pevent = SpiderFootEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
+                    pevent = NecroSpiderEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
                     self.notifyListeners(pevent)
                 elif eventName == 'NETBLOCKV6_MEMBER':
-                    pevent = SpiderFootEvent("AFFILIATE_IPV6_ADDRESS", addr, self.__name__, event)
+                    pevent = NecroSpiderEvent("AFFILIATE_IPV6_ADDRESS", addr, self.__name__, event)
                     self.notifyListeners(pevent)
                 else:
                     pevent = event
 
-                e = SpiderFootEvent(evtType, descr, self.__name__, pevent)
+                e = NecroSpiderEvent(evtType, descr, self.__name__, pevent)
                 self.notifyListeners(e)
 
 # End of sfp_alienvault class

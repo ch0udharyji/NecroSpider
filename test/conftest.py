@@ -1,5 +1,5 @@
 import pytest
-from spiderfoot import SpiderFootHelpers
+from necrospider import NecroSpiderHelpers
 
 
 @pytest.fixture(autouse=True)
@@ -13,8 +13,8 @@ def default_options(request):
         '_fetchtimeout': 5,  # number of seconds before giving up on a fetch
         '_internettlds': 'https://publicsuffix.org/list/effective_tld_names.dat',
         '_internettlds_cache': 72,
-        '_genericusers': ",".join(SpiderFootHelpers.usernamesFromWordlists(['generic-usernames'])),
-        '__database': f"{SpiderFootHelpers.dataPath()}/spiderfoot.test.db",  # note: test database file
+        '_genericusers': ",".join(NecroSpiderHelpers.usernamesFromWordlists(['generic-usernames'])),
+        '__database': f"{NecroSpiderHelpers.dataPath()}/necrospider.test.db",  # note: test database file
         '__modules__': None,  # List of modules. Will be set after start-up.
         '__correlationrules__': None,  # List of correlation rules. Will be set after start-up.
         '_socks1type': '',

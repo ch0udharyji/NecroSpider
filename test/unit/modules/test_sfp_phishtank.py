@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_phishtank import sfp_phishtank
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModulePhishtank(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_phishtank()
         module.setup(sf, dict())
 

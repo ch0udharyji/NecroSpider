@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_dnsraw
-# Purpose:      SpiderFoot plug-in for collecting raw DNS records.
+# Purpose:      NecroSpider plug-in for collecting raw DNS records.
 #               Also extracts hostnames from SPF records.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -17,10 +17,10 @@ import dns.query
 import dns.rdatatype
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsraw(SpiderFootPlugin):
+class sfp_dnsraw(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Raw Records",
@@ -120,7 +120,7 @@ class sfp_dnsraw(SpiderFootPlugin):
 
                 self.checked[str(x)] = True
 
-                evt = SpiderFootEvent("RAW_DNS_RECORDS", str(x), self.__name__, parentEvent)
+                evt = NecroSpiderEvent("RAW_DNS_RECORDS", str(x), self.__name__, parentEvent)
                 self.notifyListeners(evt)
 
                 for rx in list(recs.keys()):
@@ -139,21 +139,21 @@ class sfp_dnsraw(SpiderFootPlugin):
                             domains.append(strdata.lower())
 
                         if rx == "MX":
-                            evt = SpiderFootEvent("PROVIDER_MAIL", strdata.lower(), self.__name__, parentEvent)
+                            evt = NecroSpiderEvent("PROVIDER_MAIL", strdata.lower(), self.__name__, parentEvent)
                             self.notifyListeners(evt)
                             domains.append(strdata.lower())
 
                         if rx == "NS":
-                            evt = SpiderFootEvent("PROVIDER_DNS", strdata.lower(), self.__name__, parentEvent)
+                            evt = NecroSpiderEvent("PROVIDER_DNS", strdata.lower(), self.__name__, parentEvent)
                             self.notifyListeners(evt)
                             domains.append(strdata.lower())
 
                         if rx == "TXT":
-                            evt = SpiderFootEvent("DNS_TEXT", strdata, self.__name__, parentEvent)
+                            evt = NecroSpiderEvent("DNS_TEXT", strdata, self.__name__, parentEvent)
                             self.notifyListeners(evt)
 
                             if "v=spf" in strdata or "spf2.0/" in strdata:
-                                evt = SpiderFootEvent("DNS_SPF", strdata, self.__name__, parentEvent)
+                                evt = NecroSpiderEvent("DNS_SPF", strdata, self.__name__, parentEvent)
                                 self.notifyListeners(evt)
 
                                 matches = re.findall(r'include:(.+?) ', strdata, re.IGNORECASE | re.DOTALL)
@@ -173,7 +173,7 @@ class sfp_dnsraw(SpiderFootPlugin):
                 self.debug(f"Host {domain} could not be resolved")
                 evt_type += '_UNRESOLVED'
 
-            evt = SpiderFootEvent(evt_type, domain, self.__name__, parentEvent)
+            evt = NecroSpiderEvent(evt_type, domain, self.__name__, parentEvent)
             self.notifyListeners(evt)
 
 # End of sfp_dnsraw class

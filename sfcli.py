@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfcli
-# Purpose:     Command Line Interface for SpiderFoot.
+# Purpose:     Command Line Interface for NecroSpider.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
 #
@@ -34,7 +34,7 @@ ASCII_LOGO = r"""
 /_______  /   __/|__\____ |\___  >__|  \___  / \____/ \____/|__|
         \/|__|           \/    \/          \/
                 Open Source Intelligence Automation."""
-COPYRIGHT_INFO = "               by Steve Micallef | @spiderfoot\n"
+COPYRIGHT_INFO = "               by Steve Micallef | @necrospider\n"
 
 try:
     import readline
@@ -53,7 +53,7 @@ class bcolors:
     GREYBLUE_DARK = '\x1b[38;5;24m'
 
 
-class SpiderFootCli(cmd.Cmd):
+class NecroSpiderCli(cmd.Cmd):
     version = "4.0.0"
     pipecmd = None
     output = None
@@ -344,7 +344,7 @@ class SpiderFootCli(cmd.Cmd):
         # print("time: " + str(time.time() - ts))
         return ''.join(out)
 
-    # Make a request to the SpiderFoot server
+    # Make a request to the NecroSpider server
     def request(self, url, post=None):
         if not url:
             self.edprint("Invalid request URL")
@@ -360,7 +360,7 @@ class SpiderFootCli(cmd.Cmd):
         # requests_log.setLevel(logging.DEBUG)
         # requests_log.propagate = True
         headers = {
-            "User-agent": "SpiderFoot-CLI/" + self.version,
+            "User-agent": "NecroSpider-CLI/" + self.version,
             "Accept": "application/json"
         }
 
@@ -554,7 +554,7 @@ class SpiderFootCli(cmd.Cmd):
     # Ping the server.
     def do_ping(self, line):
         """ping
-        Ping the SpiderFoot server to ensure it's responding."""
+        Ping the NecroSpider server to ensure it's responding."""
         d = self.request(self.ownopts['cli.server_baseurl'] + "/ping")
         if not d:
             return
@@ -570,7 +570,7 @@ class SpiderFootCli(cmd.Cmd):
         if s[1] != self.version:
             self.edprint(f"Server and CLI version are not the same ({s[1]} / {self.version}). This could lead to unpredictable results!")
 
-    # List all SpiderFoot modules.
+    # List all NecroSpider modules.
     def do_modules(self, line, cacheonly=False):
         """modules
         List all available modules and their descriptions."""
@@ -587,7 +587,7 @@ class SpiderFootCli(cmd.Cmd):
         self.send_output(d, line, titles={"name": "Module name",
                                           "descr": "Description"})
 
-    # List all SpiderFoot correlation rules
+    # List all NecroSpider correlation rules
     def do_correlationrules(self, line, cacheonly=False):
         """correlations
         List all available correlation rules and their descriptions."""
@@ -605,7 +605,7 @@ class SpiderFootCli(cmd.Cmd):
                                           "name": "Name",
                                           "risk": "Risk"})
 
-    # List all SpiderFoot data element types.
+    # List all NecroSpider data element types.
     def do_types(self, line, cacheonly=False):
         """types
         List all available element types and their descriptions."""
@@ -632,7 +632,7 @@ class SpiderFootCli(cmd.Cmd):
     # Load commands from a file.
     def do_load(self, line):
         """load <file>
-        Execute SpiderFoot CLI commands found in <file>."""
+        Execute NecroSpider CLI commands found in <file>."""
         pass
 
     # Get scan info and config.
@@ -1145,8 +1145,8 @@ class SpiderFootCli(cmd.Cmd):
             ["history", "Enable/Disable/List command history."],
             ["spool", "Enable/Disable spooling output."],
             ["shell", "Execute a shell command."],
-            ["exit", "Exit the SpiderFoot CLI (won't impact running scans)."],
-            ["ping", "Test connectivity to the SpiderFoot server."],
+            ["exit", "Exit the NecroSpider CLI (won't impact running scans)."],
+            ["ping", "Test connectivity to the NecroSpider server."],
             ["modules", "List available modules."],
             ["types", "List available data types."],
             ["correlationrules", "List available correlation rules."],
@@ -1161,7 +1161,7 @@ class SpiderFootCli(cmd.Cmd):
             ["correlations", "Show correlation results from a scan."],
             ["summary", "Scan result summary."],
             ["find", "Search for data within scan results."],
-            ["query", "Run SQL against the SpiderFoot SQLite database."],
+            ["query", "Run SQL against the NecroSpider SQLite database."],
             ["logs", "View/watch logs from a scan."]
         ]
 
@@ -1175,7 +1175,7 @@ class SpiderFootCli(cmd.Cmd):
     # Get/Set configuration
     def do_set(self, line):
         """set [opt [= <val>]]
-        Set a configuration variable in SpiderFoot."""
+        Set a configuration variable in NecroSpider."""
 
         c = self.myparseline(line, replace=False)
         cfg = None
@@ -1212,7 +1212,7 @@ class SpiderFootCli(cmd.Cmd):
         # Get the server-side config
         d = self.request(self.ownopts['cli.server_baseurl'] + "/optsraw")
         if not d:
-            self.edprint("Unable to obtain SpiderFoot server-side config.")
+            self.edprint("Unable to obtain NecroSpider server-side config.")
             return
 
         j = list()
@@ -1220,7 +1220,7 @@ class SpiderFootCli(cmd.Cmd):
         token = ""  # nosec
         j = json.loads(d)
         if j[0] == "ERROR":
-            self.edprint("Error fetching SpiderFoot server-side config.")
+            self.edprint("Error fetching NecroSpider server-side config.")
             return
 
         serverconfig = j[1]['data']
@@ -1306,12 +1306,12 @@ class SpiderFootCli(cmd.Cmd):
             j = list()
 
             if not d:
-                self.edprint("Unable to set SpiderFoot server-side config.")
+                self.edprint("Unable to set NecroSpider server-side config.")
                 return
 
             j = json.loads(d)
             if j[0] == "ERROR":
-                self.edprint(f"Error setting SpiderFoot server-side config: {j[1]}")
+                self.edprint(f"Error setting NecroSpider server-side config: {j[1]}")
                 return
 
             self.dprint(f"{cfg} set to {val}")
@@ -1336,26 +1336,26 @@ class SpiderFootCli(cmd.Cmd):
     # Exit the CLI
     def do_exit(self, line):
         """exit
-        Exit the SpiderFoot CLI."""
+        Exit the NecroSpider CLI."""
         return True
 
     # Ctrl-D
     def do_EOF(self, line):
         """EOF (Ctrl-D)
-        Exit the SpiderFoot CLI."""
+        Exit the NecroSpider CLI."""
         print("\n")
         return True
 
 
 if __name__ == "__main__":
-    p = argparse.ArgumentParser(description='SpiderFoot: Open Source Intelligence Automation.')
+    p = argparse.ArgumentParser(description='NecroSpider: Open Source Intelligence Automation.')
     p.add_argument("-d", "--debug", help="Enable debug output.", action='store_true')
-    p.add_argument("-s", metavar="URL", type=str, help="Connect to SpiderFoot server on URL. By default, a connection to http://127.0.0.1:5001 will be attempted.")
-    p.add_argument("-u", metavar="USER", type=str, help="Username to authenticate to SpiderFoot server.")
-    p.add_argument("-p", metavar="PASS", type=str, help="Password to authenticate to SpiderFoot server. Consider using -P PASSFILE instead so that your password isn't visible in your shell history or in process lists!")
-    p.add_argument("-P", metavar="PASSFILE", type=str, help="File containing password to authenticate to SpiderFoot server. Ensure permissions on the file are set appropriately!")
+    p.add_argument("-s", metavar="URL", type=str, help="Connect to NecroSpider server on URL. By default, a connection to http://127.0.0.1:5001 will be attempted.")
+    p.add_argument("-u", metavar="USER", type=str, help="Username to authenticate to NecroSpider server.")
+    p.add_argument("-p", metavar="PASS", type=str, help="Password to authenticate to NecroSpider server. Consider using -P PASSFILE instead so that your password isn't visible in your shell history or in process lists!")
+    p.add_argument("-P", metavar="PASSFILE", type=str, help="File containing password to authenticate to NecroSpider server. Ensure permissions on the file are set appropriately!")
     p.add_argument("-e", metavar="FILE", type=str, help="Execute commands from FILE.")
-    p.add_argument("-l", metavar="FILE", type=str, help="Log command history to FILE. By default, history is stored to ~/.spiderfoot_history unless disabled with -n.")
+    p.add_argument("-l", metavar="FILE", type=str, help="Log command history to FILE. By default, history is stored to ~/.necrospider_history unless disabled with -n.")
     p.add_argument("-n", action='store_true', help="Disable history logging.")
     p.add_argument("-o", metavar="FILE", type=str, help="Spool commands and output to FILE.")
     p.add_argument("-i", help="Allow insecure server connections when using SSL", action='store_true')
@@ -1375,7 +1375,7 @@ if __name__ == "__main__":
             sys.exit(-1)
     else:
         cin = sys.stdin
-    s = SpiderFootCli(stdin=cin)
+    s = NecroSpiderCli(stdin=cin)
     s.identchars += "$"
 
     # Map command-line to config
@@ -1406,11 +1406,11 @@ if __name__ == "__main__":
         s.ownopts['cli.history_file'] = args.l
     else:
         try:
-            s.ownopts['cli.history_file'] = expanduser("~") + "/.spiderfoot_history"
+            s.ownopts['cli.history_file'] = expanduser("~") + "/.necrospider_history"
         except BaseException as e:
             s.dprint(f"Failed to set 'cli.history_file': {e}")
-            s.dprint("Using '.spiderfoot_history' in working directory")
-            s.ownopts['cli.history_file'] = ".spiderfoot_history"
+            s.dprint("Using '.necrospider_history' in working directory")
+            s.ownopts['cli.history_file'] = ".necrospider_history"
     if args.o:
         s.ownopts['cli.spool'] = True
         s.ownopts['cli.spool_file'] = args.o
@@ -1425,7 +1425,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if not args.q:
-        s = SpiderFootCli()
+        s = NecroSpiderCli()
         s.dprint(ASCII_LOGO, plain=True, color=bcolors.GREYBLUE)
         s.dprint(COPYRIGHT_INFO, plain=True,
                  color=bcolors.GREYBLUE_DARK)

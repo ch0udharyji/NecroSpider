@@ -22,10 +22,10 @@ import exifread
 
 import pptx
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_filemeta(SpiderFootPlugin):
+class sfp_filemeta(NecroSpiderPlugin):
 
     meta = {
         'name': "File Metadata Extractor",
@@ -154,7 +154,7 @@ class sfp_filemeta(SpiderFootPlugin):
                         return
 
                 if meta is not None and data is not None:
-                    rawevt = SpiderFootEvent("RAW_FILE_META_DATA", meta,
+                    rawevt = NecroSpiderEvent("RAW_FILE_META_DATA", meta,
                                              self.__name__, event)
                     self.notifyListeners(rawevt)
 
@@ -180,5 +180,5 @@ class sfp_filemeta(SpiderFootPlugin):
                             self.debug("VAL: " + str(val))
                             # Strip non-ASCII
                             v = ''.join([i if ord(i) < 128 else ' ' for i in v])
-                            evt = SpiderFootEvent("SOFTWARE_USED", v, self.__name__, rawevt)
+                            evt = NecroSpiderEvent("SOFTWARE_USED", v, self.__name__, rawevt)
                             self.notifyListeners(evt)

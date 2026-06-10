@@ -12,10 +12,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_fullhunt(SpiderFootPlugin):
+class sfp_fullhunt(NecroSpiderPlugin):
 
     meta = {
         'name': "FullHunt",
@@ -164,7 +164,7 @@ class sfp_fullhunt(SpiderFootPlugin):
             self.debug(f"Found no results for {eventData}")
             return
 
-        e = SpiderFootEvent("RAW_RIR_DATA", str(res), self.__name__, event)
+        e = NecroSpiderEvent("RAW_RIR_DATA", str(res), self.__name__, event)
         self.notifyListeners(e)
 
         hosts = list()
@@ -199,7 +199,7 @@ class sfp_fullhunt(SpiderFootPlugin):
             network_ports = record.get('network_ports')
             if network_ports:
                 for port in network_ports:
-                    e = SpiderFootEvent("TCP_PORT_OPEN", f"{host}:{port}", self.__name__, event)
+                    e = NecroSpiderEvent("TCP_PORT_OPEN", f"{host}:{port}", self.__name__, event)
                     self.notifyListeners(e)
 
         for host in set(mail_servers):
@@ -208,7 +208,7 @@ class sfp_fullhunt(SpiderFootPlugin):
 
             hosts.append(host)
 
-            e = SpiderFootEvent("PROVIDER_MAIL", host, self.__name__, event)
+            e = NecroSpiderEvent("PROVIDER_MAIL", host, self.__name__, event)
             self.notifyListeners(e)
 
         for host in set(name_servers):
@@ -217,7 +217,7 @@ class sfp_fullhunt(SpiderFootPlugin):
 
             hosts.append(host)
 
-            e = SpiderFootEvent("PROVIDER_DNS", host, self.__name__, event)
+            e = NecroSpiderEvent("PROVIDER_DNS", host, self.__name__, event)
             self.notifyListeners(e)
 
         for host in set(hosts):
@@ -238,7 +238,7 @@ class sfp_fullhunt(SpiderFootPlugin):
                 self.debug(f"Host {host} could not be resolved")
                 evt_type += "_UNRESOLVED"
 
-            evt = SpiderFootEvent(evt_type, host, self.__name__, event)
+            evt = NecroSpiderEvent(evt_type, host, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_fullhunt class

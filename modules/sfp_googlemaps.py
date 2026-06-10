@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_googlemaps
-# Purpose:      SpiderFoot plug-in to identify historical certificates for a domain
+# Purpose:      NecroSpider plug-in to identify historical certificates for a domain
 #               from googlemaps.sh, and from this identify hostnames.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -14,10 +14,10 @@
 import json
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_googlemaps(SpiderFootPlugin):
+class sfp_googlemaps(NecroSpiderPlugin):
 
     meta = {
         'name': "Google Maps",
@@ -120,7 +120,7 @@ class sfp_googlemaps(SpiderFootPlugin):
             self.debug(f"No information found for {eventData}")
             return
 
-        evt = SpiderFootEvent(
+        evt = NecroSpiderEvent(
             "RAW_RIR_DATA",
             res['content'],
             self.__name__,
@@ -144,7 +144,7 @@ class sfp_googlemaps(SpiderFootPlugin):
                 lat = location.get('lat')
                 lng = location.get('lng')
                 if lat and lng:
-                    evt = SpiderFootEvent(
+                    evt = NecroSpiderEvent(
                         "PHYSICAL_COORDINATES",
                         f"{lat},{lng}",
                         self.__name__,
@@ -154,7 +154,7 @@ class sfp_googlemaps(SpiderFootPlugin):
 
         formatted_address = data.get('formatted_address')
         if formatted_address:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "PHYSICAL_ADDRESS",
                 data['formatted_address'],
                 self.__name__,

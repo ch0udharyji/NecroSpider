@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_strangeheaders
-# Purpose:      SpiderFoot plug-in for identifying non-standard HTTP headers
+# Purpose:      NecroSpider plug-in for identifying non-standard HTTP headers
 #               in web server responses.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,7 +13,7 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 # Standard headers, taken from http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
 headers = [
@@ -79,7 +79,7 @@ headers = [
 ]
 
 
-class sfp_strangeheaders(SpiderFootPlugin):
+class sfp_strangeheaders(NecroSpiderPlugin):
 
     meta = {
         'name': "Strange Header Identifier",
@@ -136,7 +136,7 @@ class sfp_strangeheaders(SpiderFootPlugin):
 
         for key in data:
             if key.lower() not in headers:
-                evt = SpiderFootEvent("WEBSERVER_STRANGEHEADER", f"{key}: {data[key]}", self.__name__, event)
+                evt = NecroSpiderEvent("WEBSERVER_STRANGEHEADER", f"{key}: {data[key]}", self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_strangeheaders class

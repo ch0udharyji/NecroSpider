@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_spamhaus
-# Purpose:      SpiderFoot plug-in for looking up whether IPs/Netblocks/Domains
+# Purpose:      NecroSpider plug-in for looking up whether IPs/Netblocks/Domains
 #               appear in the Spamhaus block lists, indicating potential open-relays,
 #               open proxies, malicious servers, vulnerable servers, etc.
 #
@@ -14,10 +14,10 @@
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_spamhaus(SpiderFootPlugin):
+class sfp_spamhaus(NecroSpiderPlugin):
 
     meta = {
         'name': "Spamhaus Zen",
@@ -218,10 +218,10 @@ class sfp_spamhaus(SpiderFootPlugin):
                         self.error(f"Spamhaus Zen resolved address {addr} to unknown IP address {result} not found in Spamhaus Zen list.")
                     continue
 
-                evt = SpiderFootEvent(blacklist_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
+                evt = NecroSpiderEvent(blacklist_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent(malicious_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
+                evt = NecroSpiderEvent(malicious_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_spamhaus class

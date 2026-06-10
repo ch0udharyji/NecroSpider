@@ -11,10 +11,10 @@
 # -------------------------------------------------------------------------------
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_hostio(SpiderFootPlugin):
+class sfp_hostio(NecroSpiderPlugin):
 
     meta = {
         "name": "Host.io",
@@ -98,7 +98,7 @@ class sfp_hostio(SpiderFootPlugin):
             f"https://host.io/api/full/{qry}",
             headers={"Authorization": f"Bearer {self.opts['api_key']}"},
             timeout=self.opts["_fetchtimeout"],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
         if res["code"] != "200":
             self.handle_error_response(qry, res)
@@ -150,13 +150,13 @@ class sfp_hostio(SpiderFootPlugin):
                 # Not supporting co-hosted sites yet
                 if not self.sf.validIP(address):
                     continue
-                evt = SpiderFootEvent("IP_ADDRESS", address, self.__name__, event)
+                evt = NecroSpiderEvent("IP_ADDRESS", address, self.__name__, event)
                 self.notifyListeners(evt)
                 found = True
 
                 loc = ip_data.get("loc")
                 if loc and isinstance(loc, str):
-                    loc_evt = SpiderFootEvent(
+                    loc_evt = NecroSpiderEvent(
                         "PHYSICAL_COORDINATES", loc, self.__name__, evt
                     )
                     self.notifyListeners(loc_evt)
@@ -164,7 +164,7 @@ class sfp_hostio(SpiderFootPlugin):
 
                 geo_info = ', '.join(filter(None, (ip_data.get(k) for k in ("city", "region", "country"))))
                 if geo_info:
-                    geo_info_evt = SpiderFootEvent(
+                    geo_info_evt = NecroSpiderEvent(
                         "GEOINFO", geo_info, self.__name__, evt
                     )
                     self.notifyListeners(geo_info_evt)
@@ -180,7 +180,7 @@ class sfp_hostio(SpiderFootPlugin):
                         if value and isinstance(value, str):
                             for email in value.split(','):
                                 email = email.strip('.')
-                                evt = SpiderFootEvent(
+                                evt = NecroSpiderEvent(
                                     "EMAILADDR", email, self.__name__, event
                                 )
                                 self.notifyListeners(evt)
@@ -190,7 +190,7 @@ class sfp_hostio(SpiderFootPlugin):
         if web and isinstance(web, dict):
             server = web.get("server")
             if server and isinstance(server, str):
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "WEBSERVER_TECHNOLOGY", server, self.__name__, event
                 )
                 self.notifyListeners(evt)
@@ -198,7 +198,7 @@ class sfp_hostio(SpiderFootPlugin):
 
             google_analytics = web.get("googleanalytics")
             if google_analytics and isinstance(google_analytics, str):
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "WEB_ANALYTICS_ID", google_analytics, self.__name__, event
                 )
                 self.notifyListeners(evt)
@@ -206,14 +206,14 @@ class sfp_hostio(SpiderFootPlugin):
 
             title = web.get("title")
             if title and isinstance(title, str):
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "DESCRIPTION_ABSTRACT", title, self.__name__, event
                 )
                 self.notifyListeners(evt)
                 found = True
 
         if found:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", json.dumps(data), self.__name__, event
             )
             self.notifyListeners(evt)

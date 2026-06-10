@@ -12,10 +12,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_cinsscore(SpiderFootPlugin):
+class sfp_cinsscore(NecroSpiderPlugin):
 
     meta = {
         'name': "CINS Army List",
@@ -172,10 +172,10 @@ class sfp_cinsscore(SpiderFootPlugin):
 
         text = f"cinsscore.com [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_cinsscore class

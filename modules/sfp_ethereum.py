@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_ethereum
-# Purpose:      SpiderFoot plug-in for scanning retrieved content by other
+# Purpose:      NecroSpider plug-in for scanning retrieved content by other
 #               modules (such as sfp_spider) and identifying ethereum addresses.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ethereum(SpiderFootPlugin):
+class sfp_ethereum(NecroSpiderPlugin):
 
     meta = {
         'name': "Ethereum Address Extractor",
@@ -67,7 +67,7 @@ class sfp_ethereum(SpiderFootPlugin):
         matches = re.findall(r"[\s:=\>](0x[a-fA-F0-9]{40})", eventData)
         for m in matches:
             self.debug("Ethereum address match: " + m)
-            evt = SpiderFootEvent("ETHEREUM_ADDRESS", m, self.__name__, event)
+            evt = NecroSpiderEvent("ETHEREUM_ADDRESS", m, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_ethereum class

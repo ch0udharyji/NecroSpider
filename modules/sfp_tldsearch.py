@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_tldsearch
-# Purpose:      SpiderFoot plug-in for identifying the existence of this target
+# Purpose:      NecroSpider plug-in for identifying the existence of this target
 #               on other TLDs.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -17,10 +17,10 @@ import time
 
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_tldsearch(SpiderFootPlugin):
+class sfp_tldsearch(NecroSpiderPlugin):
 
     meta = {
         'name': "TLD Searcher",
@@ -139,10 +139,10 @@ class sfp_tldsearch(SpiderFootPlugin):
                                            noLog=True,
                                            verify=False)
             if pageContent['content'] is not None:
-                evt = SpiderFootEvent("SIMILARDOMAIN", result, self.__name__, source)
+                evt = NecroSpiderEvent("SIMILARDOMAIN", result, self.__name__, source)
                 self.notifyListeners(evt)
         else:
-            evt = SpiderFootEvent("SIMILARDOMAIN", result, self.__name__, source)
+            evt = NecroSpiderEvent("SIMILARDOMAIN", result, self.__name__, source)
             self.notifyListeners(evt)
 
     # Search for similar sounding domains

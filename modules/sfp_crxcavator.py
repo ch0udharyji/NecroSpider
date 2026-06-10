@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_crxcavator(SpiderFootPlugin):
+class sfp_crxcavator(NecroSpiderPlugin):
 
     meta = {
         'name': "CRXcavator",
@@ -151,7 +151,7 @@ class sfp_crxcavator(SpiderFootPlugin):
             self.info(f"No results found for {domain_keyword}")
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', json.dumps(results), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', json.dumps(results), self.__name__, event)
         self.notifyListeners(evt)
 
         urls = list()
@@ -175,7 +175,7 @@ class sfp_crxcavator(SpiderFootPlugin):
             if not extensions:
                 continue
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', json.dumps(extensions), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', json.dumps(extensions), self.__name__, event)
             self.notifyListeners(evt)
 
             for extension in extensions:
@@ -225,7 +225,7 @@ class sfp_crxcavator(SpiderFootPlugin):
 
                 app_data = f"{name} {version}\n<SFURL>https://chrome.google.com/webstore/detail/{extension_id}</SFURL>"
 
-                evt = SpiderFootEvent('APPSTORE_ENTRY', app_data, self.__name__, event)
+                evt = NecroSpiderEvent('APPSTORE_ENTRY', app_data, self.__name__, event)
                 self.notifyListeners(evt)
 
                 if privacy_policy:
@@ -255,7 +255,7 @@ class sfp_crxcavator(SpiderFootPlugin):
                 continue
 
             if self.getTarget().matches(host, includeChildren=True, includeParents=True):
-                evt = SpiderFootEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
+                evt = NecroSpiderEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
                 self.notifyListeners(evt)
 
             hosts.append(host)
@@ -273,11 +273,11 @@ class sfp_crxcavator(SpiderFootPlugin):
                 self.debug(f"Host {host} could not be resolved")
                 evt_type += '_UNRESOLVED'
 
-            evt = SpiderFootEvent(evt_type, host, self.__name__, event)
+            evt = NecroSpiderEvent(evt_type, host, self.__name__, event)
             self.notifyListeners(evt)
 
         for location in set(locations):
-            evt = SpiderFootEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
+            evt = NecroSpiderEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_crxcavator class

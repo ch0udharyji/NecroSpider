@@ -15,10 +15,10 @@ import urllib.parse
 import urllib.request
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_clearbit(SpiderFootPlugin):
+class sfp_clearbit(NecroSpiderPlugin):
 
     meta = {
         'name': "Clearbit",
@@ -103,7 +103,7 @@ class sfp_clearbit(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://person.clearbit.com/v2/combined/find?{urllib.parse.urlencode(params)}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers
         )
 
@@ -187,7 +187,7 @@ class sfp_clearbit(SpiderFootPlugin):
                 if name:
                     fullName = name.get('fullName')
                     if fullName:
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             "RAW_RIR_DATA",
                             f"Possible full name: {fullName}",
                             self.__name__,
@@ -218,7 +218,7 @@ class sfp_clearbit(SpiderFootPlugin):
                 )
 
                 if location:
-                    evt = SpiderFootEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
+                    evt = NecroSpiderEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
                     self.notifyListeners(evt)
         except Exception:
             self.debug("Unable to extract location from JSON.")
@@ -234,7 +234,7 @@ class sfp_clearbit(SpiderFootPlugin):
                             t = "INTERNET_NAME"
                         else:
                             t = "AFFILIATE_INTERNET_NAME"
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             t,
                             d,
                             self.__name__,
@@ -246,7 +246,7 @@ class sfp_clearbit(SpiderFootPlugin):
                 if site:
                     if 'phoneNumbers' in site:
                         for p in site['phoneNumbers']:
-                            evt = SpiderFootEvent("PHONE_NUMBER", p, self.__name__, event)
+                            evt = NecroSpiderEvent("PHONE_NUMBER", p, self.__name__, event)
                             self.notifyListeners(evt)
 
                     if 'emailAddresses' in company['site']:
@@ -255,7 +255,7 @@ class sfp_clearbit(SpiderFootPlugin):
                                 evttype = "EMAILADDR_GENERIC"
                             else:
                                 evttype = "EMAILADDR"
-                            evt = SpiderFootEvent(evttype, e, self.__name__, event)
+                            evt = NecroSpiderEvent(evttype, e, self.__name__, event)
                             self.notifyListeners(evt)
 
                 # Get the location of the person, also indicating
@@ -277,7 +277,7 @@ class sfp_clearbit(SpiderFootPlugin):
                     )
 
                     if location:
-                        evt = SpiderFootEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
+                        evt = NecroSpiderEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
                         self.notifyListeners(evt)
         except Exception:
             self.debug("Unable to extract company info from JSON.")

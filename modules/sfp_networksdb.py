@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_networksdb
-# Purpose:     SpiderFoot plug-in to search NetworksDB.io API for IP address and
+# Purpose:     NecroSpider plug-in to search NetworksDB.io API for IP address and
 #              domain information.
 #
 # Author:      <bcoles@gmail.com>
@@ -17,10 +17,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_networksdb(SpiderFootPlugin):
+class sfp_networksdb(NecroSpiderPlugin):
 
     meta = {
         'name': "NetworksDB",
@@ -278,7 +278,7 @@ class sfp_networksdb(SpiderFootPlugin):
             if data is None:
                 self.debug("No IP address information found for " + eventData)
             else:
-                evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
                 self.notifyListeners(evt)
 
                 network = data.get('network')
@@ -286,9 +286,9 @@ class sfp_networksdb(SpiderFootPlugin):
                     cidr = network.get('cidr')
                     if cidr and cidr != 'N/A' and self.sf.validIpNetwork(cidr):
                         if ":" in cidr:
-                            evt = SpiderFootEvent('NETBLOCKV6_MEMBER', cidr, self.__name__, event)
+                            evt = NecroSpiderEvent('NETBLOCKV6_MEMBER', cidr, self.__name__, event)
                         else:
-                            evt = SpiderFootEvent('NETBLOCK_MEMBER', cidr, self.__name__, event)
+                            evt = NecroSpiderEvent('NETBLOCK_MEMBER', cidr, self.__name__, event)
                         self.notifyListeners(evt)
 
             data = self.queryIpGeo(eventData)
@@ -296,12 +296,12 @@ class sfp_networksdb(SpiderFootPlugin):
             if data is None:
                 self.debug("No IP geolocation information found for " + eventData)
             else:
-                evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
                 self.notifyListeners(evt)
 
                 if data.get('country'):
                     location = ', '.join(filter(None, [data.get('city'), data.get('state'), data.get('country')]))
-                    evt = SpiderFootEvent('GEOINFO', location, self.__name__, event)
+                    evt = NecroSpiderEvent('GEOINFO', location, self.__name__, event)
                     self.notifyListeners(evt)
 
             data = self.queryReverseDns(eventData)
@@ -311,7 +311,7 @@ class sfp_networksdb(SpiderFootPlugin):
             if data is None:
                 self.debug("No reverse DNS results for " + eventData)
             else:
-                evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
                 self.notifyListeners(evt)
 
                 results = data.get('results')
@@ -332,15 +332,15 @@ class sfp_networksdb(SpiderFootPlugin):
 
                 if not self.opts['cohostsamedomain']:
                     if self.getTarget().matches(co, includeParents=True):
-                        evt = SpiderFootEvent('INTERNET_NAME', co, self.__name__, event)
+                        evt = NecroSpiderEvent('INTERNET_NAME', co, self.__name__, event)
                         self.notifyListeners(evt)
                         if self.sf.isDomain(co, self.opts['_internettlds']):
-                            evt = SpiderFootEvent('DOMAIN_NAME', co, self.__name__, event)
+                            evt = NecroSpiderEvent('DOMAIN_NAME', co, self.__name__, event)
                             self.notifyListeners(evt)
                         continue
 
                 if self.cohostcount < self.opts['maxcohost']:
-                    evt = SpiderFootEvent('CO_HOSTED_SITE', co, self.__name__, event)
+                    evt = NecroSpiderEvent('CO_HOSTED_SITE', co, self.__name__, event)
                     self.notifyListeners(evt)
                     self.cohostcount += 1
 
@@ -357,15 +357,15 @@ class sfp_networksdb(SpiderFootPlugin):
                 self.debug("No forward DNS results for " + eventData)
                 return
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(res), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(res), self.__name__, event)
             self.notifyListeners(evt)
 
             for ip in res:
                 if self.sf.validIP(ip):
-                    evt = SpiderFootEvent('IP_ADDRESS', ip, self.__name__, event)
+                    evt = NecroSpiderEvent('IP_ADDRESS', ip, self.__name__, event)
                     self.notifyListeners(evt)
                 elif self.sf.validIP6(ip):
-                    evt = SpiderFootEvent('IPV6_ADDRESS', ip, self.__name__, event)
+                    evt = NecroSpiderEvent('IPV6_ADDRESS', ip, self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_networksdb class

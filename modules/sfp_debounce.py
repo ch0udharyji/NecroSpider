@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_debounce
-# Purpose:      Spiderfoot plugin to check if an email is
+# Purpose:      Necrospider plugin to check if an email is
 #               disposable using Debounce API.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_debounce(SpiderFootPlugin):
+class sfp_debounce(NecroSpiderPlugin):
 
     meta = {
         'name': "Debounce",
@@ -70,7 +70,7 @@ class sfp_debounce(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://disposable.debounce.io?email={qry}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['content'] is None:
@@ -105,10 +105,10 @@ class sfp_debounce(SpiderFootPlugin):
         isDisposable = data.get('disposable')
 
         if isDisposable == "true":
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
+            evt = NecroSpiderEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_debounce class

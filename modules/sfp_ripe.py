@@ -14,10 +14,10 @@
 import json
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ripe(SpiderFootPlugin):
+class sfp_ripe(NecroSpiderPlugin):
 
     meta = {
         'name': "RIPE",
@@ -351,13 +351,13 @@ class sfp_ripe(SpiderFootPlugin):
                 # Technically this netblock was identified via the AS, not
                 # the original IP event, so link it to asevt, not event.
                 if ":" in netblock:
-                    evt = SpiderFootEvent("NETBLOCKV6_OWNER", netblock, self.__name__, event)
+                    evt = NecroSpiderEvent("NETBLOCKV6_OWNER", netblock, self.__name__, event)
                     self.notifyListeners(evt)
                 else:
-                    evt = SpiderFootEvent("NETBLOCK_OWNER", netblock, self.__name__, event)
+                    evt = NecroSpiderEvent("NETBLOCK_OWNER", netblock, self.__name__, event)
                     self.notifyListeners(evt)
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", self.lastContent, self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", self.lastContent, self.__name__, event)
             self.notifyListeners(evt)
 
             return
@@ -371,12 +371,12 @@ class sfp_ripe(SpiderFootPlugin):
                 return
 
             if eventName in ["NETBLOCK_OWNER", "NETBLOCKV6_OWNER"] and self.ownsAs(asn):
-                asevt = SpiderFootEvent("BGP_AS_OWNER", asn, self.__name__, event)
+                asevt = NecroSpiderEvent("BGP_AS_OWNER", asn, self.__name__, event)
                 self.notifyListeners(asevt)
-                evt = SpiderFootEvent("RAW_RIR_DATA", self.lastContent, self.__name__, event)
+                evt = NecroSpiderEvent("RAW_RIR_DATA", self.lastContent, self.__name__, event)
                 self.notifyListeners(evt)
             else:
-                asevt = SpiderFootEvent("BGP_AS_MEMBER", asn, self.__name__, event)
+                asevt = NecroSpiderEvent("BGP_AS_MEMBER", asn, self.__name__, event)
                 self.notifyListeners(asevt)
 
             return
@@ -405,9 +405,9 @@ class sfp_ripe(SpiderFootPlugin):
                 relationship = "MEMBER"
 
             if ":" in prefix:
-                evt = SpiderFootEvent("NETBLOCKV6_" + relationship, prefix, self.__name__, event)
+                evt = NecroSpiderEvent("NETBLOCKV6_" + relationship, prefix, self.__name__, event)
             else:
-                evt = SpiderFootEvent("NETBLOCK_" + relationship, prefix, self.__name__, event)
+                evt = NecroSpiderEvent("NETBLOCK_" + relationship, prefix, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_ripe class

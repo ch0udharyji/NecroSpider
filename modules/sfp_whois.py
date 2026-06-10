@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_whois
-# Purpose:      SpiderFoot plug-in for searching Whois servers for domain names
+# Purpose:      NecroSpider plug-in for searching Whois servers for domain names
 #               and netblocks identified.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -15,10 +15,10 @@ import ipwhois
 import netaddr
 import whois
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_whois(SpiderFootPlugin):
+class sfp_whois(NecroSpiderPlugin):
 
     meta = {
         'name': "Whois",
@@ -120,14 +120,14 @@ class sfp_whois(SpiderFootPlugin):
             self.error(f"WHOIS data ({len(data)} bytes) is smaller than 250 bytes. Throttling from WHOIS server is probably happening. Ignoring response.")
             return
 
-        rawevt = SpiderFootEvent(typ, data, self.__name__, event)
+        rawevt = NecroSpiderEvent(typ, data, self.__name__, event)
         self.notifyListeners(rawevt)
 
         if eventName.startswith("DOMAIN_NAME"):
             if whoisdata:
                 registrar = whoisdata.get('registrar')
                 if registrar:
-                    evt = SpiderFootEvent("DOMAIN_REGISTRAR", registrar, self.__name__, event)
+                    evt = NecroSpiderEvent("DOMAIN_REGISTRAR", registrar, self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_whois class

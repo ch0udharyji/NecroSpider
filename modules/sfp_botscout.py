@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_botscout
-# Purpose:      SpiderFoot plug-in to search botsout.com using their API, for
+# Purpose:      NecroSpider plug-in to search botsout.com using their API, for
 #               potential malicious IPs and e-mail addresses.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -15,10 +15,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_botscout(SpiderFootPlugin):
+class sfp_botscout(NecroSpiderPlugin):
 
     meta = {
         'name': "BotScout",
@@ -92,7 +92,7 @@ class sfp_botscout(SpiderFootPlugin):
         return self.parseApiResponse(res)
 
     def queryEmail(self, email):
-        if not SpiderFootHelpers.validEmail(email):
+        if not NecroSpiderHelpers.validEmail(email):
             return None
 
         params = urllib.parse.urlencode({
@@ -165,10 +165,10 @@ class sfp_botscout(SpiderFootPlugin):
             url = f"https://botscout.com/ipcheck.htm?ip={eventData}"
             text = f"BotScout [{eventData}]\n<SFURL>{url}</SFURL>"
 
-            evt = SpiderFootEvent("MALICIOUS_IPADDR", text, self.__name__, event)
+            evt = NecroSpiderEvent("MALICIOUS_IPADDR", text, self.__name__, event)
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent("BLACKLISTED_IPADDR", text, self.__name__, event)
+            evt = NecroSpiderEvent("BLACKLISTED_IPADDR", text, self.__name__, event)
             self.notifyListeners(evt)
         elif eventName == "EMAILADDR":
             res = self.queryEmail(eventData)
@@ -182,7 +182,7 @@ class sfp_botscout(SpiderFootPlugin):
             url = f"https://botscout.com/search.htm?sterm={eventData}&stype=q"
             text = f"BotScout [{eventData}]\n<SFURL>{url}</SFURL>"
 
-            evt = SpiderFootEvent("MALICIOUS_EMAILADDR", text, self.__name__, event)
+            evt = NecroSpiderEvent("MALICIOUS_EMAILADDR", text, self.__name__, event)
             self.notifyListeners(evt)
         else:
             self.debug(f"Unexpected event type {eventName}, skipping")

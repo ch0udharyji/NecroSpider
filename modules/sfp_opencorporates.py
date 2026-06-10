@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_opencorporates
-# Purpose:      SpiderFoot plug-in for retrieving company information from
+# Purpose:      NecroSpider plug-in for retrieving company information from
 #               OpenCorporates.
 #
 # Author:      <bcoles@gmail.com>
@@ -14,10 +14,10 @@
 import json
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_opencorporates(SpiderFootPlugin):
+class sfp_opencorporates(NecroSpiderPlugin):
 
     meta = {
         'name': "OpenCorporates",
@@ -170,7 +170,7 @@ class sfp_opencorporates(SpiderFootPlugin):
 
                 location = location.replace("\n", ',')
                 self.info("Found company address: " + location)
-                e = SpiderFootEvent("PHYSICAL_ADDRESS", location, self.__name__, sevt)
+                e = NecroSpiderEvent("PHYSICAL_ADDRESS", location, self.__name__, sevt)
                 self.notifyListeners(e)
 
         # Extract previous company names
@@ -181,7 +181,7 @@ class sfp_opencorporates(SpiderFootPlugin):
                 p = previous_name.get('company_name')
                 if p:
                     self.info("Found previous company name: " + p)
-                    e = SpiderFootEvent("COMPANY_NAME", p, self.__name__, sevt)
+                    e = NecroSpiderEvent("COMPANY_NAME", p, self.__name__, sevt)
                     self.notifyListeners(e)
 
         # Extract officer names
@@ -192,7 +192,7 @@ class sfp_opencorporates(SpiderFootPlugin):
                 n = officer.get('name')
                 if n:
                     self.info("Found company officer: " + n)
-                    e = SpiderFootEvent("RAW_RIR_DATA", "Possible full name: " + n, self.__name__, sevt)
+                    e = NecroSpiderEvent("RAW_RIR_DATA", "Possible full name: " + n, self.__name__, sevt)
                     self.notifyListeners(e)
 
     def handleEvent(self, event):

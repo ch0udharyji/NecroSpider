@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_stor_stdout
-# Purpose:      SpiderFoot plug-in for dumping events to standard output.
+# Purpose:      NecroSpider plug-in for dumping events to standard output.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
 #
@@ -12,14 +12,14 @@
 
 import json
 
-from spiderfoot import SpiderFootPlugin
+from necrospider import NecroSpiderPlugin
 
 
-class sfp__stor_stdout(SpiderFootPlugin):
+class sfp__stor_stdout(NecroSpiderPlugin):
 
     meta = {
         'name': "Command-line output",
-        'summary': "Dumps output to standard out. Used for when a SpiderFoot scan is run via the command-line."
+        'summary': "Dumps output to standard out. Used for when a NecroSpider scan is run via the command-line."
     }
 
     _priority = 0

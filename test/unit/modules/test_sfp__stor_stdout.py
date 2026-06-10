@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp__stor_stdout import sfp__stor_stdout
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleStor_stdout(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp__stor_stdout()
         module.setup(sf, dict())
 

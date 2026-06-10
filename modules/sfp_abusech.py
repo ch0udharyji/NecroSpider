@@ -13,10 +13,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_abusech(SpiderFootPlugin):
+class sfp_abusech(NecroSpiderPlugin):
 
     meta = {
         'name': "abuse.ch",
@@ -394,14 +394,14 @@ class sfp_abusech(SpiderFootPlugin):
             if self.queryFeodoTrackerBlacklist(eventData, targetType):
                 url = "https://feodotracker.abuse.ch/downloads/ipblocklist.txt"
                 text = f"Abuse.ch Feodo Tracker [{eventData}]\n<SFURL>{url}</SFURL>"
-                evt = SpiderFootEvent(evtType, text, self.__name__, event)
+                evt = NecroSpiderEvent(evtType, text, self.__name__, event)
                 self.notifyListeners(evt)
 
             self.debug(f"Checking maliciousness of {eventData} ({eventName}) with Abuse.ch SSL Blacklist")
             if self.querySslBlacklist(eventData, targetType):
                 url = "https://sslbl.abuse.ch/blacklist/sslipblacklist.csv"
                 text = f"Abuse.ch SSL Blacklist [{eventData}]\n<SFURL>{url}</SFURL>"
-                evt = SpiderFootEvent(evtType, text, self.__name__, event)
+                evt = NecroSpiderEvent(evtType, text, self.__name__, event)
                 self.notifyListeners(evt)
 
         if targetType in ['ip', 'domain']:
@@ -409,7 +409,7 @@ class sfp_abusech(SpiderFootPlugin):
             if self.queryUrlHausBlacklist(eventData, targetType):
                 url = "https://urlhaus.abuse.ch/downloads/csv_recent/"
                 text = f"Abuse.ch URL Haus Blacklist [{eventData}]\n<SFURL>{url}</SFURL>"
-                evt = SpiderFootEvent(evtType, text, self.__name__, event)
+                evt = NecroSpiderEvent(evtType, text, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_abusech class

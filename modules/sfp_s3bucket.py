@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_s3bucket
-# Purpose:      SpiderFoot plug-in for identifying potential S3 buckets related to
+# Purpose:      NecroSpider plug-in for identifying potential S3 buckets related to
 #               the target.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -15,10 +15,10 @@ import random
 import threading
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_s3bucket(SpiderFootPlugin):
+class sfp_s3bucket(NecroSpiderPlugin):
 
     meta = {
         'name': "Amazon S3 Bucket Finder",
@@ -72,7 +72,7 @@ class sfp_s3bucket(SpiderFootPlugin):
         return ["CLOUD_STORAGE_BUCKET", "CLOUD_STORAGE_BUCKET_OPEN"]
 
     def checkSite(self, url):
-        res = self.sf.fetchUrl(url, timeout=10, useragent="SpiderFoot", noLog=True)
+        res = self.sf.fetchUrl(url, timeout=10, useragent="NecroSpider", noLog=True)
 
         if not res['content']:
             return
@@ -167,7 +167,7 @@ class sfp_s3bucket(SpiderFootPlugin):
                     except Exception:
                         # Not a proper bucket path
                         return
-                evt = SpiderFootEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
+                evt = NecroSpiderEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
                 self.notifyListeners(evt)
             return
 
@@ -192,11 +192,11 @@ class sfp_s3bucket(SpiderFootPlugin):
         ret = self.batchSites(urls)
         for b in ret:
             bucket = b.split(":")
-            evt = SpiderFootEvent("CLOUD_STORAGE_BUCKET", bucket[0] + ":" + bucket[1], self.__name__, event)
+            evt = NecroSpiderEvent("CLOUD_STORAGE_BUCKET", bucket[0] + ":" + bucket[1], self.__name__, event)
             self.notifyListeners(evt)
             if bucket[2] != "0":
                 bucketname = bucket[1].replace("//", "")
-                evt = SpiderFootEvent("CLOUD_STORAGE_BUCKET_OPEN", bucketname + ": " + bucket[2] + " files found.",
+                evt = NecroSpiderEvent("CLOUD_STORAGE_BUCKET_OPEN", bucketname + ": " + bucket[2] + " files found.",
                                       self.__name__, evt)
                 self.notifyListeners(evt)
 

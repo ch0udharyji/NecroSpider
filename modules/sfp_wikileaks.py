@@ -12,10 +12,10 @@
 
 import datetime
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_wikileaks(SpiderFootPlugin):
+class sfp_wikileaks(NecroSpiderPlugin):
 
     meta = {
         'name': "Wikileaks",
@@ -105,11 +105,11 @@ class sfp_wikileaks(SpiderFootPlugin):
             return
 
         links = dict()
-        p = SpiderFootHelpers.extractLinksFromHtml(wlurl, res['content'], "wikileaks.org")
+        p = NecroSpiderHelpers.extractLinksFromHtml(wlurl, res['content'], "wikileaks.org")
         if p:
             links.update(p)
 
-        p = SpiderFootHelpers.extractLinksFromHtml(wlurl, res['content'], "cryptome.org")
+        p = NecroSpiderHelpers.extractLinksFromHtml(wlurl, res['content'], "cryptome.org")
         if p:
             links.update(p)
 
@@ -138,7 +138,7 @@ class sfp_wikileaks(SpiderFootPlugin):
                 # Wikileaks leak links will have a nested folder structure link
                 if link.count('/') >= 4:
                     if not link.endswith(".js") and not link.endswith(".css"):
-                        evt = SpiderFootEvent("LEAKSITE_URL", link, self.__name__, event)
+                        evt = NecroSpiderEvent("LEAKSITE_URL", link, self.__name__, event)
                         self.notifyListeners(evt)
 
             # Fail-safe to prevent infinite looping
@@ -158,11 +158,11 @@ class sfp_wikileaks(SpiderFootPlugin):
                     break
 
                 links = dict()
-                p = SpiderFootHelpers.extractLinksFromHtml(wlurl, res['content'], "wikileaks.org")
+                p = NecroSpiderHelpers.extractLinksFromHtml(wlurl, res['content'], "wikileaks.org")
                 if p:
                     links.update(p)
 
-                p = SpiderFootHelpers.extractLinksFromHtml(wlurl, res['content'], "cryptome.org")
+                p = NecroSpiderHelpers.extractLinksFromHtml(wlurl, res['content'], "cryptome.org")
                 if p:
                     links.update(p)
 

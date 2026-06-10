@@ -15,10 +15,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_urlscan(SpiderFootPlugin):
+class sfp_urlscan(NecroSpiderPlugin):
 
     meta = {
         'name': "URLScan.io",
@@ -125,7 +125,7 @@ class sfp_urlscan(SpiderFootPlugin):
         if not results:
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', str(results), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', str(results), self.__name__, event)
         self.notifyListeners(evt)
 
         urls = list()
@@ -177,11 +177,11 @@ class sfp_urlscan(SpiderFootPlugin):
                 urls.append(url)
 
         for url in set(urls):
-            evt = SpiderFootEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
+            evt = NecroSpiderEvent('LINKED_URL_INTERNAL', url, self.__name__, event)
             self.notifyListeners(evt)
 
         for location in set(locations):
-            evt = SpiderFootEvent('GEOINFO', location, self.__name__, event)
+            evt = NecroSpiderEvent('GEOINFO', location, self.__name__, event)
             self.notifyListeners(evt)
 
         if self.opts['verify'] and len(domains) > 0:
@@ -189,22 +189,22 @@ class sfp_urlscan(SpiderFootPlugin):
 
         for domain in set(domains):
             if self.opts['verify'] and not self.sf.resolveHost(domain) and not self.sf.resolveHost6(domain):
-                evt = SpiderFootEvent('INTERNET_NAME_UNRESOLVED', domain, self.__name__, event)
+                evt = NecroSpiderEvent('INTERNET_NAME_UNRESOLVED', domain, self.__name__, event)
                 self.notifyListeners(evt)
             else:
-                evt = SpiderFootEvent('INTERNET_NAME', domain, self.__name__, event)
+                evt = NecroSpiderEvent('INTERNET_NAME', domain, self.__name__, event)
                 self.notifyListeners(evt)
 
             if self.sf.isDomain(domain, self.opts['_internettlds']):
-                evt = SpiderFootEvent('DOMAIN_NAME', domain, self.__name__, event)
+                evt = NecroSpiderEvent('DOMAIN_NAME', domain, self.__name__, event)
                 self.notifyListeners(evt)
 
         for asn in set(asns):
-            evt = SpiderFootEvent('BGP_AS_MEMBER', asn, self.__name__, event)
+            evt = NecroSpiderEvent('BGP_AS_MEMBER', asn, self.__name__, event)
             self.notifyListeners(evt)
 
         for server in set(servers):
-            evt = SpiderFootEvent('WEBSERVER_BANNER', server, self.__name__, event)
+            evt = NecroSpiderEvent('WEBSERVER_BANNER', server, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_ipinfo class

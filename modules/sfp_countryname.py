@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_countryname
-# Purpose:      SpiderFoot plug-in for scanning retrieved content by other
+# Purpose:      NecroSpider plug-in for scanning retrieved content by other
 #               modules (such as sfp_iban, sfp_phone, sfp_whois) and identifying country names
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -16,10 +16,10 @@ import re
 import phonenumbers
 from phonenumbers.phonenumberutil import region_code_for_country_code
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_countryname(SpiderFootPlugin):
+class sfp_countryname(NecroSpiderPlugin):
 
     meta = {
         'name': "Country Name Extractor",
@@ -83,7 +83,7 @@ class sfp_countryname(SpiderFootPlugin):
         if not countryCode:
             return None
 
-        return SpiderFootHelpers.countryNameFromCountryCode(countryCode.upper())
+        return NecroSpiderHelpers.countryNameFromCountryCode(countryCode.upper())
 
     def detectCountryFromDomainName(self, srcDomain: str) -> str:
         """Lookup name of country from TLD of domain name.
@@ -103,7 +103,7 @@ class sfp_countryname(SpiderFootPlugin):
 
         # Search for country TLD in the domain parts - reversed
         for part in domainParts[::-1]:
-            country_name = SpiderFootHelpers.countryNameFromTld(part)
+            country_name = NecroSpiderHelpers.countryNameFromTld(part)
             if country_name:
                 return country_name
 
@@ -121,7 +121,7 @@ class sfp_countryname(SpiderFootPlugin):
         if not isinstance(srcIBAN, str):
             return None
 
-        return SpiderFootHelpers.countryNameFromCountryCode(srcIBAN[0:2])
+        return NecroSpiderHelpers.countryNameFromCountryCode(srcIBAN[0:2])
 
     def detectCountryFromData(self, srcData: str) -> list:
         """Detect name of country from event data (WHOIS lookup, Geo Info, Physical Address, etc)
@@ -138,7 +138,7 @@ class sfp_countryname(SpiderFootPlugin):
             return countries
 
         # Get dictionary of country codes and  country names
-        abbvCountryCodes = SpiderFootHelpers.countryCodes()
+        abbvCountryCodes = NecroSpiderHelpers.countryCodes()
 
         # Look for countrycodes and country in source data
         for countryName in abbvCountryCodes.values():
@@ -229,7 +229,7 @@ class sfp_countryname(SpiderFootPlugin):
 
             self.debug(f"Found country name: {countryName}")
 
-            evt = SpiderFootEvent("COUNTRY_NAME", countryName, self.__name__, event)
+            evt = NecroSpiderEvent("COUNTRY_NAME", countryName, self.__name__, event)
             evt.moduleDataSource = moduleDataSource
             self.notifyListeners(evt)
 

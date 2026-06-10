@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_dnsresolve
-# Purpose:      SpiderFoot plug-in for extracting hostnames from identified data
+# Purpose:      NecroSpider plug-in for extracting hostnames from identified data
 #               and resolving them.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -16,10 +16,10 @@ import urllib
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsresolve(SpiderFootPlugin):
+class sfp_dnsresolve(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Resolver",
@@ -96,7 +96,7 @@ class sfp_dnsresolve(SpiderFootPlugin):
         """Resolve alternative names for a given target.
 
         Args:
-            target (SpiderFootTarget): target object
+            target (NecroSpiderTarget): target object
             validateReverse (bool): validate domain names resolve
 
         Returns:
@@ -232,9 +232,9 @@ class sfp_dnsresolve(SpiderFootPlugin):
             ipv6 = eventData.split(".ipv6-literal.net")[0].replace('-', ':').replace('s', '%').split('%')[0]
             if self.sf.validIP6(ipv6):
                 if self.getTarget().matches(ipv6):
-                    evt = SpiderFootEvent("IPV6_ADDRESS", ipv6, self.__name__, parentEvent)
+                    evt = NecroSpiderEvent("IPV6_ADDRESS", ipv6, self.__name__, parentEvent)
                 else:
-                    evt = SpiderFootEvent("AFFILIATE_IPV6_ADDRESS", ipv6, self.__name__, parentEvent)
+                    evt = NecroSpiderEvent("AFFILIATE_IPV6_ADDRESS", ipv6, self.__name__, parentEvent)
                 self.notifyListeners(evt)
             return
 
@@ -243,9 +243,9 @@ class sfp_dnsresolve(SpiderFootPlugin):
             ipv4 = '.'.join(reversed(eventData.split('.in-addr.arpa')[0].split('.')))
             if self.sf.validIP(ipv4):
                 if self.getTarget().matches(ipv4):
-                    evt = SpiderFootEvent("IP_ADDRESS", ipv4, self.__name__, parentEvent)
+                    evt = NecroSpiderEvent("IP_ADDRESS", ipv4, self.__name__, parentEvent)
                 else:
-                    evt = SpiderFootEvent("AFFILIATE_IPADDR", ipv4, self.__name__, parentEvent)
+                    evt = NecroSpiderEvent("AFFILIATE_IPADDR", ipv4, self.__name__, parentEvent)
                 self.notifyListeners(evt)
 
         # Simply translates these to their domains
@@ -259,13 +259,13 @@ class sfp_dnsresolve(SpiderFootPlugin):
 
             # What we've been provided might be a domain, so report it
             if self.sf.isDomain(eventData, self.opts['_internettlds']):
-                evt = SpiderFootEvent(ev, eventData, self.__name__, parentEvent)
+                evt = NecroSpiderEvent(ev, eventData, self.__name__, parentEvent)
                 self.notifyListeners(evt)
 
             # In case the domain of the provided host is different, report that too
             dom = self.sf.hostDomain(eventData, self.opts['_internettlds'])
             if dom and dom != eventData:
-                evt = SpiderFootEvent(ev, dom, self.__name__, parentEvent)
+                evt = NecroSpiderEvent(ev, dom, self.__name__, parentEvent)
                 self.notifyListeners(evt)
 
         # Resolve host names
@@ -470,13 +470,13 @@ class sfp_dnsresolve(SpiderFootPlugin):
 
         if htype in ["INTERNET_NAME", "AFFILIATE_INTERNET_NAME"]:
             if not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
-                evt = SpiderFootEvent(f"{htype}_UNRESOLVED", host, self.__name__, parentEvent)
+                evt = NecroSpiderEvent(f"{htype}_UNRESOLVED", host, self.__name__, parentEvent)
                 self.notifyListeners(evt)
                 return
 
         # Report the host
         if host != parentEvent.data:
-            evt = SpiderFootEvent(htype, host, self.__name__, parentEvent)
+            evt = NecroSpiderEvent(htype, host, self.__name__, parentEvent)
             self.notifyListeners(evt)
         else:
             evt = parentEvent
@@ -500,7 +500,7 @@ class sfp_dnsresolve(SpiderFootPlugin):
                         continue
                     self.hostresults[ip6] = self.hostresults[ip6] + [parentHash]
 
-                evt6 = SpiderFootEvent("IPV6_ADDRESS", ip6, self.__name__, evt)
+                evt6 = NecroSpiderEvent("IPV6_ADDRESS", ip6, self.__name__, evt)
                 self.notifyListeners(evt6)
 
         if htype == "AFFILIATE_INTERNET_NAME":
@@ -519,13 +519,13 @@ class sfp_dnsresolve(SpiderFootPlugin):
         self.domresults[domainName] = True
 
         if affil:
-            domevt = SpiderFootEvent("AFFILIATE_DOMAIN_NAME", domainName,
+            domevt = NecroSpiderEvent("AFFILIATE_DOMAIN_NAME", domainName,
                                      self.__name__, parentEvent)
             self.notifyListeners(domevt)
             return
 
         if self.getTarget().matches(domainName):
-            domevt = SpiderFootEvent("DOMAIN_NAME", domainName,
+            domevt = NecroSpiderEvent("DOMAIN_NAME", domainName,
                                      self.__name__, parentEvent)
             self.notifyListeners(domevt)
         else:
@@ -534,7 +534,7 @@ class sfp_dnsresolve(SpiderFootPlugin):
             if not host:
                 return
             if parentEvent.data.endswith("." + domainName):
-                domevt = SpiderFootEvent("DOMAIN_NAME_PARENT", domainName,
+                domevt = NecroSpiderEvent("DOMAIN_NAME_PARENT", domainName,
                                          self.__name__, parentEvent)
                 self.notifyListeners(domevt)
 

@@ -13,10 +13,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_webanalytics(SpiderFootPlugin):
+class sfp_webanalytics(NecroSpiderPlugin):
 
     meta = {
         'name': "Web Analytics Extractor",
@@ -78,7 +78,7 @@ class sfp_webanalytics(SpiderFootPlugin):
                     continue
 
                 self.debug("Google Analytics match: " + m)
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Google Analytics: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -91,7 +91,7 @@ class sfp_webanalytics(SpiderFootPlugin):
                     continue
 
                 self.debug("Google AdSense match: " + m)
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Google AdSense: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -104,7 +104,7 @@ class sfp_webanalytics(SpiderFootPlugin):
                     continue
 
                 self.debug(f"Google Tag Manager match: {m}")
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     "WEB_ANALYTICS_ID",
                     f"Google Tag Manager: {m}",
                     self.__name__,
@@ -118,7 +118,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             matches = re.findall(r'<meta name="google-site-verification" content="([a-z0-9\-\+_=]{43,44})"', eventData, re.IGNORECASE)
             for m in matches:
                 self.debug("Google Site Verification match: " + m)
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Google Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -127,7 +127,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             matches = re.findall(r'<meta name="verify-v1" content="([a-z0-9\-\+_=]{43,44})"', eventData, re.IGNORECASE)
             for m in matches:
                 self.debug("Google Site Verification match: " + m)
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Google Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -138,7 +138,7 @@ class sfp_webanalytics(SpiderFootPlugin):
                 matches = re.findall(r"\bqacct:\"(p-[a-z0-9]+)\"", eventData, re.IGNORECASE)
                 for m in matches:
                     self.debug("Quantcast match: " + m)
-                    evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                    evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                           "Quantcast: " + m,
                                           self.__name__, event)
                     evt.moduleDataSource = datasource
@@ -148,7 +148,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             matches = re.findall(r'<meta name="ahrefs-site-verification" content="([a-f0-9]{64})"', eventData, re.IGNORECASE)
             for m in matches:
                 self.debug("Ahrefs Site Verification match: " + m)
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Ahrefs Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -159,7 +159,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://developers.google.com/site-verification/v1/getting_started
             matches = re.findall(r'google-site-verification=([a-z0-9\-\+_=]{43,44})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Google Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -169,7 +169,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.logmeininc.com/openvoice/help/adding-a-txt-record-to-a-dns-server-ov710011
             matches = re.findall(r'logmein-domain-confirmation ([A-Z0-9]{24})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "LogMeIn Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -177,7 +177,7 @@ class sfp_webanalytics(SpiderFootPlugin):
 
             matches = re.findall(r'logmein-verification-code=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "LogMeIn Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -187,7 +187,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.docusign.com/en/guides/org-admin-guide-domains
             matches = re.findall(r'docusign=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "DocuSign Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -197,7 +197,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.globalsign.com/customer/en/portal/articles/2167245-performing-domain-verification---dns-txt-record
             matches = re.findall(r'globalsign-domain-verification=([a-z0-9\-\+_=]{42,44})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "GlobalSign Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -207,7 +207,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://confluence.atlassian.com/cloud/verify-a-domain-for-your-organization-873871234.html
             matches = re.findall(r'atlassian-domain-verification=([a-z0-9\-\+\/_=]{64})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Atlassian Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -217,7 +217,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://helpx.adobe.com/au/enterprise/using/verify-domain-ownership.html
             matches = re.findall(r'adobe-idp-site-verification=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Adobe IDP Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -225,7 +225,7 @@ class sfp_webanalytics(SpiderFootPlugin):
 
             matches = re.findall(r'adobe-idp-site-verification=([a-f0-9]{64})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Adobe IDP Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -235,7 +235,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://helpx.adobe.com/sign/help/domain_claiming.html
             matches = re.findall(r'adobe-sign-verification=([a-f0-9]{32})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Adobe Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -245,7 +245,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://stripe.com/docs/apple-pay/web#going-live
             matches = re.findall(r'stripe-verification=([a-f0-9]{64})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Stripe Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -255,7 +255,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://community.teamviewer.com/t5/Knowledge-Base/Single-Sign-On-SSO/ta-p/30784
             matches = re.findall(r'teamviewer-sso-verification=([a-f0-9]{32})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "TeamViewer SSO Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -264,7 +264,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # Aliyun Site Verification
             matches = re.findall(r'aliyun-site-verification=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Aliyun Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -274,7 +274,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://developers.facebook.com/docs/sharing/domain-verification/
             matches = re.findall(r'facebook-domain-verification=([a-z0-9]{30})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Facebook Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -283,7 +283,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # Citrix Domain Verification
             matches = re.findall(r'citrix-verification-code=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Citrix Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -293,7 +293,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://help.dropbox.com/teams-admins/admin/domain-insights-account-capture#verify
             matches = re.findall(r'dropbox-domain-verification=([a-z0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Dropbox Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -303,7 +303,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.detectify.com/customer/en/portal/articles/2836806-verification-with-dns-txt-
             matches = re.findall(r'detectify-verification=([a-f0-9]{32})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Detectify Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -312,7 +312,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # Drift Domain Verification
             matches = re.findall(r'drift-verification=([a-f0-9]{64})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Drift Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -322,7 +322,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://help.ahrefs.com/en/articles/1431155-how-do-i-finish-crawling-my-website-faster-in-site-audit
             matches = re.findall(r'ahrefs-site-verification_([a-f0-9]{64})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Ahrefs Site Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -332,7 +332,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://help.statuspage.io/help/domain-ownership
             matches = re.findall(r'status-page-domain-verification=([a-z0-9]{12})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Statuspage Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -342,7 +342,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.zoom.us/hc/en-us/articles/203395207-What-is-Managed-Domain-
             matches = re.findall(r'ZOOM_verify_([a-z0-9\-\+\/_=]{22})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Zoom.us Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -351,7 +351,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # Mail.ru Domain Verification
             matches = re.findall(r'mailru-verification: ([a-z0-9]{16})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Mail.ru Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -360,7 +360,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # Yandex Domain Verification
             matches = re.findall(r'yandex-verification: ([a-z0-9]{16})$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Yandex Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -370,7 +370,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://support.brave.com/hc/en-us/articles/360021408352-How-do-I-verify-my-channel-
             matches = re.findall(r'brave-ledger-verification=([a-z0-9]+)$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Brave Ledger Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -379,7 +379,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # have-i-been-pwned Verification
             matches = re.findall(r'have-i-been-pwned-verification=([a-f0-9]+)$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "have-i-been-pwned Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource
@@ -389,7 +389,7 @@ class sfp_webanalytics(SpiderFootPlugin):
             # https://www.ciscolive.com/c/dam/r/ciscolive/us/docs/2016/pdf/TECCOL-2982.pdf
             matches = re.findall(r'cisco-ci-domain-verification=([a-f0-9]+)$', eventData.strip(), re.IGNORECASE)
             for m in matches:
-                evt = SpiderFootEvent("WEB_ANALYTICS_ID",
+                evt = NecroSpiderEvent("WEB_ANALYTICS_ID",
                                       "Cisco Live Domain Verification: " + m,
                                       self.__name__, event)
                 evt.moduleDataSource = datasource

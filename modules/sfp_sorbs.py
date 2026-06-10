@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_sorbs
-# Purpose:      SpiderFoot plug-in for looking up whether IPs/Netblocks/Domains
+# Purpose:      NecroSpider plug-in for looking up whether IPs/Netblocks/Domains
 #               appear in the SORBS blocklist, indicating potential open-relays,
 #               open proxies, malicious servers, vulnerable servers, etc.
 #
@@ -14,10 +14,10 @@
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_sorbs(SpiderFootPlugin):
+class sfp_sorbs(NecroSpiderPlugin):
 
     meta = {
         'name': "SORBS",
@@ -223,7 +223,7 @@ class sfp_sorbs(SpiderFootPlugin):
                         self.error(f"SORBS resolved address {addr} to unknown IP address {result} not found in SORBS list.")
                     continue
 
-                evt = SpiderFootEvent(blacklist_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
+                evt = NecroSpiderEvent(blacklist_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
                 self.notifyListeners(evt)
 
                 if k in [
@@ -231,7 +231,7 @@ class sfp_sorbs(SpiderFootPlugin):
                     "127.0.0.3",
                     "127.0.0.4",
                 ]:
-                    evt = SpiderFootEvent("PROXY_HOST", eventData, self.__name__, event)
+                    evt = NecroSpiderEvent("PROXY_HOST", eventData, self.__name__, event)
                     self.notifyListeners(evt)
 
                 if k not in [
@@ -241,7 +241,7 @@ class sfp_sorbs(SpiderFootPlugin):
                     "127.0.0.12",
                     "127.0.0.14",
                 ]:
-                    evt = SpiderFootEvent(malicious_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
+                    evt = NecroSpiderEvent(malicious_type, f"{self.checks[k]} [{addr}]", self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_sorbs class

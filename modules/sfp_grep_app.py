@@ -18,10 +18,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_grep_app(SpiderFootPlugin):
+class sfp_grep_app(NecroSpiderPlugin):
 
     meta = {
         'name': "grep.app",
@@ -161,7 +161,7 @@ class sfp_grep_app(SpiderFootPlugin):
                 if result is None:
                     continue
 
-                evt = SpiderFootEvent("RAW_RIR_DATA", str(result), self.__name__, event)
+                evt = NecroSpiderEvent("RAW_RIR_DATA", str(result), self.__name__, event)
                 self.notifyListeners(evt)
 
                 content = result.get('content')
@@ -192,11 +192,11 @@ class sfp_grep_app(SpiderFootPlugin):
                             continue
 
                         self.debug('Found a link: ' + link)
-                        evt = SpiderFootEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
+                        evt = NecroSpiderEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
                         self.notifyListeners(evt)
                         self.results[link] = True
 
-                emails = SpiderFootHelpers.extractEmailsFromText(snippet.replace('<mark>', '').replace('</mark>', ''))
+                emails = NecroSpiderHelpers.extractEmailsFromText(snippet.replace('<mark>', '').replace('</mark>', ''))
                 if emails:
                     for email in emails:
                         if email in self.results:
@@ -213,7 +213,7 @@ class sfp_grep_app(SpiderFootPlugin):
                         else:
                             evttype = "EMAILADDR"
 
-                        evt = SpiderFootEvent(evttype, email, self.__name__, event)
+                        evt = NecroSpiderEvent(evttype, email, self.__name__, event)
                         self.notifyListeners(evt)
                         self.results[email] = True
 
@@ -226,14 +226,14 @@ class sfp_grep_app(SpiderFootPlugin):
 
             if self.opts['dns_resolve'] and not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
                 self.debug(f"Host {host} could not be resolved")
-                evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                 self.notifyListeners(evt)
                 continue
 
-            evt = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+            evt = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
             self.notifyListeners(evt)
             if self.sf.isDomain(host, self.opts["_internettlds"]):
-                evt = SpiderFootEvent("DOMAIN_NAME", host, self.__name__, event)
+                evt = NecroSpiderEvent("DOMAIN_NAME", host, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_grep_app class

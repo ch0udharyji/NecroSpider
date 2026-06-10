@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_tool_onesixtyone
-# Purpose:     SpiderFoot plug-in for using the onesixtyone tool.
+# Purpose:     NecroSpider plug-in for using the onesixtyone tool.
 #              Tool: https://github.com/trailofbits/onesixtyone
 #
 # Author:      <steve@binarypool.com>
@@ -17,10 +17,10 @@ import tempfile
 from netaddr import IPNetwork
 from subprocess import PIPE, Popen, TimeoutExpired
 
-from spiderfoot import SpiderFootPlugin, SpiderFootEvent, SpiderFootHelpers
+from necrospider import NecroSpiderPlugin, NecroSpiderEvent, NecroSpiderHelpers
 
 
-class sfp_tool_onesixtyone(SpiderFootPlugin):
+class sfp_tool_onesixtyone(NecroSpiderPlugin):
 
     meta = {
         "name": "Tool - onesixtyone",
@@ -111,7 +111,7 @@ class sfp_tool_onesixtyone(SpiderFootPlugin):
             self.errorState = True
             return
 
-        if not SpiderFootHelpers.sanitiseInput(eventData, extra=['/']):
+        if not NecroSpiderHelpers.sanitiseInput(eventData, extra=['/']):
             self.debug("Invalid input, skipping.")
             return
 
@@ -180,13 +180,13 @@ class sfp_tool_onesixtyone(SpiderFootPlugin):
                     continue
 
                 if target != eventData:
-                    srcevent = SpiderFootEvent("IP_ADDRESS", target, self.__name__, event)
+                    srcevent = NecroSpiderEvent("IP_ADDRESS", target, self.__name__, event)
                     self.notifyListeners(srcevent)
 
-                e = SpiderFootEvent('UDP_PORT_OPEN', f"{target}:161", self.__name__, srcevent)
+                e = NecroSpiderEvent('UDP_PORT_OPEN', f"{target}:161", self.__name__, srcevent)
                 self.notifyListeners(e)
 
-                e = SpiderFootEvent("UDP_PORT_OPEN_INFO", result, self.__name__, e)
+                e = NecroSpiderEvent("UDP_PORT_OPEN_INFO", result, self.__name__, e)
                 self.notifyListeners(e)
 
 # End of sfp_tool_onesixtyone class

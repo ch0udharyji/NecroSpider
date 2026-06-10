@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_phone import sfp_phone
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModulePhone(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_phone()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModulePhone(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_domain_whois_event_data_containing_phone_string_should_create_phone_number_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_phone()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -54,13 +54,13 @@ class TestModulePhone(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'DOMAIN_WHOIS'
         event_data = 'example data +1 202 555 0111 example data'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -68,14 +68,14 @@ class TestModulePhone(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_domain_whois_event_data_not_containing_phone_string_should_not_create_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_phone()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -87,27 +87,27 @@ class TestModulePhone(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'DOMAIN_WHOIS'
         event_data = 'example data'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)
 
     def test_handleEvent_phone_number_event_data_containing_phone_string_should_return_provider_telco_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_phone()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -127,13 +127,13 @@ class TestModulePhone(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'PHONE_NUMBER'
         event_data = '+41798765432'
         event_module = 'example module'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)

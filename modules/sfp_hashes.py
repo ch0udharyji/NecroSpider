@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_hashes
-# Purpose:      SpiderFoot plug-in for scanning retrieved content by other
+# Purpose:      NecroSpider plug-in for scanning retrieved content by other
 #               modules (such as sfp_spider) and identifying hashes
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -11,10 +11,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_hashes(SpiderFootPlugin):
+class sfp_hashes(NecroSpiderPlugin):
 
     meta = {
         'name': "Hash Extractor",
@@ -59,11 +59,11 @@ class sfp_hashes(SpiderFootPlugin):
 
         self.debug(f"Received event, {eventName}, from {srcModuleName}")
 
-        hashes = SpiderFootHelpers.extractHashesFromText(eventData)
+        hashes = NecroSpiderHelpers.extractHashesFromText(eventData)
         for hashtup in hashes:
             hashalgo, hashval = hashtup
 
-            evt = SpiderFootEvent("HASH", f"[{hashalgo}] {hashval}", self.__name__, event)
+            evt = NecroSpiderEvent("HASH", f"[{hashalgo}] {hashval}", self.__name__, event)
             if event.moduleDataSource:
                 evt.moduleDataSource = event.moduleDataSource
             else:

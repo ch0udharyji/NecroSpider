@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_adguard_dns
-# Purpose:     SpiderFoot plug-in for looking up whether hosts are blocked by
+# Purpose:     NecroSpider plug-in for looking up whether hosts are blocked by
 #              AdGuard DNS servers.
 #
 # Author:      <bcoles@gmail.com>
@@ -13,10 +13,10 @@
 
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_adguard_dns(SpiderFootPlugin):
+class sfp_adguard_dns(NecroSpiderPlugin):
 
     meta = {
         'name': "AdGuard DNS",
@@ -118,12 +118,12 @@ class sfp_adguard_dns(SpiderFootPlugin):
 
         if '94.140.14.35' in family:
             self.debug(f"{eventData} blocked by AdGuard Family DNS")
-            evt = SpiderFootEvent(blacklist_type, f"AdGuard - Family Filter [{eventData}]", self.__name__, event)
+            evt = NecroSpiderEvent(blacklist_type, f"AdGuard - Family Filter [{eventData}]", self.__name__, event)
             self.notifyListeners(evt)
 
         if '94.140.14.35' in default:
             self.debug(f"{eventData} blocked by AdGuard Default DNS")
-            evt = SpiderFootEvent(blacklist_type, f"AdGuard - Default Filter [{eventData}]", self.__name__, event)
+            evt = NecroSpiderEvent(blacklist_type, f"AdGuard - Default Filter [{eventData}]", self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_adguard_dns class

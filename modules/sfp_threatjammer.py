@@ -13,10 +13,10 @@
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_threatjammer(SpiderFootPlugin):
+class sfp_threatjammer(NecroSpiderPlugin):
 
     meta = {
         'name': "Threat Jammer",
@@ -217,7 +217,7 @@ class sfp_threatjammer(SpiderFootPlugin):
 
         self.info(f"Malicious IP address {eventData} found in any Threat Jammer lists")
 
-        evt = SpiderFootEvent(
+        evt = NecroSpiderEvent(
             malicious_type,
             f"Threat Jammer - {detail}",
             self.__name__,
@@ -225,7 +225,7 @@ class sfp_threatjammer(SpiderFootPlugin):
         )
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(
+        evt = NecroSpiderEvent(
             blacklist_type,
             f"Threat Jammer  - {detail}",
             self.__name__,

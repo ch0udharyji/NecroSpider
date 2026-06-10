@@ -2,7 +2,7 @@
 # Run unit and integration tests (excluding module integration tests).
 # These same tests are run on all pull requests automatically.
 #
-# Must be run from SpiderFoot root directory; ie:
+# Must be run from NecroSpider root directory; ie:
 # ./test/run
 
 echo Running flake8 ...

@@ -11,10 +11,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_twitter(SpiderFootPlugin):
+class sfp_twitter(NecroSpiderPlugin):
 
     meta = {
         'name': "Twitter",
@@ -84,7 +84,7 @@ class sfp_twitter(SpiderFootPlugin):
             return
 
         res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'],
-                               useragent="SpiderFoot")
+                               useragent="NecroSpider")
 
         if res['content'] is None:
             return
@@ -98,7 +98,7 @@ class sfp_twitter(SpiderFootPlugin):
                                 str(res['content']), re.MULTILINE)
 
         if human_name:
-            e = SpiderFootEvent("RAW_RIR_DATA", "Possible full name: " + human_name[0],
+            e = NecroSpiderEvent("RAW_RIR_DATA", "Possible full name: " + human_name[0],
                                 self.__name__, event)
             self.notifyListeners(e)
 
@@ -109,7 +109,7 @@ class sfp_twitter(SpiderFootPlugin):
             if len(location[0]) < 3 or len(location[0]) > 100:
                 self.debug("Skipping likely invalid location.")
             else:
-                e = SpiderFootEvent("GEOINFO", location[0], self.__name__, event)
+                e = NecroSpiderEvent("GEOINFO", location[0], self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_twitter class

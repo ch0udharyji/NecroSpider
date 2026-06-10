@@ -12,10 +12,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_isc(SpiderFootPlugin):
+class sfp_isc(NecroSpiderPlugin):
 
     meta = {
         'name': "Internet Storm Center",
@@ -145,10 +145,10 @@ class sfp_isc(SpiderFootPlugin):
         url = f"https://isc.sans.edu/api/ip/{eventData}"
         text = f"Internet Storm Center [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_isc class

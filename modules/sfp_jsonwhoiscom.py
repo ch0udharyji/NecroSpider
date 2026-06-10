@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_jsonwhoiscom(SpiderFootPlugin):
+class sfp_jsonwhoiscom(NecroSpiderPlugin):
 
     meta = {
         'name': "JsonWHOIS.com",
@@ -177,7 +177,7 @@ class sfp_jsonwhoiscom(SpiderFootPlugin):
             self.debug(f"No information found for domain {eventData}")
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', str(res), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', str(res), self.__name__, event)
         self.notifyListeners(evt)
 
         dns_providers = list()
@@ -215,7 +215,7 @@ class sfp_jsonwhoiscom(SpiderFootPlugin):
         for contact in contacts:
             email = contact.get('email')
             if email:
-                if SpiderFootHelpers.validEmail(email):
+                if NecroSpiderHelpers.validEmail(email):
                     emails.append(email)
 
             name = contact.get("name")
@@ -227,7 +227,7 @@ class sfp_jsonwhoiscom(SpiderFootPlugin):
                 phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "").replace(".", "")
                 phones.append(phone)
 
-            country = SpiderFootHelpers.countryNameFromCountryCode(contact.get('country_code'))
+            country = NecroSpiderHelpers.countryNameFromCountryCode(contact.get('country_code'))
             location = ', '.join([_f for _f in [contact.get('address'), contact.get('city'), contact.get('state'), contact.get('zip'), country] if _f])
             if location:
                 locations.append(location)
@@ -239,50 +239,50 @@ class sfp_jsonwhoiscom(SpiderFootPlugin):
                     evttype = "EMAILADDR_GENERIC"
                 else:
                     evttype = "EMAILADDR"
-                evt = SpiderFootEvent(evttype, email, self.__name__, event)
+                evt = NecroSpiderEvent(evttype, email, self.__name__, event)
                 self.notifyListeners(evt)
             else:
-                evt = SpiderFootEvent("AFFILIATE_EMAILADDR", email, self.__name__, event)
+                evt = NecroSpiderEvent("AFFILIATE_EMAILADDR", email, self.__name__, event)
                 self.notifyListeners(evt)
 
         if eventName in ["DOMAIN_NAME"]:
             raw = res.get('raw')
             if raw:
-                evt = SpiderFootEvent("DOMAIN_WHOIS", raw, self.__name__, event)
+                evt = NecroSpiderEvent("DOMAIN_WHOIS", raw, self.__name__, event)
                 self.notifyListeners(evt)
 
             registrar = res.get("registrar")
             if registrar:
                 registrar_name = registrar.get("name")
                 if registrar_name:
-                    evt = SpiderFootEvent("DOMAIN_REGISTRAR", registrar_name, self.__name__, event)
+                    evt = NecroSpiderEvent("DOMAIN_REGISTRAR", registrar_name, self.__name__, event)
                     self.notifyListeners(evt)
 
             for dns_provider in set(dns_providers):
-                evt = SpiderFootEvent("PROVIDER_DNS", dns_provider, self.__name__, event)
+                evt = NecroSpiderEvent("PROVIDER_DNS", dns_provider, self.__name__, event)
                 self.notifyListeners(evt)
 
             for name in set(names):
-                evt = SpiderFootEvent("RAW_RIR_DATA", f"Possible full name {name}", self.__name__, event)
+                evt = NecroSpiderEvent("RAW_RIR_DATA", f"Possible full name {name}", self.__name__, event)
                 self.notifyListeners(evt)
 
             for phone in set(phones):
-                evt = SpiderFootEvent("PHONE_NUMBER", phone, self.__name__, event)
+                evt = NecroSpiderEvent("PHONE_NUMBER", phone, self.__name__, event)
                 self.notifyListeners(evt)
 
             for location in set(locations):
-                evt = SpiderFootEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
+                evt = NecroSpiderEvent("PHYSICAL_ADDRESS", location, self.__name__, event)
                 self.notifyListeners(evt)
 
         if eventName in ["AFFILIATE_DOMAIN_NAME"]:
             raw = res.get('raw')
             if raw:
-                evt = SpiderFootEvent("AFFILIATE_DOMAIN_WHOIS", raw, self.__name__, event)
+                evt = NecroSpiderEvent("AFFILIATE_DOMAIN_WHOIS", raw, self.__name__, event)
                 self.notifyListeners(evt)
 
             available = res.get('available?')
             if available:
-                evt = SpiderFootEvent("AFFILIATE_DOMAIN_UNREGISTERED", eventData, self.__name__, event)
+                evt = NecroSpiderEvent("AFFILIATE_DOMAIN_UNREGISTERED", eventData, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_jsonwhoiscom class

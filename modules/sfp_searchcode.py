@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_searchcode(SpiderFootPlugin):
+class sfp_searchcode(NecroSpiderPlugin):
 
     meta = {
         'name': "searchcode",
@@ -146,7 +146,7 @@ class sfp_searchcode(SpiderFootPlugin):
             if not results:
                 return
 
-            emails = SpiderFootHelpers.extractEmailsFromText(str(results))
+            emails = NecroSpiderHelpers.extractEmailsFromText(str(results))
             for email in emails:
                 if email in self.results:
                     continue
@@ -161,7 +161,7 @@ class sfp_searchcode(SpiderFootPlugin):
                 evt_type = "EMAILADDR"
                 if email.split("@")[0] in self.opts['_genericusers'].split(","):
                     evt_type = "EMAILADDR_GENERIC"
-                evt = SpiderFootEvent(evt_type, email, self.__name__, event)
+                evt = NecroSpiderEvent(evt_type, email, self.__name__, event)
                 self.notifyListeners(evt)
                 self.results[email] = True
 
@@ -170,7 +170,7 @@ class sfp_searchcode(SpiderFootPlugin):
                 lines = result.get('lines')
                 if lines:
                     for line in lines:
-                        links.update(SpiderFootHelpers.extractUrlsFromText(lines[line]))
+                        links.update(NecroSpiderHelpers.extractUrlsFromText(lines[line]))
 
             for link in links:
                 if link in self.results:
@@ -183,7 +183,7 @@ class sfp_searchcode(SpiderFootPlugin):
                     continue
 
                 self.debug(f"Found a URL: {link}")
-                evt = SpiderFootEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
+                evt = NecroSpiderEvent('LINKED_URL_INTERNAL', link, self.__name__, event)
                 self.notifyListeners(evt)
                 self.results[link] = True
 
@@ -192,10 +192,10 @@ class sfp_searchcode(SpiderFootPlugin):
 
                 if self.opts['dns_resolve'] and not self.sf.resolveHost(host) and not self.sf.resolveHost6(host):
                     self.debug(f"Host {host} could not be resolved")
-                    evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                     self.notifyListeners(evt)
                 else:
-                    evt = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
                     self.notifyListeners(evt)
 
                 self.results[host] = True
@@ -219,10 +219,10 @@ class sfp_searchcode(SpiderFootPlugin):
 
                 repo_data = f"{repo}\n<SFURL>{url}</SFURL>"
 
-                evt = SpiderFootEvent('PUBLIC_CODE_REPO', repo_data, self.__name__, event)
+                evt = NecroSpiderEvent('PUBLIC_CODE_REPO', repo_data, self.__name__, event)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent('RAW_RIR_DATA', json.dumps(result), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', json.dumps(result), self.__name__, event)
                 self.notifyListeners(evt)
 
                 self.results[repo] = True

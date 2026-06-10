@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_portscan_tcp
-# Purpose:      SpiderFoot plug-in for performing a basic TCP port scan of IP
+# Purpose:      NecroSpider plug-in for performing a basic TCP port scan of IP
 #               addresses identified.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -17,10 +17,10 @@ import time
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_portscan_tcp(SpiderFootPlugin):
+class sfp_portscan_tcp(NecroSpiderPlugin):
 
     meta = {
         'name': "Port Scanner - TCP",
@@ -161,12 +161,12 @@ class sfp_portscan_tcp(SpiderFootPlugin):
                 continue
 
             self.info(f"TCP port {cp} found to be OPEN.")
-            evt = SpiderFootEvent("TCP_PORT_OPEN", cp, self.__name__, srcEvent)
+            evt = NecroSpiderEvent("TCP_PORT_OPEN", cp, self.__name__, srcEvent)
             self.notifyListeners(evt)
 
             if resArray[cp] is not True:
                 banner = str(resArray[cp], 'utf-8', errors='replace')
-                bevt = SpiderFootEvent("TCP_PORT_OPEN_BANNER", banner, self.__name__, evt)
+                bevt = NecroSpiderEvent("TCP_PORT_OPEN_BANNER", banner, self.__name__, evt)
                 self.notifyListeners(bevt)
 
     # Handle events sent to this module

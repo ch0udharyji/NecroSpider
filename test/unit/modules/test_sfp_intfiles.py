@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_intfiles import sfp_intfiles
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleIntfiles(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_intfiles()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModuleIntfiles(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_event_data_internal_url_with_interesting_file_extension_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_intfiles()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -42,7 +42,7 @@ class TestModuleIntfiles(unittest.TestCase):
             if str(event.eventType) != expected:
                 raise Exception(f"{event.eventType} != {expected}")
 
-            expected = 'https://spiderfoot.net/example.zip'
+            expected = 'https://necrospider.net/example.zip'
             if str(event.data) != expected:
                 raise Exception(f"{event.data} != {expected}")
 
@@ -54,14 +54,14 @@ class TestModuleIntfiles(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'LINKED_URL_INTERNAL'
-        event_data = 'https://spiderfoot.net/example.zip'
+        event_data = 'https://necrospider.net/example.zip'
         event_module = 'example module'
         source_event = evt
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -69,14 +69,14 @@ class TestModuleIntfiles(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_internal_url_without_interesting_file_extension_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_intfiles()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -88,14 +88,14 @@ class TestModuleIntfiles(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'LINKED_URL_INTERNAL'
-        event_data = 'https://spiderfoot.net/example'
+        event_data = 'https://necrospider.net/example'
         event_module = 'example module'
         source_event = evt
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)

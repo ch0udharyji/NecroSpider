@@ -12,10 +12,10 @@
 
 from netaddr import IPAddress, IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_greensnow(SpiderFootPlugin):
+class sfp_greensnow(NecroSpiderPlugin):
 
     meta = {
         'name': "Greensnow",
@@ -176,10 +176,10 @@ class sfp_greensnow(SpiderFootPlugin):
 
         text = f"greensnow.co [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_greensnow class

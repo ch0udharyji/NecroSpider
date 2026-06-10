@@ -5,11 +5,11 @@ import unittest
 import cherrypy
 from cherrypy.test import helper
 
-from spiderfoot import SpiderFootHelpers
-from sfwebui import SpiderFootWebUi
+from necrospider import NecroSpiderHelpers
+from sfwebui import NecroSpiderWebUi
 
 
-class TestSpiderFootWebUiRoutes(helper.CPWebCase):
+class TestNecroSpiderWebUiRoutes(helper.CPWebCase):
     @staticmethod
     def setup_server():
         default_config = {
@@ -21,8 +21,8 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
             '_fetchtimeout': 5,  # number of seconds before giving up on a fetch
             '_internettlds': 'https://publicsuffix.org/list/effective_tld_names.dat',
             '_internettlds_cache': 72,
-            '_genericusers': ",".join(SpiderFootHelpers.usernamesFromWordlists(['generic-usernames'])),
-            '__database': f"{SpiderFootHelpers.dataPath()}/spiderfoot.test.db",  # note: test database file
+            '_genericusers': ",".join(NecroSpiderHelpers.usernamesFromWordlists(['generic-usernames'])),
+            '__database': f"{NecroSpiderHelpers.dataPath()}/necrospider.test.db",  # note: test database file
             '__modules__': None,  # List of modules. Will be set after start-up.
             '__correlationrules__': None,  # List of correlation rules. Will be set after start-up.
             '_socks1type': '',
@@ -38,7 +38,7 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
         }
 
         mod_dir = os.path.dirname(os.path.abspath(__file__)) + '/../../modules/'
-        default_config['__modules__'] = SpiderFootHelpers.loadModulesAsDict(mod_dir, ['sfp_template.py'])
+        default_config['__modules__'] = NecroSpiderHelpers.loadModulesAsDict(mod_dir, ['sfp_template.py'])
 
         conf = {
             '/query': {
@@ -48,18 +48,18 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
             '/static': {
                 'tools.staticdir.on': True,
                 'tools.staticdir.dir': 'static',
-                'tools.staticdir.root': f"{os.path.dirname(os.path.abspath(__file__))}/../../spiderfoot",
+                'tools.staticdir.root': f"{os.path.dirname(os.path.abspath(__file__))}/../../necrospider",
             }
         }
 
-        cherrypy.tree.mount(SpiderFootWebUi(default_web_config, default_config), script_name=default_web_config.get('root'), config=conf)
+        cherrypy.tree.mount(NecroSpiderWebUi(default_web_config, default_config), script_name=default_web_config.get('root'), config=conf)
 
     def test_invalid_page_returns_404(self):
         self.getPage("/doesnotexist")
         self.assertStatus('404 Not Found')
 
     def test_static_returns_200(self):
-        self.getPage("/static/img/spiderfoot-header.png")
+        self.getPage("/static/img/necrospider-header.png")
         self.assertStatus('200 OK')
 
     def test_scaneventresultexport_invalid_scan_id_returns_200(self):
@@ -130,7 +130,7 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
         self.assertStatus('200 OK')
         self.getPage("/optsexport?pattern=api_key")
         self.assertStatus('200 OK')
-        self.assertHeader("Content-Disposition", "attachment; filename=\"SpiderFoot.cfg\"")
+        self.assertHeader("Content-Disposition", "attachment; filename=\"NecroSpider.cfg\"")
         self.assertInBody(":api_key=")
 
     def test_optsraw(self):
@@ -190,20 +190,20 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
     def test_startscan_unrecognized_scan_target_returns_error(self):
         self.getPage("/startscan?scanname=example-scan&scantarget=invalid-target&modulelist=doesnotexist&typelist=doesnotexist&usecase=doesnotexist")
         self.assertStatus('200 OK')
-        self.assertInBody('Invalid target type. Could not recognize it as a target SpiderFoot supports.')
+        self.assertInBody('Invalid target type. Could not recognize it as a target NecroSpider supports.')
 
     def test_startscan_invalid_modules_returns_error(self):
-        self.getPage("/startscan?scanname=example-scan&scantarget=spiderfoot.net&modulelist=&typelist=&usecase=")
+        self.getPage("/startscan?scanname=example-scan&scantarget=necrospider.net&modulelist=&typelist=&usecase=")
         self.assertStatus('200 OK')
         self.assertInBody('Invalid request: no modules specified for scan.')
 
     def test_startscan_invalid_typelist_returns_error(self):
-        self.getPage("/startscan?scanname=example-scan&scantarget=spiderfoot.net&modulelist=&typelist=doesnotexist&usecase=")
+        self.getPage("/startscan?scanname=example-scan&scantarget=necrospider.net&modulelist=&typelist=doesnotexist&usecase=")
         self.assertStatus('200 OK')
         self.assertInBody('Invalid request: no modules specified for scan.')
 
     def test_startscan_should_start_a_scan(self):
-        self.getPage("/startscan?scanname=spiderfoot.net&scantarget=spiderfoot.net&modulelist=doesnotexist&typelist=doesnotexist&usecase=doesnotexist")
+        self.getPage("/startscan?scanname=necrospider.net&scantarget=necrospider.net&modulelist=doesnotexist&typelist=doesnotexist&usecase=doesnotexist")
         self.assertStatus('303 See Other')
 
     def test_stopscan_invalid_scan_id_returns_404(self):

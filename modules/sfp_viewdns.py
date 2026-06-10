@@ -15,10 +15,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_viewdns(SpiderFootPlugin):
+class sfp_viewdns(NecroSpiderPlugin):
 
     meta = {
         'name': "ViewDNS.info",
@@ -113,7 +113,7 @@ class sfp_viewdns(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.viewdns.info/{querytype}/?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['code'] in ["400", "429", "500", "403"]:
@@ -230,11 +230,11 @@ class sfp_viewdns(SpiderFootPlugin):
                 continue
 
             if eventName == "EMAILADDR":
-                e = SpiderFootEvent("AFFILIATE_INTERNET_NAME", domain, self.__name__, event)
+                e = NecroSpiderEvent("AFFILIATE_INTERNET_NAME", domain, self.__name__, event)
                 self.notifyListeners(e)
 
                 if self.sf.isDomain(domain, self.opts['_internettlds']):
-                    evt = SpiderFootEvent('AFFILIATE_DOMAIN_NAME', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('AFFILIATE_DOMAIN_NAME', domain, self.__name__, event)
                     self.notifyListeners(evt)
             else:
                 if self.cohostcount >= self.opts['maxcohost']:
@@ -246,7 +246,7 @@ class sfp_viewdns(SpiderFootPlugin):
 
                 self.cohostcount += 1
 
-                e = SpiderFootEvent("CO_HOSTED_SITE", domain, self.__name__, event)
+                e = NecroSpiderEvent("CO_HOSTED_SITE", domain, self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_viewdns class

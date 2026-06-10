@@ -13,10 +13,10 @@ import base64
 import re
 import urllib.parse
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_base64(SpiderFootPlugin):
+class sfp_base64(NecroSpiderPlugin):
 
     meta = {
         'name': "Base64 Decoder",
@@ -91,7 +91,7 @@ class sfp_base64(SpiderFootPlugin):
                 self.debug(f"Unable to base64-decode string: {e}")
                 continue
 
-            evt = SpiderFootEvent("BASE64_DATA", string, self.__name__, event)
+            evt = NecroSpiderEvent("BASE64_DATA", string, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_base64 class

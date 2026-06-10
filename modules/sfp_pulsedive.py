@@ -19,10 +19,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_pulsedive(SpiderFootPlugin):
+class sfp_pulsedive(NecroSpiderPlugin):
 
     meta = {
         'name': "Pulsedive",
@@ -117,7 +117,7 @@ class sfp_pulsedive(SpiderFootPlugin):
         }
 
         url = 'https://pulsedive.com/api/info.php?' + urllib.parse.urlencode(params)
-        res = self.sf.fetchUrl(url, timeout=30, useragent="SpiderFoot")
+        res = self.sf.fetchUrl(url, timeout=30, useragent="NecroSpider")
 
         time.sleep(self.opts['delay'])
 
@@ -226,7 +226,7 @@ class sfp_pulsedive(SpiderFootPlugin):
                 ports = attributes.get('port')
                 if ports:
                     for p in ports:
-                        e = SpiderFootEvent('TCP_PORT_OPEN', addr + ':' + p, self.__name__, event)
+                        e = NecroSpiderEvent('TCP_PORT_OPEN', addr + ':' + p, self.__name__, event)
                         self.notifyListeners(e)
 
             threats = rec.get('threats')
@@ -256,7 +256,7 @@ class sfp_pulsedive(SpiderFootPlugin):
                         continue
                 except Exception:
                     self.debug("Couldn't parse date from Pulsedive so assuming it's OK.")
-                e = SpiderFootEvent(evtType, descr, self.__name__, event)
+                e = NecroSpiderEvent(evtType, descr, self.__name__, event)
                 self.notifyListeners(e)
 
 # End of sfp_pulsedive class

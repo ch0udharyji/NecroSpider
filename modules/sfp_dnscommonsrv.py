@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
 # Name:         sfp_dnscommonsrv
-# Purpose:      SpiderFoot plug-in for attempting to resolve through
+# Purpose:      NecroSpider plug-in for attempting to resolve through
 #               brute-forcing common DNS SRV records.
 #
 # Author:      Michael Scherer <misc@zarb.org>
@@ -13,10 +13,10 @@
 
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnscommonsrv(SpiderFootPlugin):
+class sfp_dnscommonsrv(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Common SRV",
@@ -131,7 +131,7 @@ class sfp_dnscommonsrv(SpiderFootPlugin):
             if not answers:
                 continue
 
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "DNS_SRV",
                 name,
                 self.__name__,
@@ -148,7 +148,7 @@ class sfp_dnscommonsrv(SpiderFootPlugin):
                 else:
                     evt_type = "AFFILIATE_INTERNET_NAME"
 
-                evt = SpiderFootEvent(
+                evt = NecroSpiderEvent(
                     evt_type,
                     tgt_clean,
                     self.__name__,

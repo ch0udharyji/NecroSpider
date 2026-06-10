@@ -15,10 +15,10 @@ import json
 import re
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_circllu(SpiderFootPlugin):
+class sfp_circllu(NecroSpiderPlugin):
 
     meta = {
         'name': "CIRCL.LU",
@@ -115,7 +115,7 @@ class sfp_circllu(SpiderFootPlugin):
 
         # Be more forgiving with the timeout as some queries for subnets can be slow
         res = self.sf.fetchUrl(url, timeout=30,
-                               useragent="SpiderFoot", headers=headers)
+                               useragent="NecroSpider", headers=headers)
 
         if res['code'] not in ["200", "201"]:
             self.error("CIRCL.LU access seems to have been rejected or you have exceeded usage limits.")
@@ -180,13 +180,13 @@ class sfp_circllu(SpiderFootPlugin):
                     for ip in j:
                         ipe = event
                         if ip != eventData:
-                            ipe = SpiderFootEvent("IP_ADDRESS", ip, self.__name__, event)
+                            ipe = NecroSpiderEvent("IP_ADDRESS", ip, self.__name__, event)
                             self.notifyListeners(ipe)
                         for crt in j[ip]['subjects']:
                             r = re.findall(r".*[\"\'](.+CN=([a-zA-Z0-9\-\*\.])+)[\"\'].*",
                                            str(j[ip]['subjects'][crt]), re.IGNORECASE)
                             if r:
-                                e = SpiderFootEvent("SSL_CERTIFICATE_ISSUED", r[0][0], self.__name__, ipe)
+                                e = NecroSpiderEvent("SSL_CERTIFICATE_ISSUED", r[0][0], self.__name__, ipe)
                                 self.notifyListeners(e)
                 except Exception as e:
                     self.error("Invalid response returned from CIRCL.LU: " + str(e))
@@ -238,7 +238,7 @@ class sfp_circllu(SpiderFootPlugin):
                             continue
 
                     if self.cohostcount < self.opts['maxcohost']:
-                        e = SpiderFootEvent("CO_HOSTED_SITE", co, self.__name__, event)
+                        e = NecroSpiderEvent("CO_HOSTED_SITE", co, self.__name__, event)
                         self.notifyListeners(e)
                         self.cohostcount += 1
 

@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_citadel import sfp_citadel
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModulecitadel(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_citadel()
         module.setup(sf, dict())
 

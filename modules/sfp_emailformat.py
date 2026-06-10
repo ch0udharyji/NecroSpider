@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_emailformat
-# Purpose:      SpiderFoot plug-in for retrieving e-mail addresses
+# Purpose:      NecroSpider plug-in for retrieving e-mail addresses
 #               belonging to your target from email-format.com.
 #
 # Author:      <bcoles@gmail.com>
@@ -15,10 +15,10 @@ import re
 
 from bs4 import BeautifulSoup
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_emailformat(SpiderFootPlugin):
+class sfp_emailformat(NecroSpiderPlugin):
 
     meta = {
         'name': "EmailFormat",
@@ -90,7 +90,7 @@ class sfp_emailformat(SpiderFootPlugin):
             # fall back to raw page contents
             data = res["content"]
 
-        emails = SpiderFootHelpers.extractEmailsFromText(data)
+        emails = NecroSpiderHelpers.extractEmailsFromText(data)
         for email in emails:
             # Skip unrelated emails
             mailDom = email.lower().split('@')[1]
@@ -109,7 +109,7 @@ class sfp_emailformat(SpiderFootPlugin):
             else:
                 evttype = "EMAILADDR"
 
-            evt = SpiderFootEvent(evttype, email, self.__name__, event)
+            evt = NecroSpiderEvent(evttype, email, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_emailformat class

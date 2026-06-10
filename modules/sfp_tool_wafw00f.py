@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_tool_wafw00f
-# Purpose:     SpiderFoot plug-in for using the WAFW00F tool.
+# Purpose:     NecroSpider plug-in for using the WAFW00F tool.
 #              Tool: https://github.com/EnableSecurity/wafw00f
 #
 # Author:      <bcoles@gmail.com>
@@ -15,10 +15,10 @@ import json
 import os.path
 from subprocess import PIPE, Popen, TimeoutExpired
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin, SpiderFootHelpers
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin, NecroSpiderHelpers
 
 
-class sfp_tool_wafw00f(SpiderFootPlugin):
+class sfp_tool_wafw00f(NecroSpiderPlugin):
     meta = {
         'name': "Tool - WAFW00F",
         'summary': "Identify what web application firewall (WAF) is in use on the specified website.",
@@ -93,7 +93,7 @@ class sfp_tool_wafw00f(SpiderFootPlugin):
 
         url = eventData
 
-        if not SpiderFootHelpers.sanitiseInput(url):
+        if not NecroSpiderHelpers.sanitiseInput(url):
             self.error("Invalid input, refusing to run.")
             return
 
@@ -136,7 +136,7 @@ class sfp_tool_wafw00f(SpiderFootPlugin):
             self.debug(f"wafw00f returned no output for {eventData}")
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', json.dumps(result_json), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', json.dumps(result_json), self.__name__, event)
         self.notifyListeners(evt)
 
         for waf in result_json:
@@ -156,7 +156,7 @@ class sfp_tool_wafw00f(SpiderFootPlugin):
             software = ' '.join(filter(None, [manufacturer, firewall]))
 
             if software:
-                evt = SpiderFootEvent('WEBSERVER_TECHNOLOGY', software, self.__name__, event)
+                evt = NecroSpiderEvent('WEBSERVER_TECHNOLOGY', software, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_tool_wafw00f class

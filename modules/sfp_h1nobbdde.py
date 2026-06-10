@@ -11,10 +11,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_h1nobbdde(SpiderFootPlugin):
+class sfp_h1nobbdde(NecroSpiderPlugin):
 
     meta = {
         'name': "HackerOne (Unofficial)",
@@ -106,7 +106,7 @@ class sfp_h1nobbdde(SpiderFootPlugin):
             data.extend(obb)
 
         for n in data:
-            e = SpiderFootEvent("VULNERABILITY_DISCLOSURE", n, self.__name__, event)
+            e = NecroSpiderEvent("VULNERABILITY_DISCLOSURE", n, self.__name__, event)
             self.notifyListeners(e)
 
 # End of sfp_h1nobbdde class

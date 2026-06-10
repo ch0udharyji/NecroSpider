@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_cloudflaredns
-# Purpose:      SpiderFoot plug-in for looking up whether hosts are blocked by
+# Purpose:      NecroSpider plug-in for looking up whether hosts are blocked by
 #               CloudFlare family and malware filtering DNS servers.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import dns.resolver
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_cloudflaredns(SpiderFootPlugin):
+class sfp_cloudflaredns(NecroSpiderPlugin):
 
     meta = {
         'name': "CloudFlare DNS",
@@ -126,13 +126,13 @@ class sfp_cloudflaredns(SpiderFootPlugin):
         # Host is blocked only by family filters
         if '0.0.0.0' not in malware:
             self.debug(f"{eventData} blocked by CloudFlare Family DNS")
-            evt = SpiderFootEvent(e, f"CloudFlare - Family [{eventData}]", self.__name__, event)
+            evt = NecroSpiderEvent(e, f"CloudFlare - Family [{eventData}]", self.__name__, event)
             self.notifyListeners(evt)
             return
 
         # Host is blocked only by malware filters
         self.debug(f"{eventData} blocked by CloudFlare Malware DNS")
-        evt = SpiderFootEvent(e, f"CloudFlare - Malware [{eventData}]", self.__name__, event)
+        evt = NecroSpiderEvent(e, f"CloudFlare - Malware [{eventData}]", self.__name__, event)
         self.notifyListeners(evt)
 
         if eventName == "INTERNET_NAME":
@@ -144,7 +144,7 @@ class sfp_cloudflaredns(SpiderFootPlugin):
         else:
             self.debug(f"Unexpected event type {eventName}, skipping")
 
-        evt = SpiderFootEvent(e, f"CloudFlare - Malware [{eventData}]", self.__name__, event)
+        evt = NecroSpiderEvent(e, f"CloudFlare - Malware [{eventData}]", self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_cloudflaredns class

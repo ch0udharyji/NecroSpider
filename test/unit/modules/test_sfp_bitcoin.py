@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_bitcoin import sfp_bitcoin
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleBitcoin(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_bitcoin()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModuleBitcoin(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_event_data_containing_bitcoin_string_in_legacy_base58_format_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_bitcoin()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -55,7 +55,7 @@ class TestModuleBitcoin(unittest.TestCase):
         event_module = ''
         source_event = ''
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -63,14 +63,14 @@ class TestModuleBitcoin(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_containing_bitcoin_string_in_bech32_format_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_bitcoin()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -91,7 +91,7 @@ class TestModuleBitcoin(unittest.TestCase):
         event_module = ''
         source_event = ''
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -99,14 +99,14 @@ class TestModuleBitcoin(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_not_containing_bitcoin_string_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_bitcoin()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -119,7 +119,7 @@ class TestModuleBitcoin(unittest.TestCase):
         event_module = ''
         source_event = ''
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)

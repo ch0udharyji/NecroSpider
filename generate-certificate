@@ -4,17 +4,17 @@ if ! command -v openssl >/dev/null 2>&1 ; then
   exit 1
 fi
 
-if test -f spiderfoot.key; then
-  echo "Error: spiderfoot.key already exists"
+if test -f necrospider.key; then
+  echo "Error: necrospider.key already exists"
   exit 1
 fi
 
-if test -f spiderfoot.crt; then
-  echo "Error: spiderfoot.crt already exists"
+if test -f necrospider.crt; then
+  echo "Error: necrospider.crt already exists"
   exit 1
 fi
 
-openssl req -new -newkey rsa:4096 -sha256 -x509 -days 365 -nodes -out spiderfoot.crt -keyout spiderfoot.key -subj "/CN=localhost"
+openssl req -new -newkey rsa:4096 -sha256 -x509 -days 365 -nodes -out necrospider.crt -keyout necrospider.key -subj "/CN=localhost"
 
-chmod 600 spiderfoot.crt
-chmod 600 spiderfoot.key
+chmod 600 necrospider.crt
+chmod 600 necrospider.key

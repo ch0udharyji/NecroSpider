@@ -17,10 +17,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_emailcrawlr(SpiderFootPlugin):
+class sfp_emailcrawlr(NecroSpiderPlugin):
 
     meta = {
         'name': "EmailCrawlr",
@@ -174,7 +174,7 @@ class sfp_emailcrawlr(SpiderFootPlugin):
                 self.debug(f"No information found for domain {eventData}")
                 return
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
             self.notifyListeners(evt)
 
             emails = data.get("emails")
@@ -193,14 +193,14 @@ class sfp_emailcrawlr(SpiderFootPlugin):
                         else:
                             evttype = "EMAILADDR"
 
-                        evt = SpiderFootEvent(evttype, email, self.__name__, event)
+                        evt = NecroSpiderEvent(evttype, email, self.__name__, event)
                         self.notifyListeners(evt)
 
                 name = res.get('name')
                 if name:
                     full_name = name.get('name')
                     if full_name and len(full_name) > 3:
-                        evt = SpiderFootEvent("RAW_RIR_DATA", f"Possible full name: {full_name}",
+                        evt = NecroSpiderEvent("RAW_RIR_DATA", f"Possible full name: {full_name}",
                                               self.__name__, event)
                         self.notifyListeners(evt)
 
@@ -208,14 +208,14 @@ class sfp_emailcrawlr(SpiderFootPlugin):
                 if phone_numbers:
                     for number in phone_numbers:
                         if number:
-                            evt = SpiderFootEvent("PHONE_NUMBER", number, self.__name__, event)
+                            evt = NecroSpiderEvent("PHONE_NUMBER", number, self.__name__, event)
                             self.notifyListeners(evt)
 
                 location = res.get('location')
                 if location:
                     loc = ', '.join([_f for _f in [location.get('city'), location.get('country')] if _f])
                     if loc:
-                        evt = SpiderFootEvent("GEOINFO", loc, self.__name__, event)
+                        evt = NecroSpiderEvent("GEOINFO", loc, self.__name__, event)
                         self.notifyListeners(evt)
 
 # End of sfp_emailcrawlr class

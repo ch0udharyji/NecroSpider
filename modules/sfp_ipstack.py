@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_ipstack
-# Purpose:      SpiderFoot plug-in to identify the Geo-location of IP addresses
+# Purpose:      NecroSpider plug-in to identify the Geo-location of IP addresses
 #               identified by other modules using ipstack.com.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ipstack(SpiderFootPlugin):
+class sfp_ipstack(NecroSpiderPlugin):
 
     meta = {
         'name': "ipstack",
@@ -114,7 +114,7 @@ class sfp_ipstack(SpiderFootPlugin):
         geoinfo = hostip.get('country_name')
         if geoinfo:
             self.info(f"Found GeoIP for {eventData}: {geoinfo}")
-            evt = SpiderFootEvent("GEOINFO", geoinfo, self.__name__, event)
+            evt = NecroSpiderEvent("GEOINFO", geoinfo, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_ipstack class

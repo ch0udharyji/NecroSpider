@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_torexits import sfp_torexits
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModuleTorexits(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_torexits()
         module.setup(sf, dict())
 

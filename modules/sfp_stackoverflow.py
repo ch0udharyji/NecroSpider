@@ -14,10 +14,10 @@ import json
 import re
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_stackoverflow(SpiderFootPlugin):
+class sfp_stackoverflow(NecroSpiderPlugin):
 
     meta = {
         'name': "StackOverflow",
@@ -92,7 +92,7 @@ class sfp_stackoverflow(SpiderFootPlugin):
                 res = self.sf.fetchUrl(
                     f"https://api.stackexchange.com/2.3/search/excerpts?order=desc&q={qry}&site=stackoverflow",
                     timeout=self.opts['_fetchtimeout'],
-                    useragent="SpiderFoot"
+                    useragent="NecroSpider"
                 )
                 time.sleep(1)
             except Exception as e:
@@ -106,7 +106,7 @@ class sfp_stackoverflow(SpiderFootPlugin):
                 res = self.sf.fetchUrl(
                     f"https://api.stackexchange.com/2.3/questions/{qry}?order=desc&sort=activity&site=stackoverflow",
                     timeout=self.opts['_fetchtimeout'],
-                    useragent="SpiderFoot"
+                    useragent="NecroSpider"
                 )
                 time.sleep(1)
             except Exception as e:
@@ -209,7 +209,7 @@ class sfp_stackoverflow(SpiderFootPlugin):
             text = body + excerpt
 
             # create raw_rir_data event
-            e = SpiderFootEvent(
+            e = NecroSpiderEvent(
                 'RAW_RIR_DATA',
                 f"<SFURL>https://stackoverflow.com/questions/{question}</SFURL>\n{item}",
                 self.__name__,
@@ -217,7 +217,7 @@ class sfp_stackoverflow(SpiderFootPlugin):
             )
             self.notifyListeners(e)
 
-            emails = SpiderFootHelpers.extractEmailsFromText(text)
+            emails = NecroSpiderHelpers.extractEmailsFromText(text)
             if emails:
                 for email in emails:
                     allEmails.append(str(email))
@@ -239,26 +239,26 @@ class sfp_stackoverflow(SpiderFootPlugin):
         for email in set(allEmails):
             email = str(email).lower()
             if self.getTarget().matches(email):
-                e = SpiderFootEvent('EMAILADDR', email, self.__name__, event)
+                e = NecroSpiderEvent('EMAILADDR', email, self.__name__, event)
             else:
-                e = SpiderFootEvent('AFFILIATE_EMAILADDR', email, self.__name__, event)
+                e = NecroSpiderEvent('AFFILIATE_EMAILADDR', email, self.__name__, event)
             self.notifyListeners(e)
 
         for username in set(allUsernames):
             if " " in username:
-                e = SpiderFootEvent('RAW_RIR_DATA', 'Possible full name: ' + username, self.__name__, event)
+                e = NecroSpiderEvent('RAW_RIR_DATA', 'Possible full name: ' + username, self.__name__, event)
             else:
-                e = SpiderFootEvent('USERNAME', username, self.__name__, event)
+                e = NecroSpiderEvent('USERNAME', username, self.__name__, event)
             self.notifyListeners(e)
 
         for ip in set(allIP4s):
             ip = str(ip)
-            e = SpiderFootEvent('AFFILIATE_IP_ADDRESS', ip, self.__name__, event)
+            e = NecroSpiderEvent('AFFILIATE_IP_ADDRESS', ip, self.__name__, event)
             self.notifyListeners(e)
 
         for ip in set(allIP6s):
             ip = str(ip)
-            e = SpiderFootEvent('AFFILIATE_IPV6_ADDRESS', ip, self.__name__, event)
+            e = NecroSpiderEvent('AFFILIATE_IPV6_ADDRESS', ip, self.__name__, event)
             self.notifyListeners(e)
 
 # End of sfp_stackoverflow class

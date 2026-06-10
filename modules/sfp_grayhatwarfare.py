@@ -13,10 +13,10 @@ import json
 import time
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_grayhatwarfare(SpiderFootPlugin):
+class sfp_grayhatwarfare(NecroSpiderPlugin):
 
     meta = {
         'name': "Grayhat Warfare",
@@ -166,13 +166,13 @@ class sfp_grayhatwarfare(SpiderFootPlugin):
                 bucketKeyword = bucketName.split('.')[0]
                 self.debug(bucketKeyword)
                 if bucketKeyword.startswith(keyword) or bucketKeyword.endswith(keyword):
-                    evt = SpiderFootEvent('CLOUD_STORAGE_BUCKET', bucketName, self.__name__, event)
+                    evt = NecroSpiderEvent('CLOUD_STORAGE_BUCKET', bucketName, self.__name__, event)
                     self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent('CLOUD_STORAGE_BUCKET_OPEN', f"{bucketName}: {row.get('fileCount')} files found.", self.__name__, event)
+                    evt = NecroSpiderEvent('CLOUD_STORAGE_BUCKET_OPEN', f"{bucketName}: {row.get('fileCount')} files found.", self.__name__, event)
                     self.notifyListeners(evt)
 
-                    evt = SpiderFootEvent('RAW_RIR_DATA', str(row), self.__name__, event)
+                    evt = NecroSpiderEvent('RAW_RIR_DATA', str(row), self.__name__, event)
                     self.notifyListeners(evt)
 
             currentPage += 1

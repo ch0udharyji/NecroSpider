@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_botvrij(SpiderFootPlugin):
+class sfp_botvrij(NecroSpiderPlugin):
 
     meta = {
         'name': "botvrij.eu",
@@ -177,10 +177,10 @@ class sfp_botvrij(SpiderFootPlugin):
         url = "https://www.botvrij.eu/data/blocklist/blocklist_full.csv"
         text = f"botvrij.eu Domain Blocklist [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_botvrij class

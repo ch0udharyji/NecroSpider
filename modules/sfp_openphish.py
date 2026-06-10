@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_openphish(SpiderFootPlugin):
+class sfp_openphish(NecroSpiderPlugin):
 
     meta = {
         'name': "OpenPhish",
@@ -188,10 +188,10 @@ class sfp_openphish(SpiderFootPlugin):
         url = "https://www.openphish.com/feed.txt"
         text = f"OpenPhish [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_openphish class

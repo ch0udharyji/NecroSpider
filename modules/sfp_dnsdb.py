@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_dnsdb
-# Purpose:     SpiderFoot plug-in that resolves and gets history of domains and IPs
+# Purpose:     NecroSpider plug-in that resolves and gets history of domains and IPs
 #
 # Author:      Filip Aleksić <faleksicdev@gmail.com>
 #
@@ -14,10 +14,10 @@ import json
 import re
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsdb(SpiderFootPlugin):
+class sfp_dnsdb(NecroSpiderPlugin):
     meta = {
         "name": "DNSDB",
         "summary": "Query FarSight's DNSDB for historical and passive DNS data.",
@@ -106,7 +106,7 @@ class sfp_dnsdb(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.dnsdb.info/dnsdb/v2/lookup/{endpoint}/{queryType}/{query}",
             timeout=30,
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers,
         )
 
@@ -173,7 +173,7 @@ class sfp_dnsdb(SpiderFootPlugin):
             if rrsetRecords is None:
                 return
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rrsetRecords), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rrsetRecords), self.__name__, event)
             self.notifyListeners(evt)
 
             for record in rrsetRecords:
@@ -213,7 +213,7 @@ class sfp_dnsdb(SpiderFootPlugin):
                             )
                             continue
 
-                        evt = SpiderFootEvent("IP_ADDRESS", data, self.__name__, event)
+                        evt = NecroSpiderEvent("IP_ADDRESS", data, self.__name__, event)
 
                     if record.get("rrtype") == "AAAA":
 
@@ -234,15 +234,15 @@ class sfp_dnsdb(SpiderFootPlugin):
                             )
                             continue
 
-                        evt = SpiderFootEvent("IPV6_ADDRESS", data, self.__name__, event)
+                        evt = NecroSpiderEvent("IPV6_ADDRESS", data, self.__name__, event)
                     elif record.get("rrtype") == "MX":
                         data = re.sub(r'.*\s+(.*)', r'\1', data)
-                        evt = SpiderFootEvent("PROVIDER_MAIL", data, self.__name__, event)
+                        evt = NecroSpiderEvent("PROVIDER_MAIL", data, self.__name__, event)
                     elif record.get("rrtype") == "NS":
-                        evt = SpiderFootEvent("PROVIDER_DNS", data, self.__name__, event)
+                        evt = NecroSpiderEvent("PROVIDER_DNS", data, self.__name__, event)
                     elif record.get("rrtype") == "TXT":
                         data = data.replace('"', '')
-                        evt = SpiderFootEvent("DNS_TEXT", data, self.__name__, event)
+                        evt = NecroSpiderEvent("DNS_TEXT", data, self.__name__, event)
                     elif record.get("rrtype") == "CNAME":
                         if not self.getTarget().matches(data):
                             coHosts.add(data)
@@ -254,7 +254,7 @@ class sfp_dnsdb(SpiderFootPlugin):
             if rdataRecords is None:
                 return
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rdataRecords), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rdataRecords), self.__name__, event)
             self.notifyListeners(evt)
 
             for record in rdataRecords:
@@ -270,7 +270,7 @@ class sfp_dnsdb(SpiderFootPlugin):
                     continue
                 responseData.add(data)
                 if record.get("rrtype") == "NS":
-                    evt = SpiderFootEvent("PROVIDER_DNS", data, self.__name__, event)
+                    evt = NecroSpiderEvent("PROVIDER_DNS", data, self.__name__, event)
                 elif record.get("rrtype") == "CNAME":
                     if not self.getTarget().matches(data):
                         coHosts.add(data)
@@ -280,7 +280,7 @@ class sfp_dnsdb(SpiderFootPlugin):
             if rdataRecords is None:
                 return
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rdataRecords), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rdataRecords), self.__name__, event)
             self.notifyListeners(evt)
 
             for record in rdataRecords:
@@ -306,9 +306,9 @@ class sfp_dnsdb(SpiderFootPlugin):
 
                 if self.opts["verify"] and not self.sf.resolveHost(data) and not self.sf.resolveHost6(data):
                     self.debug(f"Host {data} could not be resolved")
-                    evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", data, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", data, self.__name__, event)
                 else:
-                    evt = SpiderFootEvent("INTERNET_NAME", data, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME", data, self.__name__, event)
                 self.notifyListeners(evt)
 
         for co in coHosts:
@@ -326,7 +326,7 @@ class sfp_dnsdb(SpiderFootPlugin):
                     continue
 
             if self.cohostcount < self.opts["maxcohost"]:
-                evt = SpiderFootEvent("CO_HOSTED_SITE", co, self.__name__, event)
+                evt = NecroSpiderEvent("CO_HOSTED_SITE", co, self.__name__, event)
                 self.notifyListeners(evt)
                 self.cohostcount += 1
 

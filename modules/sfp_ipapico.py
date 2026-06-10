@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_ipapico
-# Purpose:     SpiderFoot plug-in to identify the Geo-location of IP addresses
+# Purpose:     NecroSpider plug-in to identify the Geo-location of IP addresses
 #              identified by other modules using ipapi.co
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -14,10 +14,10 @@
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ipapico(SpiderFootPlugin):
+class sfp_ipapico(NecroSpiderPlugin):
 
     meta = {
         'name': "ipapi.co",
@@ -113,10 +113,10 @@ class sfp_ipapico(SpiderFootPlugin):
 
         if data.get('country'):
             location = ', '.join(filter(None, [data.get('city'), data.get('region'), data.get('region_code'), data.get('country_name'), data.get('country')]))
-            evt = SpiderFootEvent('GEOINFO', location, self.__name__, event)
+            evt = NecroSpiderEvent('GEOINFO', location, self.__name__, event)
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
             self.notifyListeners(evt)
 
 

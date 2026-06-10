@@ -18,10 +18,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_xforce(SpiderFootPlugin):
+class sfp_xforce(NecroSpiderPlugin):
 
     meta = {
         'name': "XForce Exchange",
@@ -145,7 +145,7 @@ class sfp_xforce(SpiderFootPlugin):
             'Authorization': "Basic " + token.decode('utf-8')
         }
         url = xforce_url + "/" + querytype + "/" + qry
-        res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'], useragent="SpiderFoot", headers=headers)
+        res = self.sf.fetchUrl(url, timeout=self.opts['_fetchtimeout'], useragent="NecroSpider", headers=headers)
 
         return self.parseApiResponse(res)
 
@@ -282,7 +282,7 @@ class sfp_xforce(SpiderFootPlugin):
                 if len(rec_history) > 0:
                     self.debug(f"Found history results for {addr} in XForce")
 
-                    e = SpiderFootEvent("RAW_RIR_DATA", str(rec_history), self.__name__, event)
+                    e = NecroSpiderEvent("RAW_RIR_DATA", str(rec_history), self.__name__, event)
                     self.notifyListeners(e)
 
                     for result in rec_history:
@@ -310,9 +310,9 @@ class sfp_xforce(SpiderFootPlugin):
                         entry = infield_sep.join([str(reason), str(score), str(created), cats_description])
 
                         text = f"{entry}\n<SFURL>https://exchange.xforce.ibmcloud.com/ip/{addr}</SFURL>"
-                        e = SpiderFootEvent(malicious_type, text, self.__name__, event)
+                        e = NecroSpiderEvent(malicious_type, text, self.__name__, event)
                         self.notifyListeners(e)
-                        e = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+                        e = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
                         self.notifyListeners(e)
 
             rec = self.query(addr, "ipr/malware")
@@ -321,7 +321,7 @@ class sfp_xforce(SpiderFootPlugin):
                 if len(rec_malware) > 0:
                     self.debug(f"Found malware results for {addr} in XForce")
 
-                    e = SpiderFootEvent("RAW_RIR_DATA", str(rec_malware), self.__name__, event)
+                    e = NecroSpiderEvent("RAW_RIR_DATA", str(rec_malware), self.__name__, event)
                     self.notifyListeners(e)
 
                     for result in rec_malware:
@@ -350,9 +350,9 @@ class sfp_xforce(SpiderFootPlugin):
                             continue
 
                         text = f"{entry}\n<SFURL>https://exchange.xforce.ibmcloud.com/ip/{addr}</SFURL>"
-                        e = SpiderFootEvent(malicious_type, text, self.__name__, event)
+                        e = NecroSpiderEvent(malicious_type, text, self.__name__, event)
                         self.notifyListeners(e)
-                        e = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+                        e = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
                         self.notifyListeners(e)
 
         # For IP addresses, do the additional passive DNS lookup
@@ -376,7 +376,7 @@ class sfp_xforce(SpiderFootPlugin):
 
             self.debug(f"Found passive DNS results for {eventData} in Xforce")
 
-            e = SpiderFootEvent("RAW_RIR_DATA", str(records), self.__name__, event)
+            e = NecroSpiderEvent("RAW_RIR_DATA", str(records), self.__name__, event)
             self.notifyListeners(e)
 
             for rec in records:
@@ -409,17 +409,17 @@ class sfp_xforce(SpiderFootPlugin):
                     if not self.opts["cohostsamedomain"]:
                         if self.getTarget().matches(host, includeParents=True):
                             if self.sf.resolveHost(host) or self.sf.resolveHost6(host):
-                                e = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+                                e = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
                             else:
-                                e = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                                e = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                             self.notifyListeners(e)
 
                             if self.sf.isDomain(host, self.opts['_internettlds']):
-                                e = SpiderFootEvent("DOMAIN_NAME", host, self.__name__, event)
+                                e = NecroSpiderEvent("DOMAIN_NAME", host, self.__name__, event)
                                 self.notifyListeners(e)
                             continue
 
-                    e = SpiderFootEvent("CO_HOSTED_SITE", host, self.__name__, event)
+                    e = NecroSpiderEvent("CO_HOSTED_SITE", host, self.__name__, event)
                     self.notifyListeners(e)
                     self.cohostcount += 1
 

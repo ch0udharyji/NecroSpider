@@ -31,20 +31,20 @@ import openpyxl
 
 import secure
 
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
-from sfscan import startSpiderFootScanner
+from sfscan import startNecroSpiderScanner
 
-from spiderfoot import SpiderFootDb
-from spiderfoot import SpiderFootHelpers
-from spiderfoot import __version__
-from spiderfoot.logger import logListenerSetup, logWorkerSetup
+from necrospider import NecroSpiderDb
+from necrospider import NecroSpiderHelpers
+from necrospider import __version__
+from necrospider.logger import logListenerSetup, logWorkerSetup
 
 mp.set_start_method("spawn", force=True)
 
 
-class SpiderFootWebUi:
-    """SpiderFoot web interface."""
+class NecroSpiderWebUi:
+    """NecroSpider web interface."""
 
     lookup = TemplateLookup(directories=[''])
     defaultConfig = dict()
@@ -52,12 +52,12 @@ class SpiderFootWebUi:
     token = None
     docroot = ''
 
-    def __init__(self: 'SpiderFootWebUi', web_config: dict, config: dict, loggingQueue: 'logging.handlers.QueueListener' = None) -> None:
+    def __init__(self: 'NecroSpiderWebUi', web_config: dict, config: dict, loggingQueue: 'logging.handlers.QueueListener' = None) -> None:
         """Initialize web server.
 
         Args:
             web_config (dict): config settings for web interface (interface, port, root path)
-            config (dict): SpiderFoot config
+            config (dict): NecroSpider config
             loggingQueue: TBD
 
         Raises:
@@ -79,8 +79,8 @@ class SpiderFootWebUi:
         # 'config' supplied will be the defaults, let's supplement them
         # now with any configuration which may have previously been saved.
         self.defaultConfig = deepcopy(config)
-        dbh = SpiderFootDb(self.defaultConfig, init=True)
-        sf = SpiderFoot(self.defaultConfig)
+        dbh = NecroSpiderDb(self.defaultConfig, init=True)
+        sf = NecroSpider(self.defaultConfig)
         self.config = sf.configUnserialize(dbh.configGet(), self.defaultConfig)
 
         # Set up logging
@@ -90,7 +90,7 @@ class SpiderFootWebUi:
         else:
             self.loggingQueue = loggingQueue
         logWorkerSetup(self.loggingQueue)
-        self.log = logging.getLogger(f"spiderfoot.{__name__}")
+        self.log = logging.getLogger(f"necrospider.{__name__}")
 
         cherrypy.config.update({
             'error_page.401': self.error_page_401,
@@ -121,7 +121,7 @@ class SpiderFootWebUi:
             "tools.response_headers.headers": secure_headers.framework.cherrypy()
         })
 
-    def error_page(self: 'SpiderFootWebUi') -> None:
+    def error_page(self: 'NecroSpiderWebUi') -> None:
         """Error page."""
         cherrypy.response.status = 500
 
@@ -130,7 +130,7 @@ class SpiderFootWebUi:
         else:
             cherrypy.response.body = b"<html><body>Error</body></html>"
 
-    def error_page_401(self: 'SpiderFootWebUi', status: str, message: str, traceback: str, version: str) -> str:
+    def error_page_401(self: 'NecroSpiderWebUi', status: str, message: str, traceback: str, version: str) -> str:
         """Unauthorized access HTTP 401 error page.
 
         Args:
@@ -144,7 +144,7 @@ class SpiderFootWebUi:
         """
         return ""
 
-    def error_page_404(self: 'SpiderFootWebUi', status: str, message: str, traceback: str, version: str) -> str:
+    def error_page_404(self: 'NecroSpiderWebUi', status: str, message: str, traceback: str, version: str) -> str:
         """Not found error page 404.
 
         Args:
@@ -156,10 +156,10 @@ class SpiderFootWebUi:
         Returns:
             str: HTTP response template
         """
-        templ = Template(filename='spiderfoot/templates/error.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/error.tmpl', lookup=self.lookup)
         return templ.render(message='Not Found', docroot=self.docroot, status=status, version=__version__)
 
-    def jsonify_error(self: 'SpiderFootWebUi', status: str, message: str) -> dict:
+    def jsonify_error(self: 'NecroSpiderWebUi', status: str, message: str) -> dict:
         """Jsonify error response.
 
         Args:
@@ -178,7 +178,7 @@ class SpiderFootWebUi:
             }
         }
 
-    def error(self: 'SpiderFootWebUi', message: str) -> None:
+    def error(self: 'NecroSpiderWebUi', message: str) -> None:
         """Show generic error page with error message.
 
         Args:
@@ -187,10 +187,10 @@ class SpiderFootWebUi:
         Returns:
             None
         """
-        templ = Template(filename='spiderfoot/templates/error.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/error.tmpl', lookup=self.lookup)
         return templ.render(message=message, docroot=self.docroot, version=__version__)
 
-    def cleanUserInput(self: 'SpiderFootWebUi', inputList: list) -> list:
+    def cleanUserInput(self: 'NecroSpiderWebUi', inputList: list) -> list:
         """Convert data to HTML entities; except quotes and ampersands.
 
         Args:
@@ -223,7 +223,7 @@ class SpiderFootWebUi:
 
         return ret
 
-    def searchBase(self: 'SpiderFootWebUi', id: str = None, eventType: str = None, value: str = None) -> list:
+    def searchBase(self: 'NecroSpiderWebUi', id: str = None, eventType: str = None, value: str = None) -> list:
         """Search.
 
         Args:
@@ -252,7 +252,7 @@ class SpiderFootWebUi:
             value = "%"
             regex = ""
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         criteria = {
             'scan_id': id or '',
             'type': eventType or '',
@@ -275,7 +275,7 @@ class SpiderFootWebUi:
 
         return retdata
 
-    def buildExcel(self: 'SpiderFootWebUi', data: list, columnNames: list, sheetNameIndex: int = 0) -> str:
+    def buildExcel(self: 'NecroSpiderWebUi', data: list, columnNames: list, sheetNameIndex: int = 0) -> str:
         """Convert supplied raw data into GEXF (Graph Exchange XML Format) format (e.g. for Gephi).
 
         Args:
@@ -329,7 +329,7 @@ class SpiderFootWebUi:
     #
 
     @cherrypy.expose
-    def scanexportlogs(self: 'SpiderFootWebUi', id: str, dialect: str = "excel") -> bytes:
+    def scanexportlogs(self: 'NecroSpiderWebUi', id: str, dialect: str = "excel") -> bytes:
         """Get scan log
 
         Args:
@@ -339,7 +339,7 @@ class SpiderFootWebUi:
         Returns:
             bytes: scan logs in CSV format
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         try:
             data = dbh.scanLogs(id, None, None, True)
@@ -361,13 +361,13 @@ class SpiderFootWebUi:
                 row[4]
             ])
 
-        cherrypy.response.headers['Content-Disposition'] = f"attachment; filename=SpiderFoot-{id}.log.csv"
+        cherrypy.response.headers['Content-Disposition'] = f"attachment; filename=NecroSpider-{id}.log.csv"
         cherrypy.response.headers['Content-Type'] = "application/csv"
         cherrypy.response.headers['Pragma'] = "no-cache"
         return fileobj.getvalue().encode('utf-8')
 
     @cherrypy.expose
-    def scancorrelationsexport(self: 'SpiderFootWebUi', id: str, filetype: str = "csv", dialect: str = "excel") -> str:
+    def scancorrelationsexport(self: 'NecroSpiderWebUi', id: str, filetype: str = "csv", dialect: str = "excel") -> str:
         """Get scan correlation data in CSV or Excel format.
 
         Args:
@@ -378,7 +378,7 @@ class SpiderFootWebUi:
         Returns:
             str: results in CSV or Excel format
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         try:
             scaninfo = dbh.scanInstanceGet(id)
@@ -403,9 +403,9 @@ class SpiderFootWebUi:
                 rows.append([rule_name, correlation, rule_risk, rule_description])
 
             if scan_name:
-                fname = f"{scan_name}-SpiderFoot-correlations.xlxs"
+                fname = f"{scan_name}-NecroSpider-correlations.xlxs"
             else:
-                fname = "SpiderFoot-correlations.xlxs"
+                fname = "NecroSpider-correlations.xlxs"
 
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -425,9 +425,9 @@ class SpiderFootWebUi:
                 parser.writerow([rule_name, correlation, rule_risk, rule_description])
 
             if scan_name:
-                fname = f"{scan_name}-SpiderFoot-correlations.csv"
+                fname = f"{scan_name}-NecroSpider-correlations.csv"
             else:
-                fname = "SpiderFoot-correlations.csv"
+                fname = "NecroSpider-correlations.csv"
 
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/csv"
@@ -437,7 +437,7 @@ class SpiderFootWebUi:
         return self.error("Invalid export filetype.")
 
     @cherrypy.expose
-    def scaneventresultexport(self: 'SpiderFootWebUi', id: str, type: str, filetype: str = "csv", dialect: str = "excel") -> str:
+    def scaneventresultexport(self: 'NecroSpiderWebUi', id: str, type: str, filetype: str = "csv", dialect: str = "excel") -> str:
         """Get scan event result data in CSV or Excel format
 
         Args:
@@ -449,7 +449,7 @@ class SpiderFootWebUi:
         Returns:
             str: results in CSV or Excel format
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         data = dbh.scanResultEvent(id, type)
 
         if filetype.lower() in ["xlsx", "excel"]:
@@ -461,7 +461,7 @@ class SpiderFootWebUi:
                 datafield = str(row[1]).replace("<SFURL>", "").replace("</SFURL>", "")
                 rows.append([lastseen, str(row[4]), str(row[3]), str(row[2]), row[13], datafield])
 
-            fname = "SpiderFoot.xlsx"
+            fname = "NecroSpider.xlsx"
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             cherrypy.response.headers['Pragma'] = "no-cache"
@@ -479,7 +479,7 @@ class SpiderFootWebUi:
                 datafield = str(row[1]).replace("<SFURL>", "").replace("</SFURL>", "")
                 parser.writerow([lastseen, str(row[4]), str(row[3]), str(row[2]), row[13], datafield])
 
-            fname = "SpiderFoot.csv"
+            fname = "NecroSpider.csv"
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/csv"
             cherrypy.response.headers['Pragma'] = "no-cache"
@@ -488,7 +488,7 @@ class SpiderFootWebUi:
         return self.error("Invalid export filetype.")
 
     @cherrypy.expose
-    def scaneventresultexportmulti(self: 'SpiderFootWebUi', ids: str, filetype: str = "csv", dialect: str = "excel") -> str:
+    def scaneventresultexportmulti(self: 'NecroSpiderWebUi', ids: str, filetype: str = "csv", dialect: str = "excel") -> str:
         """Get scan event result data in CSV or Excel format for multiple scans
 
         Args:
@@ -499,7 +499,7 @@ class SpiderFootWebUi:
         Returns:
             str: results in CSV or Excel format
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         scaninfo = dict()
         data = list()
         scan_name = ""
@@ -525,9 +525,9 @@ class SpiderFootWebUi:
                             str(row[2]), row[13], datafield])
 
             if len(ids.split(',')) > 1 or scan_name == "":
-                fname = "SpiderFoot.xlsx"
+                fname = "NecroSpider.xlsx"
             else:
-                fname = scan_name + "-SpiderFoot.xlsx"
+                fname = scan_name + "-NecroSpider.xlsx"
 
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -548,9 +548,9 @@ class SpiderFootWebUi:
                                 str(row[2]), row[13], datafield])
 
             if len(ids.split(',')) > 1 or scan_name == "":
-                fname = "SpiderFoot.csv"
+                fname = "NecroSpider.csv"
             else:
-                fname = scan_name + "-SpiderFoot.csv"
+                fname = scan_name + "-NecroSpider.csv"
 
             cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
             cherrypy.response.headers['Content-Type'] = "application/csv"
@@ -560,7 +560,7 @@ class SpiderFootWebUi:
         return self.error("Invalid export filetype.")
 
     @cherrypy.expose
-    def scansearchresultexport(self: 'SpiderFootWebUi', id: str, eventType: str = None, value: str = None, filetype: str = "csv", dialect: str = "excel") -> str:
+    def scansearchresultexport(self: 'NecroSpiderWebUi', id: str, eventType: str = None, value: str = None, filetype: str = "csv", dialect: str = "excel") -> str:
         """Get search result data in CSV or Excel format
 
         Args:
@@ -585,7 +585,7 @@ class SpiderFootWebUi:
                     continue
                 datafield = str(row[1]).replace("<SFURL>", "").replace("</SFURL>", "")
                 rows.append([row[0], str(row[10]), str(row[3]), str(row[2]), row[11], datafield])
-            cherrypy.response.headers['Content-Disposition'] = "attachment; filename=SpiderFoot.xlsx"
+            cherrypy.response.headers['Content-Disposition'] = "attachment; filename=NecroSpider.xlsx"
             cherrypy.response.headers['Content-Type'] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             cherrypy.response.headers['Pragma'] = "no-cache"
             return self.buildExcel(rows, ["Updated", "Type", "Module", "Source",
@@ -600,7 +600,7 @@ class SpiderFootWebUi:
                     continue
                 datafield = str(row[1]).replace("<SFURL>", "").replace("</SFURL>", "")
                 parser.writerow([row[0], str(row[10]), str(row[3]), str(row[2]), row[11], datafield])
-            cherrypy.response.headers['Content-Disposition'] = "attachment; filename=SpiderFoot.csv"
+            cherrypy.response.headers['Content-Disposition'] = "attachment; filename=NecroSpider.csv"
             cherrypy.response.headers['Content-Type'] = "application/csv"
             cherrypy.response.headers['Pragma'] = "no-cache"
             return fileobj.getvalue().encode('utf-8')
@@ -608,7 +608,7 @@ class SpiderFootWebUi:
         return self.error("Invalid export filetype.")
 
     @cherrypy.expose
-    def scanexportjsonmulti(self: 'SpiderFootWebUi', ids: str) -> str:
+    def scanexportjsonmulti(self: 'NecroSpiderWebUi', ids: str) -> str:
         """Get scan event result data in JSON format for multiple scans.
 
         Args:
@@ -617,7 +617,7 @@ class SpiderFootWebUi:
         Returns:
             str: results in JSON format
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         scaninfo = list()
         scan_name = ""
 
@@ -652,9 +652,9 @@ class SpiderFootWebUi:
                 })
 
         if len(ids.split(',')) > 1 or scan_name == "":
-            fname = "SpiderFoot.json"
+            fname = "NecroSpider.json"
         else:
-            fname = scan_name + "-SpiderFoot.json"
+            fname = scan_name + "-NecroSpider.json"
 
         cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
         cherrypy.response.headers['Content-Type'] = "application/json; charset=utf-8"
@@ -662,7 +662,7 @@ class SpiderFootWebUi:
         return json.dumps(scaninfo).encode('utf-8')
 
     @cherrypy.expose
-    def scanviz(self: 'SpiderFootWebUi', id: str, gexf: str = "0") -> str:
+    def scanviz(self: 'NecroSpiderWebUi', id: str, gexf: str = "0") -> str:
         """Export entities from scan results for visualising.
 
         Args:
@@ -675,7 +675,7 @@ class SpiderFootWebUi:
         if not id:
             return None
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         data = dbh.scanResultEvent(id, filterFp=True)
         scan = dbh.scanInstanceGet(id)
 
@@ -687,20 +687,20 @@ class SpiderFootWebUi:
         root = scan[1]
 
         if gexf == "0":
-            return SpiderFootHelpers.buildGraphJson([root], data)
+            return NecroSpiderHelpers.buildGraphJson([root], data)
 
         if not scan_name:
-            fname = "SpiderFoot.gexf"
+            fname = "NecroSpider.gexf"
         else:
-            fname = scan_name + "SpiderFoot.gexf"
+            fname = scan_name + "NecroSpider.gexf"
 
         cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
         cherrypy.response.headers['Content-Type'] = "application/gexf"
         cherrypy.response.headers['Pragma'] = "no-cache"
-        return SpiderFootHelpers.buildGraphGexf([root], "SpiderFoot Export", data)
+        return NecroSpiderHelpers.buildGraphGexf([root], "NecroSpider Export", data)
 
     @cherrypy.expose
-    def scanvizmulti(self: 'SpiderFootWebUi', ids: str, gexf: str = "1") -> str:
+    def scanvizmulti(self: 'NecroSpiderWebUi', ids: str, gexf: str = "1") -> str:
         """Export entities results from multiple scans in GEXF format.
 
         Args:
@@ -710,7 +710,7 @@ class SpiderFootWebUi:
         Returns:
             str: GEXF data
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         data = list()
         roots = list()
         scan_name = ""
@@ -734,18 +734,18 @@ class SpiderFootWebUi:
             return None
 
         if len(ids.split(',')) > 1 or scan_name == "":
-            fname = "SpiderFoot.gexf"
+            fname = "NecroSpider.gexf"
         else:
-            fname = scan_name + "-SpiderFoot.gexf"
+            fname = scan_name + "-NecroSpider.gexf"
 
         cherrypy.response.headers['Content-Disposition'] = f"attachment; filename={fname}"
         cherrypy.response.headers['Content-Type'] = "application/gexf"
         cherrypy.response.headers['Pragma'] = "no-cache"
-        return SpiderFootHelpers.buildGraphGexf(roots, "SpiderFoot Export", data)
+        return NecroSpiderHelpers.buildGraphGexf(roots, "NecroSpider Export", data)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanopts(self: 'SpiderFootWebUi', id: str) -> dict:
+    def scanopts(self: 'NecroSpiderWebUi', id: str) -> dict:
         """Return configuration used for the specified scan as JSON.
 
         Args:
@@ -754,7 +754,7 @@ class SpiderFootWebUi:
         Returns:
             dict: scan options for the specified scan
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         ret = dict()
 
         meta = dbh.scanInstanceGet(id)
@@ -792,7 +792,7 @@ class SpiderFootWebUi:
         return ret
 
     @cherrypy.expose
-    def rerunscan(self: 'SpiderFootWebUi', id: str) -> None:
+    def rerunscan(self: 'NecroSpiderWebUi', id: str) -> None:
         """Rerun a scan.
 
         Args:
@@ -807,7 +807,7 @@ class SpiderFootWebUi:
         # Snapshot the current configuration to be used by the scan
         cfg = deepcopy(self.config)
         modlist = list()
-        dbh = SpiderFootDb(cfg)
+        dbh = NecroSpiderDb(cfg)
         info = dbh.scanInstanceGet(id)
 
         if not info:
@@ -824,20 +824,20 @@ class SpiderFootWebUi:
         if "sfp__stor_stdout" in modlist:
             modlist.remove("sfp__stor_stdout")
 
-        targetType = SpiderFootHelpers.targetTypeFromString(scantarget)
+        targetType = NecroSpiderHelpers.targetTypeFromString(scantarget)
         if not targetType:
             # It must then be a name, as a re-run scan should always have a clean
             # target. Put quotes around the target value and try to determine the
             # target type again.
-            targetType = SpiderFootHelpers.targetTypeFromString(f'"{scantarget}"')
+            targetType = NecroSpiderHelpers.targetTypeFromString(f'"{scantarget}"')
 
         if targetType not in ["HUMAN_NAME", "BITCOIN_ADDRESS"]:
             scantarget = scantarget.lower()
 
         # Start running a new scan
-        scanId = SpiderFootHelpers.genScanInstanceId()
+        scanId = NecroSpiderHelpers.genScanInstanceId()
         try:
-            p = mp.Process(target=startSpiderFootScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
+            p = mp.Process(target=startNecroSpiderScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
             p.daemon = True
             p.start()
         except Exception as e:
@@ -852,7 +852,7 @@ class SpiderFootWebUi:
         raise cherrypy.HTTPRedirect(f"{self.docroot}/scaninfo?id={scanId}", status=302)
 
     @cherrypy.expose
-    def rerunscanmulti(self: 'SpiderFootWebUi', ids: str) -> str:
+    def rerunscanmulti(self: 'NecroSpiderWebUi', ids: str) -> str:
         """Rerun scans.
 
         Args:
@@ -864,7 +864,7 @@ class SpiderFootWebUi:
         # Snapshot the current configuration to be used by the scan
         cfg = deepcopy(self.config)
         modlist = list()
-        dbh = SpiderFootDb(cfg)
+        dbh = NecroSpiderDb(cfg)
 
         for id in ids.split(","):
             info = dbh.scanInstanceGet(id)
@@ -883,15 +883,15 @@ class SpiderFootWebUi:
             if "sfp__stor_stdout" in modlist:
                 modlist.remove("sfp__stor_stdout")
 
-            targetType = SpiderFootHelpers.targetTypeFromString(scantarget)
+            targetType = NecroSpiderHelpers.targetTypeFromString(scantarget)
             if targetType is None:
                 # Should never be triggered for a re-run scan..
-                return self.error("Invalid target type. Could not recognize it as a target SpiderFoot supports.")
+                return self.error("Invalid target type. Could not recognize it as a target NecroSpider supports.")
 
             # Start running a new scan
-            scanId = SpiderFootHelpers.genScanInstanceId()
+            scanId = NecroSpiderHelpers.genScanInstanceId()
             try:
-                p = mp.Process(target=startSpiderFootScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
+                p = mp.Process(target=startNecroSpiderScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
                 p.daemon = True
                 p.start()
             except Exception as e:
@@ -903,25 +903,25 @@ class SpiderFootWebUi:
                 self.log.info("Waiting for the scan to initialize...")
                 time.sleep(1)
 
-        templ = Template(filename='spiderfoot/templates/scanlist.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/scanlist.tmpl', lookup=self.lookup)
         return templ.render(rerunscans=True, docroot=self.docroot, pageid="SCANLIST", version=__version__)
 
     @cherrypy.expose
-    def newscan(self: 'SpiderFootWebUi') -> str:
+    def newscan(self: 'NecroSpiderWebUi') -> str:
         """Configure a new scan.
 
         Returns:
             str: New scan page HTML
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         types = dbh.eventTypes()
-        templ = Template(filename='spiderfoot/templates/newscan.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/newscan.tmpl', lookup=self.lookup)
         return templ.render(pageid='NEWSCAN', types=types, docroot=self.docroot,
                             modules=self.config['__modules__'], scanname="",
                             selectedmods="", scantarget="", version=__version__)
 
     @cherrypy.expose
-    def clonescan(self: 'SpiderFootWebUi', id: str) -> str:
+    def clonescan(self: 'NecroSpiderWebUi', id: str) -> str:
         """Clone an existing scan (pre-selected options in the newscan page).
 
         Args:
@@ -930,7 +930,7 @@ class SpiderFootWebUi:
         Returns:
             str: New scan page HTML pre-populated with options from cloned scan.
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         types = dbh.eventTypes()
         info = dbh.scanInstanceGet(id)
 
@@ -945,31 +945,31 @@ class SpiderFootWebUi:
         if scanname == "" or scantarget == "" or len(scanconfig) == 0:
             return self.error("Something went wrong internally.")
 
-        targetType = SpiderFootHelpers.targetTypeFromString(scantarget)
+        targetType = NecroSpiderHelpers.targetTypeFromString(scantarget)
         if targetType is None:
             # It must be a name, so wrap quotes around it
             scantarget = "&quot;" + scantarget + "&quot;"
 
         modlist = scanconfig['_modulesenabled'].split(',')
 
-        templ = Template(filename='spiderfoot/templates/newscan.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/newscan.tmpl', lookup=self.lookup)
         return templ.render(pageid='NEWSCAN', types=types, docroot=self.docroot,
                             modules=self.config['__modules__'], selectedmods=modlist,
                             scanname=str(scanname),
                             scantarget=str(scantarget), version=__version__)
 
     @cherrypy.expose
-    def index(self: 'SpiderFootWebUi') -> str:
+    def index(self: 'NecroSpiderWebUi') -> str:
         """Show scan list page.
 
         Returns:
             str: Scan list page HTML
         """
-        templ = Template(filename='spiderfoot/templates/scanlist.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/scanlist.tmpl', lookup=self.lookup)
         return templ.render(pageid='SCANLIST', docroot=self.docroot, version=__version__)
 
     @cherrypy.expose
-    def scaninfo(self: 'SpiderFootWebUi', id: str) -> str:
+    def scaninfo(self: 'NecroSpiderWebUi', id: str) -> str:
         """Information about a selected scan.
 
         Args:
@@ -978,17 +978,17 @@ class SpiderFootWebUi:
         Returns:
             str: scan info page HTML
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         res = dbh.scanInstanceGet(id)
         if res is None:
             return self.error("Scan ID not found.")
 
-        templ = Template(filename='spiderfoot/templates/scaninfo.tmpl', lookup=self.lookup, input_encoding='utf-8')
+        templ = Template(filename='necrospider/templates/scaninfo.tmpl', lookup=self.lookup, input_encoding='utf-8')
         return templ.render(id=id, name=html.escape(res[0]), status=res[5], docroot=self.docroot, version=__version__,
                             pageid="SCANLIST")
 
     @cherrypy.expose
-    def opts(self: 'SpiderFootWebUi', updated: str = None) -> str:
+    def opts(self: 'NecroSpiderWebUi', updated: str = None) -> str:
         """Show module and global settings page.
 
         Args:
@@ -997,13 +997,13 @@ class SpiderFootWebUi:
         Returns:
             str: scan options page HTML
         """
-        templ = Template(filename='spiderfoot/templates/opts.tmpl', lookup=self.lookup)
+        templ = Template(filename='necrospider/templates/opts.tmpl', lookup=self.lookup)
         self.token = random.SystemRandom().randint(0, 99999999)
         return templ.render(opts=self.config, pageid='SETTINGS', token=self.token, version=__version__,
                             updated=updated, docroot=self.docroot)
 
     @cherrypy.expose
-    def optsexport(self: 'SpiderFootWebUi', pattern: str = None) -> str:
+    def optsexport(self: 'NecroSpiderWebUi', pattern: str = None) -> str:
         """Export configuration.
 
         Args:
@@ -1012,7 +1012,7 @@ class SpiderFootWebUi:
         Returns:
             str: Configuration settings
         """
-        sf = SpiderFoot(self.config)
+        sf = NecroSpider(self.config)
         conf = sf.configSerialize(self.config)
         content = ""
 
@@ -1026,13 +1026,13 @@ class SpiderFootWebUi:
             else:
                 content += f"{opt}={conf[opt]}\n"
 
-        cherrypy.response.headers['Content-Disposition'] = 'attachment; filename="SpiderFoot.cfg"'
+        cherrypy.response.headers['Content-Disposition'] = 'attachment; filename="NecroSpider.cfg"'
         cherrypy.response.headers['Content-Type'] = "text/plain"
         return content
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def optsraw(self: 'SpiderFootWebUi') -> str:
+    def optsraw(self: 'NecroSpiderWebUi') -> str:
         """Return global and module settings as json.
 
         Returns:
@@ -1056,7 +1056,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scandelete(self: 'SpiderFootWebUi', id: str) -> str:
+    def scandelete(self: 'NecroSpiderWebUi', id: str) -> str:
         """Delete scan(s).
 
         Args:
@@ -1068,7 +1068,7 @@ class SpiderFootWebUi:
         if not id:
             return self.jsonify_error('404', "No scan specified")
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         ids = id.split(',')
 
         for scan_id in ids:
@@ -1085,7 +1085,7 @@ class SpiderFootWebUi:
         return ""
 
     @cherrypy.expose
-    def savesettings(self: 'SpiderFootWebUi', allopts: str, token: str, configFile: 'cherrypy._cpreqbody.Part' = None) -> None:
+    def savesettings(self: 'NecroSpiderWebUi', allopts: str, token: str, configFile: 'cherrypy._cpreqbody.Part' = None) -> None:
         """Save settings, also used to completely reset them to default.
 
         Args:
@@ -1123,7 +1123,7 @@ class SpiderFootWebUi:
 
                 allopts = json.dumps(tmp).encode('utf-8')
             except Exception as e:
-                return self.error(f"Failed to parse input file. Was it generated from SpiderFoot? ({e})")
+                return self.error(f"Failed to parse input file. Was it generated from NecroSpider? ({e})")
 
         # Reset config to default
         if allopts == "RESET":
@@ -1133,7 +1133,7 @@ class SpiderFootWebUi:
 
         # Save settings
         try:
-            dbh = SpiderFootDb(self.config)
+            dbh = NecroSpiderDb(self.config)
             useropts = json.loads(allopts)
             cleanopts = dict()
             for opt in list(useropts.keys()):
@@ -1143,7 +1143,7 @@ class SpiderFootWebUi:
 
             # Make a new config where the user options override
             # the current system config.
-            sf = SpiderFoot(self.config)
+            sf = NecroSpider(self.config)
             self.config = sf.configUnserialize(cleanopts, currentopts)
             dbh.configSet(sf.configSerialize(self.config))
         except Exception as e:
@@ -1152,7 +1152,7 @@ class SpiderFootWebUi:
         raise cherrypy.HTTPRedirect(f"{self.docroot}/opts?updated=1")
 
     @cherrypy.expose
-    def savesettingsraw(self: 'SpiderFootWebUi', allopts: str, token: str) -> str:
+    def savesettingsraw(self: 'NecroSpiderWebUi', allopts: str, token: str) -> str:
         """Save settings, also used to completely reset them to default.
 
         Args:
@@ -1175,7 +1175,7 @@ class SpiderFootWebUi:
 
         # Save settings
         try:
-            dbh = SpiderFootDb(self.config)
+            dbh = NecroSpiderDb(self.config)
             useropts = json.loads(allopts)
             cleanopts = dict()
             for opt in list(useropts.keys()):
@@ -1185,7 +1185,7 @@ class SpiderFootWebUi:
 
             # Make a new config where the user options override
             # the current system config.
-            sf = SpiderFoot(self.config)
+            sf = NecroSpider(self.config)
             self.config = sf.configUnserialize(cleanopts, currentopts)
             dbh.configSet(sf.configSerialize(self.config))
         except Exception as e:
@@ -1193,14 +1193,14 @@ class SpiderFootWebUi:
 
         return json.dumps(["SUCCESS", ""]).encode('utf-8')
 
-    def reset_settings(self: 'SpiderFootWebUi') -> bool:
+    def reset_settings(self: 'NecroSpiderWebUi') -> bool:
         """Reset settings to default.
 
         Returns:
             bool: success
         """
         try:
-            dbh = SpiderFootDb(self.config)
+            dbh = NecroSpiderDb(self.config)
             dbh.configClear()  # Clear it in the DB
             self.config = deepcopy(self.defaultConfig)  # Clear in memory
         except Exception:
@@ -1209,7 +1209,7 @@ class SpiderFootWebUi:
         return True
 
     @cherrypy.expose
-    def resultsetfp(self: 'SpiderFootWebUi', id: str, resultids: str, fp: str) -> str:
+    def resultsetfp(self: 'NecroSpiderWebUi', id: str, resultids: str, fp: str) -> str:
         """Set a bunch of results (hashes) as false positive.
 
         Args:
@@ -1222,7 +1222,7 @@ class SpiderFootWebUi:
         """
         cherrypy.response.headers['Content-Type'] = "application/json; charset=utf-8"
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         if fp not in ["0", "1"]:
             return json.dumps(["ERROR", "No FP flag set or not set correctly."]).encode('utf-8')
@@ -1266,7 +1266,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def eventtypes(self: 'SpiderFootWebUi') -> list:
+    def eventtypes(self: 'NecroSpiderWebUi') -> list:
         """List all event types.
 
         Returns:
@@ -1274,7 +1274,7 @@ class SpiderFootWebUi:
         """
         cherrypy.response.headers['Content-Type'] = "application/json; charset=utf-8"
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         types = dbh.eventTypes()
         ret = list()
 
@@ -1285,7 +1285,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def modules(self: 'SpiderFootWebUi') -> list:
+    def modules(self: 'NecroSpiderWebUi') -> list:
         """List all modules.
 
         Returns:
@@ -1310,7 +1310,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def correlationrules(self: 'SpiderFootWebUi') -> list:
+    def correlationrules(self: 'NecroSpiderWebUi') -> list:
         """List all correlation rules.
 
         Returns:
@@ -1336,17 +1336,17 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def ping(self: 'SpiderFootWebUi') -> list:
+    def ping(self: 'NecroSpiderWebUi') -> list:
         """For the CLI to test connectivity to this server.
 
         Returns:
-            list: SpiderFoot version as JSON
+            list: NecroSpider version as JSON
         """
         return ["SUCCESS", __version__]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def query(self: 'SpiderFootWebUi', query: str) -> str:
+    def query(self: 'NecroSpiderWebUi', query: str) -> str:
         """For the CLI to run queries against the database.
 
         Args:
@@ -1355,7 +1355,7 @@ class SpiderFootWebUi:
         Returns:
             str: query results as JSON
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         if not query:
             return self.jsonify_error('400', "Invalid query.")
@@ -1372,7 +1372,7 @@ class SpiderFootWebUi:
             return self.jsonify_error('500', str(e))
 
     @cherrypy.expose
-    def startscan(self: 'SpiderFootWebUi', scanname: str, scantarget: str, modulelist: str, typelist: str, usecase: str) -> str:
+    def startscan(self: 'NecroSpiderWebUi', scanname: str, scantarget: str, modulelist: str, typelist: str, usecase: str) -> str:
         """Initiate a scan.
 
         Args:
@@ -1412,20 +1412,20 @@ class SpiderFootWebUi:
 
             return self.error("Invalid request: no modules specified for scan.")
 
-        targetType = SpiderFootHelpers.targetTypeFromString(scantarget)
+        targetType = NecroSpiderHelpers.targetTypeFromString(scantarget)
         if targetType is None:
             if cherrypy.request.headers.get('Accept') and 'application/json' in cherrypy.request.headers.get('Accept'):
                 cherrypy.response.headers['Content-Type'] = "application/json; charset=utf-8"
                 return json.dumps(["ERROR", "Unrecognised target type."]).encode('utf-8')
 
-            return self.error("Invalid target type. Could not recognize it as a target SpiderFoot supports.")
+            return self.error("Invalid target type. Could not recognize it as a target NecroSpider supports.")
 
         # Swap the globalscantable for the database handler
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         # Snapshot the current configuration to be used by the scan
         cfg = deepcopy(self.config)
-        sf = SpiderFoot(cfg)
+        sf = NecroSpider(cfg)
 
         modlist = list()
 
@@ -1483,9 +1483,9 @@ class SpiderFootWebUi:
             scantarget = scantarget.lower()
 
         # Start running a new scan
-        scanId = SpiderFootHelpers.genScanInstanceId()
+        scanId = NecroSpiderHelpers.genScanInstanceId()
         try:
-            p = mp.Process(target=startSpiderFootScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
+            p = mp.Process(target=startNecroSpiderScanner, args=(self.loggingQueue, scanname, scanId, scantarget, targetType, modlist, cfg))
             p.daemon = True
             p.start()
         except Exception as e:
@@ -1506,7 +1506,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def stopscan(self: 'SpiderFootWebUi', id: str) -> str:
+    def stopscan(self: 'NecroSpiderWebUi', id: str) -> str:
         """Stop a scan.
 
         Args:
@@ -1518,7 +1518,7 @@ class SpiderFootWebUi:
         if not id:
             return self.jsonify_error('404', "No scan specified")
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         ids = id.split(',')
 
         for scan_id in ids:
@@ -1535,7 +1535,7 @@ class SpiderFootWebUi:
                 return self.jsonify_error('400', f"Scan {scan_id} has already aborted.")
 
             if scan_status != "RUNNING" and scan_status != "STARTING":
-                return self.jsonify_error('400', f"The running scan is currently in the state '{scan_status}', please try again later or restart SpiderFoot.")
+                return self.jsonify_error('400', f"The running scan is currently in the state '{scan_status}', please try again later or restart NecroSpider.")
 
         for scan_id in ids:
             dbh.scanInstanceSet(scan_id, status="ABORT-REQUESTED")
@@ -1545,7 +1545,7 @@ class SpiderFootWebUi:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def vacuum(self):
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         try:
             if dbh.vacuumDB():
                 return json.dumps(["SUCCESS", ""]).encode('utf-8')
@@ -1559,7 +1559,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanlog(self: 'SpiderFootWebUi', id: str, limit: str = None, rowId: str = None, reverse: str = None) -> list:
+    def scanlog(self: 'NecroSpiderWebUi', id: str, limit: str = None, rowId: str = None, reverse: str = None) -> list:
         """Scan log data.
 
         Args:
@@ -1571,7 +1571,7 @@ class SpiderFootWebUi:
         Returns:
             list: scan log
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         retdata = []
 
         try:
@@ -1587,7 +1587,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanerrors(self: 'SpiderFootWebUi', id: str, limit: str = None) -> list:
+    def scanerrors(self: 'NecroSpiderWebUi', id: str, limit: str = None) -> list:
         """Scan error data.
 
         Args:
@@ -1597,7 +1597,7 @@ class SpiderFootWebUi:
         Returns:
             list: scan errors
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         retdata = []
 
         try:
@@ -1613,13 +1613,13 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanlist(self: 'SpiderFootWebUi') -> list:
+    def scanlist(self: 'NecroSpiderWebUi') -> list:
         """Produce a list of scans.
 
         Returns:
             list: scan list
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         data = dbh.scanInstanceList()
         retdata = []
 
@@ -1652,7 +1652,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanstatus(self: 'SpiderFootWebUi', id: str) -> list:
+    def scanstatus(self: 'NecroSpiderWebUi', id: str) -> list:
         """Show basic information about a scan, including status and number of each event type.
 
         Args:
@@ -1661,7 +1661,7 @@ class SpiderFootWebUi:
         Returns:
             list: scan status
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         data = dbh.scanInstanceGet(id)
 
         if not data:
@@ -1685,7 +1685,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scansummary(self: 'SpiderFootWebUi', id: str, by: str) -> list:
+    def scansummary(self: 'NecroSpiderWebUi', id: str, by: str) -> list:
         """Summary of scan results.
 
         Args:
@@ -1697,7 +1697,7 @@ class SpiderFootWebUi:
         """
         retdata = []
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         try:
             scandata = dbh.scanResultSummary(id, by)
@@ -1719,7 +1719,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scancorrelations(self: 'SpiderFootWebUi', id: str) -> list:
+    def scancorrelations(self: 'NecroSpiderWebUi', id: str) -> list:
         """Correlation results from a scan.
 
         Args:
@@ -1730,7 +1730,7 @@ class SpiderFootWebUi:
         """
         retdata = []
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         try:
             corrdata = dbh.scanCorrelationList(id)
@@ -1744,7 +1744,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scaneventresults(self: 'SpiderFootWebUi', id: str, eventType: str = None, filterfp: bool = False, correlationId: str = None) -> list:
+    def scaneventresults(self: 'NecroSpiderWebUi', id: str, eventType: str = None, filterfp: bool = False, correlationId: str = None) -> list:
         """Return all event results for a scan as JSON.
 
         Args:
@@ -1758,7 +1758,7 @@ class SpiderFootWebUi:
         """
         retdata = []
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         if not eventType:
             eventType = 'ALL'
@@ -1788,7 +1788,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scaneventresultsunique(self: 'SpiderFootWebUi', id: str, eventType: str, filterfp: bool = False) -> list:
+    def scaneventresultsunique(self: 'NecroSpiderWebUi', id: str, eventType: str, filterfp: bool = False) -> list:
         """Return unique event results for a scan as JSON.
 
         Args:
@@ -1799,7 +1799,7 @@ class SpiderFootWebUi:
         Returns:
             list: unique search results
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         retdata = []
 
         try:
@@ -1815,7 +1815,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def search(self: 'SpiderFootWebUi', id: str = None, eventType: str = None, value: str = None) -> list:
+    def search(self: 'NecroSpiderWebUi', id: str = None, eventType: str = None, value: str = None) -> list:
         """Search scans.
 
         Args:
@@ -1833,7 +1833,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanhistory(self: 'SpiderFootWebUi', id: str) -> list:
+    def scanhistory(self: 'NecroSpiderWebUi', id: str) -> list:
         """Historical data for a scan.
 
         Args:
@@ -1845,7 +1845,7 @@ class SpiderFootWebUi:
         if not id:
             return self.jsonify_error('404', "No scan specified")
 
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
 
         try:
             return dbh.scanResultHistory(id)
@@ -1854,7 +1854,7 @@ class SpiderFootWebUi:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def scanelementtypediscovery(self: 'SpiderFootWebUi', id: str, eventType: str) -> dict:
+    def scanelementtypediscovery(self: 'NecroSpiderWebUi', id: str, eventType: str) -> dict:
         """Scan element type discovery.
 
         Args:
@@ -1864,7 +1864,7 @@ class SpiderFootWebUi:
         Returns:
             dict
         """
-        dbh = SpiderFootDb(self.config)
+        dbh = NecroSpiderDb(self.config)
         pc = dict()
         datamap = dict()
         retdata = dict()
@@ -1878,7 +1878,7 @@ class SpiderFootWebUi:
 
         # Delete the ROOT key as it adds no value from a viz perspective
         del pc['ROOT']
-        retdata['tree'] = SpiderFootHelpers.dataParentChildToTree(pc)
+        retdata['tree'] = NecroSpiderHelpers.dataParentChildToTree(pc)
         retdata['data'] = datamap
 
         return retdata

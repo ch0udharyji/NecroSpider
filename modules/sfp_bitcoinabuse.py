@@ -14,10 +14,10 @@ import json
 import time
 import urllib.parse
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_bitcoinabuse(SpiderFootPlugin):
+class sfp_bitcoinabuse(NecroSpiderPlugin):
     meta = {
         "name": "BitcoinAbuse",
         "summary": "Check Bitcoin addresses against the bitcoinabuse.com database of suspect/malicious addresses.",
@@ -83,7 +83,7 @@ class sfp_bitcoinabuse(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://www.bitcoinabuse.com/api/reports/check?{urllib.parse.urlencode(params)}",
             timeout=self.opts["_fetchtimeout"],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
 
         # All endpoints other than Report Address have a rate limit of
@@ -176,7 +176,7 @@ class sfp_bitcoinabuse(SpiderFootPlugin):
                 return
 
             url = f"https://www.bitcoinabuse.com/reports/{address}"
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "MALICIOUS_BITCOIN_ADDRESS",
                 f"BitcoinAbuse [{address}]\n<SFURL>{url}</SFURL>",
                 self.__name__,
@@ -184,7 +184,7 @@ class sfp_bitcoinabuse(SpiderFootPlugin):
             )
             self.notifyListeners(evt)
 
-            rirevt = SpiderFootEvent(
+            rirevt = NecroSpiderEvent(
                 "RAW_RIR_DATA", json.dumps(rec), self.__name__, event
             )
             self.notifyListeners(rirevt)

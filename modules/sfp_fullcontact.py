@@ -13,10 +13,10 @@ import json
 import time
 from datetime import datetime
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_fullcontact(SpiderFootPlugin):
+class sfp_fullcontact(NecroSpiderPlugin):
 
     meta = {
         'name': "FullContact",
@@ -95,7 +95,7 @@ class sfp_fullcontact(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             url,
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             postData=json.dumps(data),
             headers=headers
         )
@@ -191,7 +191,7 @@ class sfp_fullcontact(SpiderFootPlugin):
             full_name = data.get('fullName')
 
             if full_name:
-                e = SpiderFootEvent("RAW_RIR_DATA", f"Possible full name: {full_name}", self.__name__, event)
+                e = NecroSpiderEvent("RAW_RIR_DATA", f"Possible full name: {full_name}", self.__name__, event)
                 self.notifyListeners(e)
 
             return
@@ -217,7 +217,7 @@ class sfp_fullcontact(SpiderFootPlugin):
                     else:
                         evttype = "EMAILADDR"
 
-                    e = SpiderFootEvent(evttype, email, self.__name__, event)
+                    e = NecroSpiderEvent(evttype, email, self.__name__, event)
                     self.notifyListeners(e)
 
             if data.get("phones"):
@@ -227,14 +227,14 @@ class sfp_fullcontact(SpiderFootPlugin):
                     if not phone:
                         continue
 
-                    e = SpiderFootEvent("PHONE_NUMBER", phone, self.__name__, event)
+                    e = NecroSpiderEvent("PHONE_NUMBER", phone, self.__name__, event)
                     self.notifyListeners(e)
 
             if data.get("locations"):
                 for r in data['locations']:
                     location = ', '.join([_f for _f in [r.get('city'), r.get('country')] if _f])
                     if location:
-                        e = SpiderFootEvent(
+                        e = NecroSpiderEvent(
                             "GEOINFO",
                             location,
                             self.__name__,
@@ -245,7 +245,7 @@ class sfp_fullcontact(SpiderFootPlugin):
                     if r.get("formatted"):
                         # Seems to contain some junk sometimes
                         if len(r['formatted']) > 10:
-                            e = SpiderFootEvent(
+                            e = NecroSpiderEvent(
                                 "PHYSICAL_ADDRESS",
                                 r['formatted'],
                                 self.__name__,
@@ -257,7 +257,7 @@ class sfp_fullcontact(SpiderFootPlugin):
                 for r in data['keyPeople']:
                     full_name = r.get('fullName')
                     if full_name:
-                        e = SpiderFootEvent(
+                        e = NecroSpiderEvent(
                             "RAW_RIR_DATA",
                             f"Possible full name: {full_name}",
                             self.__name__,

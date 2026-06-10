@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_sublist3r
-# Purpose:      SpiderFoot plug-in for subdomain enumeration using
+# Purpose:      NecroSpider plug-in for subdomain enumeration using
 #               api.sublist3r.com
 #
 # Author:      TheTechromancer
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_sublist3r(SpiderFootPlugin):
+class sfp_sublist3r(NecroSpiderPlugin):
 
     meta = {
         "name": "Sublist3r PassiveDNS",
@@ -55,7 +55,7 @@ class sfp_sublist3r(SpiderFootPlugin):
         ret = []
         res = self.sf.fetchUrl(
             url,
-            useragent=self.opts.get("_useragent", "Spiderfoot"),
+            useragent=self.opts.get("_useragent", "Necrospider"),
             # mirror sublist3r's headers
             headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -77,9 +77,9 @@ class sfp_sublist3r(SpiderFootPlugin):
 
     def sendEvent(self, source, host):
         if self.sf.resolveHost(host) or self.sf.resolveHost6(host):
-            e = SpiderFootEvent("INTERNET_NAME", host, self.__name__, source)
+            e = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, source)
         else:
-            e = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, source)
+            e = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, source)
         self.notifyListeners(e)
 
     def handleEvent(self, event):

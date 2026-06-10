@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_cybercrimetracker(SpiderFootPlugin):
+class sfp_cybercrimetracker(NecroSpiderPlugin):
 
     meta = {
         'name': "CyberCrime-Tracker.net",
@@ -200,10 +200,10 @@ class sfp_cybercrimetracker(SpiderFootPlugin):
         url = f"https://cybercrime-tracker.net/index.php?search={eventData}"
         text = f"CyberCrime-Tracker.net Malicious Submissions [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_cybercrimetracker class

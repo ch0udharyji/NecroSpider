@@ -9,10 +9,10 @@
 # Copyright:   (c) Steve Micallef 2013
 # Licence:     MIT
 # -------------------------------------------------------------------------------
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_bingsearch(SpiderFootPlugin):
+class sfp_bingsearch(NecroSpiderPlugin):
 
     meta = {
         'name': "Bing",
@@ -121,11 +121,11 @@ class sfp_bingsearch(SpiderFootPlugin):
         for link in internal_links:
             self.debug("Found a link: " + link)
 
-            evt = SpiderFootEvent("LINKED_URL_INTERNAL", link, self.__name__, event)
+            evt = NecroSpiderEvent("LINKED_URL_INTERNAL", link, self.__name__, event)
             self.notifyListeners(evt)
 
         if internal_links:
-            evt = SpiderFootEvent(
+            evt = NecroSpiderEvent(
                 "RAW_RIR_DATA", str(res), self.__name__, event
             )
             self.notifyListeners(evt)

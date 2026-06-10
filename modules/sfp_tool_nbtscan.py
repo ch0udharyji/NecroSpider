@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_tool_nbtscan
-# Purpose:     SpiderFoot plug-in for using the nbtscan tool.
+# Purpose:     NecroSpider plug-in for using the nbtscan tool.
 #              Tool: http://www.unixwiz.net/tools/nbtscan.html
 #
 # Author:      <steve@binarypool.com>
@@ -16,10 +16,10 @@ import os.path
 from netaddr import IPNetwork
 from subprocess import PIPE, Popen, TimeoutExpired
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin, SpiderFootHelpers
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin, NecroSpiderHelpers
 
 
-class sfp_tool_nbtscan(SpiderFootPlugin):
+class sfp_tool_nbtscan(NecroSpiderPlugin):
 
     meta = {
         "name": "Tool - nbtscan",
@@ -98,7 +98,7 @@ class sfp_tool_nbtscan(SpiderFootPlugin):
             self.errorState = True
             return
 
-        if not SpiderFootHelpers.sanitiseInput(eventData, extra=['/']):
+        if not NecroSpiderHelpers.sanitiseInput(eventData, extra=['/']):
             self.debug("Invalid input, skipping.")
             return
 
@@ -171,13 +171,13 @@ class sfp_tool_nbtscan(SpiderFootPlugin):
                 if eventName == "NETBLOCK_OWNER":
                     # Extract the IP from the raw nbtscan output
                     addr = info.split("\n")[0].split("for Host ")[1].replace(":", "")
-                    srcEvent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                    srcEvent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                     self.notifyListeners(srcEvent)
 
-                evt = SpiderFootEvent('UDP_PORT_OPEN', f"{addr}:137", self.__name__, srcEvent)
+                evt = NecroSpiderEvent('UDP_PORT_OPEN', f"{addr}:137", self.__name__, srcEvent)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent('UDP_PORT_OPEN_INFO', info, self.__name__, evt)
+                evt = NecroSpiderEvent('UDP_PORT_OPEN_INFO', info, self.__name__, evt)
                 self.notifyListeners(evt)
                 info = ""
 

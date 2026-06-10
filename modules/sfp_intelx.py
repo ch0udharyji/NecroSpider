@@ -15,10 +15,10 @@ import datetime
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_intelx(SpiderFootPlugin):
+class sfp_intelx(NecroSpiderPlugin):
 
     meta = {
         'name': "IntelligenceX",
@@ -110,7 +110,7 @@ class sfp_intelx(SpiderFootPlugin):
         retdata = list()
 
         headers = {
-            "User-Agent": "SpiderFoot",
+            "User-Agent": "NecroSpider",
             "x-key": self.opts['api_key'],
         }
 
@@ -248,7 +248,7 @@ class sfp_intelx(SpiderFootPlugin):
                     continue
 
                 # Notify other modules of what you've found
-                e = SpiderFootEvent(evt, val, self.__name__, event)
+                e = NecroSpiderEvent(evt, val, self.__name__, event)
                 self.notifyListeners(e)
 
         if "public.intelx.io" in self.opts['base_url'] or eventName != "INTERNET_NAME":
@@ -283,11 +283,11 @@ class sfp_intelx(SpiderFootPlugin):
                     continue
 
                 # Notify other modules of what you've found
-                e = SpiderFootEvent(evt, val, self.__name__, event)
+                e = NecroSpiderEvent(evt, val, self.__name__, event)
                 self.notifyListeners(e)
 
                 if evt == "INTERNET_NAME" and self.sf.isDomain(val, self.opts['_internettlds']):
-                    e = SpiderFootEvent("DOMAIN_NAME", val, self.__name__, event)
+                    e = NecroSpiderEvent("DOMAIN_NAME", val, self.__name__, event)
                     self.notifyListeners(e)
 
 # End of sfp_intelx class

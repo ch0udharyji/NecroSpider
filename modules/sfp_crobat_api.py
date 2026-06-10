@@ -16,10 +16,10 @@ import json
 import time
 import urllib
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_crobat_api(SpiderFootPlugin):
+class sfp_crobat_api(NecroSpiderPlugin):
 
     meta = {
         'name': "Crobat API",
@@ -152,7 +152,7 @@ class sfp_crobat_api(SpiderFootPlugin):
                 self.debug(f"No information found for domain {eventData} (page: {page})")
                 return
 
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
             self.notifyListeners(evt)
 
             page += 1
@@ -166,10 +166,10 @@ class sfp_crobat_api(SpiderFootPlugin):
 
                 if self.opts['verify'] and not self.sf.resolveHost(domain) and not self.sf.resolveHost6(domain):
                     self.debug(f"Host {domain} could not be resolved")
-                    evt = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", domain, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", domain, self.__name__, event)
                     self.notifyListeners(evt)
                 else:
-                    evt = SpiderFootEvent("INTERNET_NAME", domain, self.__name__, event)
+                    evt = NecroSpiderEvent("INTERNET_NAME", domain, self.__name__, event)
                     self.notifyListeners(evt)
 
 # End of sfp_crobat_api class

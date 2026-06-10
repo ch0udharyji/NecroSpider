@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_tool_whatweb
-# Purpose:     SpiderFoot plug-in for using the 'WhatWeb' tool.
+# Purpose:     NecroSpider plug-in for using the 'WhatWeb' tool.
 #              Tool: https://github.com/urbanadventurer/whatweb
 #
 # Author:      <bcoles@gmail.com>
@@ -15,10 +15,10 @@ import json
 import os.path
 from subprocess import PIPE, Popen, TimeoutExpired
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin, SpiderFootHelpers
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin, NecroSpiderHelpers
 
 
-class sfp_tool_whatweb(SpiderFootPlugin):
+class sfp_tool_whatweb(NecroSpiderPlugin):
 
     meta = {
         'name': "Tool - WhatWeb",
@@ -102,7 +102,7 @@ class sfp_tool_whatweb(SpiderFootPlugin):
             return
 
         # Sanitize domain name.
-        if not SpiderFootHelpers.sanitiseInput(eventData):
+        if not NecroSpiderHelpers.sanitiseInput(eventData):
             self.error("Invalid input, refusing to run.")
             return
 
@@ -174,25 +174,25 @@ class sfp_tool_whatweb(SpiderFootPlugin):
 
             if plugin_matches.get('HTTPServer'):
                 for w in plugin_matches.get('HTTPServer').get('string'):
-                    evt = SpiderFootEvent('WEBSERVER_BANNER', w, self.__name__, event)
+                    evt = NecroSpiderEvent('WEBSERVER_BANNER', w, self.__name__, event)
                     self.notifyListeners(evt)
                     found = True
 
             if plugin_matches.get('X-Powered-By'):
                 for w in plugin_matches.get('X-Powered-By').get('string'):
-                    evt = SpiderFootEvent('WEBSERVER_TECHNOLOGY', w, self.__name__, event)
+                    evt = NecroSpiderEvent('WEBSERVER_TECHNOLOGY', w, self.__name__, event)
                     self.notifyListeners(evt)
                     found = True
 
             for plugin in plugin_matches:
                 if plugin in blacklist:
                     continue
-                evt = SpiderFootEvent('WEBSERVER_TECHNOLOGY', plugin, self.__name__, event)
+                evt = NecroSpiderEvent('WEBSERVER_TECHNOLOGY', plugin, self.__name__, event)
                 self.notifyListeners(evt)
                 found = True
 
         if found:
-            evt = SpiderFootEvent('RAW_RIR_DATA', str(result_json), self.__name__, event)
+            evt = NecroSpiderEvent('RAW_RIR_DATA', str(result_json), self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_tool_whatweb class

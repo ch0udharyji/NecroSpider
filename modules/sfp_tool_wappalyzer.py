@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_tool_wappalyzer
-# Purpose:      SpiderFoot plug-in for using the 'Wappalyzer' tool.
+# Purpose:      NecroSpider plug-in for using the 'Wappalyzer' tool.
 #               Tool: https://github.com/EnableSecurity/wappalyzer
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -16,10 +16,10 @@ import sys
 import json
 from subprocess import Popen, PIPE, TimeoutExpired
 
-from spiderfoot import SpiderFootPlugin, SpiderFootEvent, SpiderFootHelpers
+from necrospider import NecroSpiderPlugin, NecroSpiderEvent, NecroSpiderHelpers
 
 
-class sfp_tool_wappalyzer(SpiderFootPlugin):
+class sfp_tool_wappalyzer(NecroSpiderPlugin):
 
     meta = {
         "name": "Tool - Wappalyzer",
@@ -89,7 +89,7 @@ class sfp_tool_wappalyzer(SpiderFootPlugin):
             self.errorState = True
             return
 
-        if not SpiderFootHelpers.sanitiseInput(eventData):
+        if not NecroSpiderHelpers.sanitiseInput(eventData):
             self.debug("Invalid input, skipping.")
             return
 
@@ -124,21 +124,21 @@ class sfp_tool_wappalyzer(SpiderFootPlugin):
             for item in data["technologies"]:
                 for cat in item["categories"]:
                     if cat["name"] == "Operating systems":
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             "OPERATING_SYSTEM",
                             item["name"],
                             self.__name__,
                             event,
                         )
                     elif cat["name"] == "Web servers":
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             "WEBSERVER_TECHNOLOGY",
                             item["name"],
                             self.__name__,
                             event,
                         )
                     else:
-                        evt = SpiderFootEvent(
+                        evt = NecroSpiderEvent(
                             "SOFTWARE_USED",
                             item["name"],
                             self.__name__,

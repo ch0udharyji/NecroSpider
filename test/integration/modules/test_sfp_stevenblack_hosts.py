@@ -2,22 +2,22 @@ import pytest
 import unittest
 
 from modules.sfp_stevenblack_hosts import sfp_stevenblack_hosts
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
 class TestModuleIntegrationStevenblackHosts(unittest.TestCase):
 
     def test_handleEvent_event_data_affiliate_internet_name_matching_ad_server_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_stevenblack_hosts()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         module.opts['_fetchtimeout'] = 15
@@ -42,14 +42,14 @@ class TestModuleIntegrationStevenblackHosts(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'AFFILIATE_INTERNET_NAME'
         event_data = 'ads.google.com'
         event_module = 'example module'
         source_event = evt
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -57,14 +57,14 @@ class TestModuleIntegrationStevenblackHosts(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_affiliate_internet_name_not_matching_ad_server_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_stevenblack_hosts()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         module.opts['_fetchtimeout'] = 15
@@ -81,14 +81,14 @@ class TestModuleIntegrationStevenblackHosts(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'AFFILIATE_INTERNET_NAME'
         event_data = 'no.ads.safe.local'
         event_module = 'example module'
         source_event = evt
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)

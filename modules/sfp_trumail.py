@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_trumail
-# Purpose:      Spiderfoot plugin to check if an email is
+# Purpose:      Necrospider plugin to check if an email is
 #               disposable using trumail.io API.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_trumail(SpiderFootPlugin):
+class sfp_trumail(NecroSpiderPlugin):
 
     meta = {
         'name': "Trumail",
@@ -72,7 +72,7 @@ class sfp_trumail(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.trumail.io/v2/lookups/json?email={qry}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['content'] is None:
@@ -107,10 +107,10 @@ class sfp_trumail(SpiderFootPlugin):
         isDisposable = data.get('disposable')
 
         if isDisposable:
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
+            evt = NecroSpiderEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_trumail class

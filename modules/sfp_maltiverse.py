@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_maltiverse
-# Purpose:      Spiderfoot plugin to search Maltiverse API
+# Purpose:      Necrospider plugin to search Maltiverse API
 #               for any malicious activity by the target
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -16,10 +16,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_maltiverse(SpiderFootPlugin):
+class sfp_maltiverse(NecroSpiderPlugin):
 
     meta = {
         'name': "Maltiverse",
@@ -193,14 +193,14 @@ class sfp_maltiverse(SpiderFootPlugin):
 
             # Data is reported about the IP Address
             if eventName.startswith("NETBLOCK_"):
-                ipEvt = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                ipEvt = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(ipEvt)
 
             if eventName.startswith("NETBLOCK_"):
-                evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, ipEvt)
+                evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, ipEvt)
                 self.notifyListeners(evt)
             else:
-                evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+                evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
                 self.notifyListeners(evt)
 
             maliciousIPDesc = f"Maltiverse [{maliciousIP}]\n"
@@ -234,11 +234,11 @@ class sfp_maltiverse(SpiderFootPlugin):
             self.results[maliciousIPDescHash] = True
 
             if eventName.startswith("NETBLOCK_"):
-                evt = SpiderFootEvent("MALICIOUS_IPADDR", maliciousIPDesc, self.__name__, ipEvt)
+                evt = NecroSpiderEvent("MALICIOUS_IPADDR", maliciousIPDesc, self.__name__, ipEvt)
             elif eventName.startswith("AFFILIATE_"):
-                evt = SpiderFootEvent("MALICIOUS_AFFILIATE_IPADDR", maliciousIPDesc, self.__name__, event)
+                evt = NecroSpiderEvent("MALICIOUS_AFFILIATE_IPADDR", maliciousIPDesc, self.__name__, event)
             else:
-                evt = SpiderFootEvent("MALICIOUS_IPADDR", maliciousIPDesc, self.__name__, event)
+                evt = NecroSpiderEvent("MALICIOUS_IPADDR", maliciousIPDesc, self.__name__, event)
 
             self.notifyListeners(evt)
 

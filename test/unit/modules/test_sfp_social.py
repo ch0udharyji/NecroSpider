@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_social import sfp_social
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleSocial(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_social()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModuleSocial(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_event_data_url_containing_social_media_profile_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_social()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -42,7 +42,7 @@ class TestModuleSocial(unittest.TestCase):
             if str(event.eventType) != expected:
                 raise Exception(f"{event.eventType} != {expected}")
 
-            expected = "LinkedIn (Individual): <SFURL>https://linkedin.com/in/spiderfoot</SFURL>"
+            expected = "LinkedIn (Individual): <SFURL>https://linkedin.com/in/necrospider</SFURL>"
             if str(event.data) != expected:
                 raise Exception(f"{event.data} != {expected}")
 
@@ -51,11 +51,11 @@ class TestModuleSocial(unittest.TestCase):
         module.notifyListeners = new_notifyListeners.__get__(module, sfp_social)
 
         event_type = 'ROOT'
-        event_data = 'https://linkedin.com/in/spiderfoot'
+        event_data = 'https://linkedin.com/in/necrospider'
         event_module = ''
         source_event = ''
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -63,14 +63,14 @@ class TestModuleSocial(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_url_not_containing_social_media_profile_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_social()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -83,7 +83,7 @@ class TestModuleSocial(unittest.TestCase):
         event_module = ''
         source_event = ''
 
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
         result = module.handleEvent(evt)
 
         self.assertIsNone(result)

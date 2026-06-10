@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_ipqualityscore
-# Purpose:      Spiderfoot module to check whether a target is malicious
+# Purpose:      Necrospider module to check whether a target is malicious
 #               using IPQualityScore API
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -12,10 +12,10 @@
 # -------------------------------------------------------------------------------
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ipqualityscore(SpiderFootPlugin):
+class sfp_ipqualityscore(NecroSpiderPlugin):
 
     meta = {
         "name": "IPQualityScore",
@@ -113,7 +113,7 @@ class sfp_ipqualityscore(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             queryString,
             timeout=self.opts["_fetchtimeout"],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
 
         if not res['content']:
@@ -185,7 +185,7 @@ class sfp_ipqualityscore(SpiderFootPlugin):
         maliciousDesc = ""
 
         if fraudScore >= self.opts['abuse_score_threshold'] or recentAbuse or botStatus:
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
             self.notifyListeners(evt)
             malicious = True
             maliciousDesc = f"IPQualityScore [{eventData}]\n"
@@ -193,31 +193,31 @@ class sfp_ipqualityscore(SpiderFootPlugin):
         if eventName == "PHONE_NUMBER":
             if malicious:
                 maliciousDesc += f" - FRAUD SCORE: {fraudScore}\n - ACTIVE: {data.get('active')}\n - RISKY: {data.get('risky')}\n - RECENT ABUSE: {recentAbuse}"
-                evt = SpiderFootEvent("MALICIOUS_PHONE_NUMBER", maliciousDesc, self.__name__, event)
+                evt = NecroSpiderEvent("MALICIOUS_PHONE_NUMBER", maliciousDesc, self.__name__, event)
                 self.notifyListeners(evt)
 
             phoneNumberType = data.get('line_type')
             if phoneNumberType:
-                evt = SpiderFootEvent("PHONE_NUMBER_TYPE", phoneNumberType, self.__name__, event)
+                evt = NecroSpiderEvent("PHONE_NUMBER_TYPE", phoneNumberType, self.__name__, event)
                 self.notifyListeners(evt)
 
             geoInfo = self.getGeoInfo(data)
             if geoInfo:
-                evt = SpiderFootEvent("GEOINFO", geoInfo, self.__name__, event)
+                evt = NecroSpiderEvent("GEOINFO", geoInfo, self.__name__, event)
                 self.notifyListeners(evt)
 
         elif eventName == "EMAILADDR":
             if malicious:
                 maliciousDesc += f" - FRAUD SCORE: {fraudScore}\n - HONEYPOT: {data.get('honeypot')}\n - SPAM TRAP SCORE: {data.get('spam_trap_score')}\n - RECENT ABUSE: {recentAbuse}"
-                evt = SpiderFootEvent("MALICIOUS_EMAILADDR", maliciousDesc, self.__name__, event)
+                evt = NecroSpiderEvent("MALICIOUS_EMAILADDR", maliciousDesc, self.__name__, event)
                 self.notifyListeners(evt)
 
             if data.get('disposable'):
-                evt = SpiderFootEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
+                evt = NecroSpiderEvent("EMAILADDR_DISPOSABLE", eventData, self.__name__, event)
                 self.notifyListeners(evt)
 
             if data.get('leaked'):
-                evt = SpiderFootEvent("EMAILADDR_COMPROMISED", f"{eventData} [Unknown]", self.__name__, event)
+                evt = NecroSpiderEvent("EMAILADDR_COMPROMISED", f"{eventData} [Unknown]", self.__name__, event)
                 self.notifyListeners(evt)
 
         elif eventName in ['IP_ADDRESS', 'DOMAIN_NAME']:
@@ -225,14 +225,14 @@ class sfp_ipqualityscore(SpiderFootPlugin):
                 maliciousDesc += f" - FRAUD SCORE: {fraudScore}\n - BOT STATUS: {botStatus}\n - RECENT ABUSE: {recentAbuse}\n - ABUSE VELOCITY: {data.get('abuse_velocity')}\n - VPN: {data.get('vpn')}\n - ACTIVE VPN: {data.get('active_vpn')}\n - TOR: {data.get('tor')}\n - ACTIVE TOR: {data.get('active_tor')}"
 
                 if eventName == "IP_ADDRESS":
-                    evt = SpiderFootEvent("MALICIOUS_IPADDR", maliciousDesc, self.__name__, event)
+                    evt = NecroSpiderEvent("MALICIOUS_IPADDR", maliciousDesc, self.__name__, event)
                 elif eventName == "DOMAIN_NAME":
-                    evt = SpiderFootEvent("MALICIOUS_INTERNET_NAME", maliciousDesc, self.__name__, event)
+                    evt = NecroSpiderEvent("MALICIOUS_INTERNET_NAME", maliciousDesc, self.__name__, event)
                 self.notifyListeners(evt)
 
             geoInfo = self.getGeoInfo(data)
             if geoInfo:
-                evt = SpiderFootEvent("GEOINFO", geoInfo, self.__name__, event)
+                evt = NecroSpiderEvent("GEOINFO", geoInfo, self.__name__, event)
                 self.notifyListeners(evt)
 
 # End of sfp_ipqualityscore class

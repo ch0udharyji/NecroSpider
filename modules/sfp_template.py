@@ -14,10 +14,10 @@ import json
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_template(SpiderFootPlugin):
+class sfp_template(NecroSpiderPlugin):
     # The module descriptor dictionary contains all the meta data about a module necessary
     # for users to understand...
     meta = {
@@ -25,7 +25,7 @@ class sfp_template(SpiderFootPlugin):
         'name': "Template Module",
 
         # Description: A sentence briefly describing the module.
-        'summary': "This is an example module to help developers create their own SpiderFoot modules.",
+        'summary': "This is an example module to help developers create their own NecroSpider modules.",
 
         # Flags: Attributes about this module:
         #   - apikey: Needs an API key to function
@@ -184,7 +184,7 @@ class sfp_template(SpiderFootPlugin):
     def setup(self, sfc, userOpts=dict()):
         self.sf = sfc
         # self.tempStorage() basically returns a dict(), but we use self.tempStorage()
-        # instead since on SpiderFoot HX, different mechanisms are used to persist
+        # instead since on NecroSpider HX, different mechanisms are used to persist
         # data for load distribution, avoiding excess memory consumption and fault
         # tolerance. This keeps modules transparently compatible with both versions.
         self.results = self.tempStorage()
@@ -196,14 +196,14 @@ class sfp_template(SpiderFootPlugin):
         # If you want to override that, for instance in cases where the module
         # is purely processing data from other modules instead of producing
         # data itself, you can do so with the following. Note that this is only
-        # utilised in SpiderFoot HX and not the open source version.
+        # utilised in NecroSpider HX and not the open source version.
         self.__dataSource__ = "Some Data Source"
 
         for opt in list(userOpts.keys()):
             self.opts[opt] = userOpts[opt]
 
     # What events is this module interested in for input
-    # For a list of all events, check spiderfoot/db.py.
+    # For a list of all events, check necrospider/db.py.
     def watchedEvents(self):
         return [
             "IP_ADDRESS",
@@ -230,20 +230,20 @@ class sfp_template(SpiderFootPlugin):
 
         # This is an example of querying SHODAN. Note that the fetch timeout
         # is inherited from global options (options prefixed with _ will come
-        # from global config), and the user agent is SpiderFoot so that the
+        # from global config), and the user agent is NecroSpider so that the
         # provider knows the request comes from the tool. Many third parties
         # request that, so best to just be consistent anyway.
         res = self.sf.fetchUrl(
             f"https://api.shodan.io/shodan/host/{qry}?key={self.opts['api_key']}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         # Report when unexpected things happen:
         # - debug(message) if it's only for debugging (user will see this if debugging is enabled)
         # - info(message) if it's not a bad thing
         # - error(message) if it's a bad thing and should cause the scan to abort
-        # - fatal(message) if it's a horrible thing and should kill SpiderFoot completely
+        # - fatal(message) if it's a horrible thing and should kill NecroSpider completely
         if res['content'] is None:
             self.info(f"No SHODAN info found for {qry}")
             return None
@@ -259,7 +259,7 @@ class sfp_template(SpiderFootPlugin):
 
     # Handle events sent to this module
     def handleEvent(self, event):
-        # The three most used fields in SpiderFootEvent are:
+        # The three most used fields in NecroSpiderEvent are:
         # event.eventType - the event type, e.g. INTERNET_NAME, IP_ADDRESS, etc.
         # event.module - the name of the module that generated the event, e.g. sfp_dnsresolve
         # event.data - the actual data, e.g. 127.0.0.1. This can sometimes be megabytes in size (e.g. a PDF)
@@ -317,20 +317,20 @@ class sfp_template(SpiderFootPlugin):
             # IP address within the network, not the whole network.
             if eventName == 'NETBLOCK_OWNER':
                 # This is where the module generates an event for other modules
-                # to process and is a fundamental part of the SpiderFoot architecture.
+                # to process and is a fundamental part of the NecroSpider architecture.
                 # We are generating an event of type "IP_ADDRESS" here, the data being
                 # the addr variable, the name of the module is the next argument
                 # (self.__name__), and finally the event that is linked as the source
-                # event of this event. This enables SpiderFoot to link events so users
+                # event of this event. This enables NecroSpider to link events so users
                 # can see what events generated other events, seeing a full chain of
                 # discovery from their target to the data returned here.
-                pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 # With the event created, we can now notify any other modules listening
                 # for IP_ADDRESS events (which they define in their watchedEvents()
                 # function).
                 self.notifyListeners(pevent)
             elif eventName == 'NETBLOCK_MEMBER':
-                pevent = SpiderFootEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             else:
                 # If the event received wasn't a netblock, then use that event
@@ -344,7 +344,7 @@ class sfp_template(SpiderFootPlugin):
             # So now we have NETBLOCK_OWNER (event we received) -> IP_ADDRESS
             # (event we generated above) -> RAW_RIR_DATA (event from the third
             # party about the IP Address we queried).
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(rec), self.__name__, pevent)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(rec), self.__name__, pevent)
             self.notifyListeners(evt)
 
             # Whenever operating in a loop, call this to check whether the user
@@ -374,7 +374,7 @@ class sfp_template(SpiderFootPlugin):
             # directly in case the key doesn't exist.
             os = rec.get('os')
             if os:
-                evt = SpiderFootEvent("OPERATING_SYSTEM", f"{os} ({addr})", self.__name__, pevent)
+                evt = NecroSpiderEvent("OPERATING_SYSTEM", f"{os} ({addr})", self.__name__, pevent)
                 self.notifyListeners(evt)
 
 # End of sfp_template class

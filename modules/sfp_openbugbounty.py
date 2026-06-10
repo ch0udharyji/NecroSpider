@@ -11,10 +11,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_openbugbounty(SpiderFootPlugin):
+class sfp_openbugbounty(NecroSpiderPlugin):
 
     meta = {
         'name': "Open Bug Bounty",
@@ -114,7 +114,7 @@ class sfp_openbugbounty(SpiderFootPlugin):
 
         for n in data:
             # Notify other modules of what you've found
-            e = SpiderFootEvent("VULNERABILITY_DISCLOSURE", n, self.__name__, event)
+            e = NecroSpiderEvent("VULNERABILITY_DISCLOSURE", n, self.__name__, event)
             self.notifyListeners(e)
 
 # End of sfp_openbugbounty class

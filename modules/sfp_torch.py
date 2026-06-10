@@ -14,10 +14,10 @@
 import re
 from urllib.parse import urlencode
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_torch(SpiderFootPlugin):
+class sfp_torch(NecroSpiderPlugin):
 
     meta = {
         'name': "TORCH",
@@ -143,7 +143,7 @@ class sfp_torch(SpiderFootPlugin):
                         if eventData not in res['content']:
                             self.debug(f"Ignoring {link} as no mention of {eventData}")
                             continue
-                        evt = SpiderFootEvent("DARKNET_MENTION_URL", link, self.__name__, event)
+                        evt = NecroSpiderEvent("DARKNET_MENTION_URL", link, self.__name__, event)
                         self.notifyListeners(evt)
                         linkcount += 1
 
@@ -155,12 +155,12 @@ class sfp_torch(SpiderFootPlugin):
                             continue
 
                         darkcontent = res['content'][startIndex:endIndex]
-                        evt = SpiderFootEvent("DARKNET_MENTION_CONTENT", f"...{darkcontent}...",
+                        evt = NecroSpiderEvent("DARKNET_MENTION_CONTENT", f"...{darkcontent}...",
                                               self.__name__, evt)
                         self.notifyListeners(evt)
 
                     else:
-                        evt = SpiderFootEvent("DARKNET_MENTION_URL", link, self.__name__, event)
+                        evt = NecroSpiderEvent("DARKNET_MENTION_URL", link, self.__name__, event)
                         self.notifyListeners(evt)
                         linkcount += 1
 

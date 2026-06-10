@@ -16,10 +16,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_onionsearchengine(SpiderFootPlugin):
+class sfp_onionsearchengine(NecroSpiderPlugin):
 
     meta = {
         'name': "Onionsearchengine.com",
@@ -150,7 +150,7 @@ class sfp_onionsearchengine(SpiderFootPlugin):
                     continue
 
                 if not self.opts['fetchlinks']:
-                    evt = SpiderFootEvent("DARKNET_MENTION_URL", link, self.__name__, event)
+                    evt = NecroSpiderEvent("DARKNET_MENTION_URL", link, self.__name__, event)
                     self.notifyListeners(evt)
                     continue
 
@@ -167,7 +167,7 @@ class sfp_onionsearchengine(SpiderFootPlugin):
                     self.debug("Ignoring " + link + " as no mention of " + eventData)
                     continue
 
-                evt = SpiderFootEvent("DARKNET_MENTION_URL", link, self.__name__, event)
+                evt = NecroSpiderEvent("DARKNET_MENTION_URL", link, self.__name__, event)
                 self.notifyListeners(evt)
 
                 try:
@@ -178,7 +178,7 @@ class sfp_onionsearchengine(SpiderFootPlugin):
                     continue
 
                 data = res['content'][startIndex:endIndex]
-                evt = SpiderFootEvent("DARKNET_MENTION_CONTENT", "..." + data + "...",
+                evt = NecroSpiderEvent("DARKNET_MENTION_CONTENT", "..." + data + "...",
                                       self.__name__, evt)
                 self.notifyListeners(evt)
 

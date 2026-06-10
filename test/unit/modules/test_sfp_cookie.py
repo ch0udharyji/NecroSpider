@@ -2,8 +2,8 @@ import pytest
 import unittest
 
 from modules.sfp_cookie import sfp_cookie
-from sflib import SpiderFoot
-from spiderfoot import SpiderFootEvent, SpiderFootTarget
+from sflib import NecroSpider
+from necrospider import NecroSpiderEvent, NecroSpiderTarget
 
 
 @pytest.mark.usefixtures
@@ -14,7 +14,7 @@ class TestModuleCookie(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_cookie()
         module.setup(sf, dict())
 
@@ -27,14 +27,14 @@ class TestModuleCookie(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_handleEvent_event_data_containing_cookie_should_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_cookie()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -54,14 +54,14 @@ class TestModuleCookie(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'WEBSERVER_HTTPHEADERS'
         event_data = '{"cookie": "example cookie"}'
         event_module = 'sfp_spider'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
-        evt.actualSource = "https://spiderfoot.net/example"
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
+        evt.actualSource = "https://necrospider.net/example"
 
         with self.assertRaises(Exception) as cm:
             module.handleEvent(evt)
@@ -69,14 +69,14 @@ class TestModuleCookie(unittest.TestCase):
         self.assertEqual("OK", str(cm.exception))
 
     def test_handleEvent_event_data_not_containing_cookie_should_not_return_event(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         module = sfp_cookie()
         module.setup(sf, dict())
 
-        target_value = 'spiderfoot.net'
+        target_value = 'necrospider.net'
         target_type = 'INTERNET_NAME'
-        target = SpiderFootTarget(target_value, target_type)
+        target = NecroSpiderTarget(target_value, target_type)
         module.setTarget(target)
 
         def new_notifyListeners(self, event):
@@ -88,14 +88,14 @@ class TestModuleCookie(unittest.TestCase):
         event_data = 'example data'
         event_module = ''
         source_event = ''
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
 
         event_type = 'WEBSERVER_HTTPHEADERS'
         event_data = '{"not cookie": "example cookie"}'
         event_module = 'sfp_spider'
         source_event = evt
-        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
-        evt.actualSource = "https://spiderfoot.net/example"
+        evt = NecroSpiderEvent(event_type, event_data, event_module, source_event)
+        evt.actualSource = "https://necrospider.net/example"
 
         result = module.handleEvent(evt)
 

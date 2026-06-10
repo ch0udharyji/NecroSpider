@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_coinblocker(SpiderFootPlugin):
+class sfp_coinblocker(NecroSpiderPlugin):
 
     meta = {
         'name': "CoinBlocker Lists",
@@ -187,10 +187,10 @@ class sfp_coinblocker(SpiderFootPlugin):
         url = "https://zerodot1.gitlab.io/CoinBlockerLists/list.txt"
         text = f"CoinBlocker [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_coinblocker class

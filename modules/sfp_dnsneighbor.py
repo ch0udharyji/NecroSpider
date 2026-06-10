@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_dnsneighbor
-# Purpose:      SpiderFoot plug-in for gathering IP addresses from sub-domains
+# Purpose:      NecroSpider plug-in for gathering IP addresses from sub-domains
 #               and hostnames identified, and optionally affiliates.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import ipaddress
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsneighbor(SpiderFootPlugin):
+class sfp_dnsneighbor(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Look-aside",
@@ -190,7 +190,7 @@ class sfp_dnsneighbor(SpiderFootPlugin):
             return None
 
         # Report the host
-        evt = SpiderFootEvent(htype, host, self.__name__, parentEvent)
+        evt = NecroSpiderEvent(htype, host, self.__name__, parentEvent)
         self.notifyListeners(evt)
 
         return evt

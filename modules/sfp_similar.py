@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_similar
-# Purpose:      SpiderFoot plug-in for identifying domains that look similar
+# Purpose:      NecroSpider plug-in for identifying domains that look similar
 #               to the one being queried.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -11,7 +11,7 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 nearchars = {
     'a': ['4', 's'],
@@ -58,7 +58,7 @@ pairs = {
 }
 
 
-class sfp_similar(SpiderFootPlugin):
+class sfp_similar(NecroSpiderPlugin):
 
     meta = {
         'name': "Similar Domain Finder",
@@ -155,7 +155,7 @@ class sfp_similar(SpiderFootPlugin):
                 for domain in [f"{d}{tld}", f"www.{d}{tld}"]:
                     if self.sf.resolveHost(domain) or self.sf.resolveHost6(domain):
                         self.debug(f"Resolved {domain}")
-                        evt = SpiderFootEvent("SIMILARDOMAIN", f"{d}{tld}", self.__name__, event)
+                        evt = NecroSpiderEvent("SIMILARDOMAIN", f"{d}{tld}", self.__name__, event)
                         self.notifyListeners(evt)
                         break
             except Exception:

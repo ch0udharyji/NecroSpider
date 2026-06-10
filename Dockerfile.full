@@ -1,7 +1,7 @@
 #
-# Spiderfoot Dockerfile (Full - includes all CLI tools, etc.)
+# Necrospider Dockerfile (Full - includes all CLI tools, etc.)
 #
-# http://www.spiderfoot.net
+# http://www.necrospider.net
 #
 # Written by: TheTechromancer
 #
@@ -28,9 +28,9 @@ RUN git clone https://github.com/urbanadventurer/WhatWeb \
     && gem install rchardet mongo json && cd /tools/WhatWeb \
     && bundle install && cd /tools
 
-RUN groupadd spiderfoot \
-    && useradd -m -g spiderfoot -d /home/spiderfoot -s /sbin/nologin \
-    -c "SpiderFoot User" spiderfoot
+RUN groupadd necrospider \
+    && useradd -m -g necrospider -d /home/necrospider -s /sbin/nologin \
+    -c "NecroSpider User" necrospider
 
 # Install RetireJS
 RUN apt remove -y cmdtest \
@@ -67,18 +67,18 @@ RUN git clone https://github.com/drwetter/testssl.sh.git
 RUN pip3 install snallygaster trufflehog
 
 # Place database and logs outside installation directory
-ENV SPIDERFOOT_DATA /var/lib/spiderfoot
-ENV SPIDERFOOT_LOGS /var/lib/spiderfoot/log
-ENV SPIDERFOOT_CACHE /var/lib/spiderfoot/cache
+ENV NECROSPIDER_DATA /var/lib/necrospider
+ENV NECROSPIDER_LOGS /var/lib/necrospider/log
+ENV NECROSPIDER_CACHE /var/lib/necrospider/cache
 
-RUN mkdir -p $SPIDERFOOT_DATA || true \
-    && mkdir -p $SPIDERFOOT_LOGS || true \
-    && mkdir -p $SPIDERFOOT_CACHE || true \
-    && chown spiderfoot:spiderfoot $SPIDERFOOT_DATA \
-    && chown spiderfoot:spiderfoot $SPIDERFOOT_LOGS \
-    && chown spiderfoot:spiderfoot $SPIDERFOOT_CACHE
+RUN mkdir -p $NECROSPIDER_DATA || true \
+    && mkdir -p $NECROSPIDER_LOGS || true \
+    && mkdir -p $NECROSPIDER_CACHE || true \
+    && chown necrospider:necrospider $NECROSPIDER_DATA \
+    && chown necrospider:necrospider $NECROSPIDER_LOGS \
+    && chown necrospider:necrospider $NECROSPIDER_CACHE
 
-WORKDIR /home/spiderfoot
+WORKDIR /home/necrospider
 COPY . .
 
 ENV VIRTUAL_ENV=/opt/venv
@@ -89,11 +89,11 @@ RUN python -m venv "$VIRTUAL_ENV"
 ARG REQUIREMENTS=requirements.txt
 COPY "$REQUIREMENTS" requirements.txt
 
-RUN chown -R spiderfoot:spiderfoot /tools
-RUN chown -R spiderfoot:spiderfoot "$VIRTUAL_ENV"
-RUN chown -R spiderfoot:spiderfoot "/home/spiderfoot"
+RUN chown -R necrospider:necrospider /tools
+RUN chown -R necrospider:necrospider "$VIRTUAL_ENV"
+RUN chown -R necrospider:necrospider "/home/necrospider"
 
-USER spiderfoot
+USER necrospider
 
 RUN pip install -U pip
 RUN pip install -r "$REQUIREMENTS"
@@ -109,13 +109,13 @@ RUN git clone https://github.com/Tuhinshubhra/CMSeeK && cd CMSeeK \
 RUN git clone https://github.com/EnableSecurity/wafw00f \
     && cd wafw00f \
     && python3 setup.py install
-WORKDIR /home/spiderfoot
+WORKDIR /home/necrospider
 
 EXPOSE 5001
 
 # Run the application
-CMD python -c 'from spiderfoot import SpiderFootDb; \
-db = SpiderFootDb({"__database": "/var/lib/spiderfoot/spiderfoot.db"}); \
+CMD python -c 'from necrospider import NecroSpiderDb; \
+db = NecroSpiderDb({"__database": "/var/lib/necrospider/necrospider.db"}); \
 db.configSet({ \
     "sfp_tool_dnstwist:dnstwistpath": "/opt/venv/bin/dnstwist", \
     "sfp_tool_cmseek:cmseekpath": "/tools/CMSeeK/cmseek.py", \

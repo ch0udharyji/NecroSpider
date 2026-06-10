@@ -20,10 +20,10 @@ from datetime import datetime
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_censys(SpiderFootPlugin):
+class sfp_censys(NecroSpiderPlugin):
 
     meta = {
         'name': "Censys",
@@ -119,7 +119,7 @@ class sfp_censys(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://search.censys.io/api/v2/hosts/{qry}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers
         )
 
@@ -143,7 +143,7 @@ class sfp_censys(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://search.censys.io/api/v2/hosts/search/?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
             headers=headers
         )
 
@@ -259,15 +259,15 @@ class sfp_censys(SpiderFootPlugin):
 
             # For netblocks, we need to create the associated IP address event first.
             if eventName == 'NETBLOCK_OWNER':
-                pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             elif eventName == 'NETBLOCKV6_OWNER':
-                pevent = SpiderFootEvent("IPV6_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IPV6_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             else:
                 pevent = event
 
-            e = SpiderFootEvent("RAW_RIR_DATA", json.dumps(rec), self.__name__, pevent)
+            e = NecroSpiderEvent("RAW_RIR_DATA", json.dumps(rec), self.__name__, pevent)
             self.notifyListeners(e)
 
             try:
@@ -297,7 +297,7 @@ class sfp_censys(SpiderFootPlugin):
                         ]
                     )
                     if geoinfo:
-                        e = SpiderFootEvent("GEOINFO", geoinfo, self.__name__, pevent)
+                        e = NecroSpiderEvent("GEOINFO", geoinfo, self.__name__, pevent)
                         self.notifyListeners(e)
             except Exception as e:
                 self.error(f"Error encountered processing location record for {addr}: {e}")
@@ -315,10 +315,10 @@ class sfp_censys(SpiderFootPlugin):
                             banner = service.get('banner')
 
                             if transport_protocol == "UDP":
-                                evt = SpiderFootEvent("UDP_PORT_OPEN", f"{addr}:{port}", self.__name__, pevent)
+                                evt = NecroSpiderEvent("UDP_PORT_OPEN", f"{addr}:{port}", self.__name__, pevent)
                                 self.notifyListeners(evt)
                             elif transport_protocol == "TCP":
-                                evt = SpiderFootEvent("TCP_PORT_OPEN", f"{addr}:{port}", self.__name__, pevent)
+                                evt = NecroSpiderEvent("TCP_PORT_OPEN", f"{addr}:{port}", self.__name__, pevent)
                                 self.notifyListeners(evt)
                                 if banner:
                                     tcp_banners.append(banner)
@@ -345,7 +345,7 @@ class sfp_censys(SpiderFootPlugin):
                             if response:
                                 headers = response.get('headers')
                                 if headers:
-                                    e = SpiderFootEvent(
+                                    e = NecroSpiderEvent(
                                         "WEBSERVER_HTTPHEADERS",
                                         json.dumps(headers, ensure_ascii=False),
                                         self.__name__,
@@ -355,11 +355,11 @@ class sfp_censys(SpiderFootPlugin):
                                     self.notifyListeners(e)
 
                     for software in set(softwares):
-                        evt = SpiderFootEvent("SOFTWARE_USED", software, self.__name__, pevent)
+                        evt = NecroSpiderEvent("SOFTWARE_USED", software, self.__name__, pevent)
                         self.notifyListeners(evt)
 
                     for banner in set(tcp_banners):
-                        evt = SpiderFootEvent("TCP_PORT_OPEN_BANNER", str(banner), self.__name__, pevent)
+                        evt = NecroSpiderEvent("TCP_PORT_OPEN_BANNER", str(banner), self.__name__, pevent)
                         self.notifyListeners(evt)
             except Exception as e:
                 self.error(f"Error encountered processing services record for {addr}: {e}")
@@ -369,15 +369,15 @@ class sfp_censys(SpiderFootPlugin):
                 if autonomous_system:
                     asn = autonomous_system.get('asn')
                     if asn:
-                        e = SpiderFootEvent("BGP_AS_MEMBER", str(asn), self.__name__, pevent)
+                        e = NecroSpiderEvent("BGP_AS_MEMBER", str(asn), self.__name__, pevent)
                         self.notifyListeners(e)
 
                     bgp_prefix = autonomous_system.get('bgp_prefix')
                     if bgp_prefix and self.sf.validIpNetwork(bgp_prefix):
                         if ':' in bgp_prefix:
-                            e = SpiderFootEvent("NETBLOCKV6_MEMBER", str(bgp_prefix), self.__name__, pevent)
+                            e = NecroSpiderEvent("NETBLOCKV6_MEMBER", str(bgp_prefix), self.__name__, pevent)
                         else:
-                            e = SpiderFootEvent("NETBLOCK_MEMBER", str(bgp_prefix), self.__name__, pevent)
+                            e = NecroSpiderEvent("NETBLOCK_MEMBER", str(bgp_prefix), self.__name__, pevent)
                         self.notifyListeners(e)
             except Exception as e:
                 self.error(f"Error encountered processing autonomous_system record for {addr}: {e}")
@@ -398,7 +398,7 @@ class sfp_censys(SpiderFootPlugin):
                     )
 
                     if os:
-                        e = SpiderFootEvent("OPERATING_SYSTEM", os, self.__name__, pevent)
+                        e = NecroSpiderEvent("OPERATING_SYSTEM", os, self.__name__, pevent)
                         self.notifyListeners(e)
             except Exception as e:
                 self.error(f"Error encountered processing operating_system record for {addr}: {e}")

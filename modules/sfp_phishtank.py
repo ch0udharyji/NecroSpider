@@ -10,10 +10,10 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_phishtank(SpiderFootPlugin):
+class sfp_phishtank(NecroSpiderPlugin):
 
     meta = {
         'name': "PhishTank",
@@ -97,7 +97,7 @@ class sfp_phishtank(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             "https://data.phishtank.com/data/online-valid.csv",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot",
+            useragent="NecroSpider",
         )
 
         if res['code'] != "200":
@@ -189,10 +189,10 @@ class sfp_phishtank(SpiderFootPlugin):
         url = f"https://www.phishtank.com/phish_detail.php?phish_id={phish_id}"
         text = f"PhishTank [{eventData}]\n<SFURL>{url}</SFURL>"
 
-        evt = SpiderFootEvent(malicious_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(malicious_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent(blacklist_type, text, self.__name__, event)
+        evt = NecroSpiderEvent(blacklist_type, text, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_phishtank class

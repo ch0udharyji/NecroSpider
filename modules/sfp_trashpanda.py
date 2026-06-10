@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_trashpanda
-# Purpose:      Spiderfoot plugin to query Trashpanda - got-hacked.wtf API to gather intelligence about
+# Purpose:      Necrospider plugin to query Trashpanda - got-hacked.wtf API to gather intelligence about
 #               mentions of your target in paste sites like Pastebin, Ghostbin and Zeropaste
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -15,10 +15,10 @@ import base64
 import json
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_trashpanda(SpiderFootPlugin):
+class sfp_trashpanda(NecroSpiderPlugin):
 
     meta = {
         'name': "Trashpanda",
@@ -138,7 +138,7 @@ class sfp_trashpanda(SpiderFootPlugin):
 
         leaksiteUrls = set()
         for row in data:
-            evt = SpiderFootEvent("PASSWORD_COMPROMISED", f"{row.get('email')}:{row.get('password')} [{row.get('paste')}]", self.__name__, event)
+            evt = NecroSpiderEvent("PASSWORD_COMPROMISED", f"{row.get('email')}:{row.get('password')} [{row.get('paste')}]", self.__name__, event)
             self.notifyListeners(evt)
 
             leaksiteUrls.add(row.get("paste"))
@@ -164,10 +164,10 @@ class sfp_trashpanda(SpiderFootPlugin):
                 ) is None:
                     continue
 
-                evt = SpiderFootEvent("LEAKSITE_URL", leaksiteUrl, self.__name__, event)
+                evt = NecroSpiderEvent("LEAKSITE_URL", leaksiteUrl, self.__name__, event)
                 self.notifyListeners(evt)
 
-                evt = SpiderFootEvent("LEAKSITE_CONTENT", res['content'], self.__name__, evt)
+                evt = NecroSpiderEvent("LEAKSITE_CONTENT", res['content'], self.__name__, evt)
                 self.notifyListeners(evt)
             except Exception as e:
                 self.debug(f"Error while fetching leaksite content : {str(e)}")

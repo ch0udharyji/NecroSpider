@@ -17,10 +17,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_koodous(SpiderFootPlugin):
+class sfp_koodous(NecroSpiderPlugin):
 
     meta = {
         'name': "Koodous",
@@ -219,12 +219,12 @@ class sfp_koodous(SpiderFootPlugin):
 
                 app_data = f"{app_full_name}\n<SFURL>https://koodous.com/apks/{sha256}</SFURL>"
 
-                evt = SpiderFootEvent('APPSTORE_ENTRY', app_data, self.__name__, event)
+                evt = NecroSpiderEvent('APPSTORE_ENTRY', app_data, self.__name__, event)
                 self.notifyListeners(evt)
                 found = True
 
             if found:
-                evt = SpiderFootEvent('RAW_RIR_DATA', json.dumps(data), self.__name__, event)
+                evt = NecroSpiderEvent('RAW_RIR_DATA', json.dumps(data), self.__name__, event)
                 self.notifyListeners(evt)
 
             if not data.get('next'):

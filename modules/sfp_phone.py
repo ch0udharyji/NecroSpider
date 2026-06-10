@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_phone
-# Purpose:      SpiderFoot plug-in for scanning retrieved content by other
+# Purpose:      NecroSpider plug-in for scanning retrieved content by other
 #               modules (such as sfp_spider) to identify phone numbers, and
 #               lookup carrier information in Google's libphonenumber DB.
 #
@@ -16,10 +16,10 @@ import phonenumbers
 from phonenumbers import carrier
 
 # from phonenumbers import geocoder
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_phone(SpiderFootPlugin):
+class sfp_phone(NecroSpiderPlugin):
 
     meta = {
         'name': "Phone Number Extractor",
@@ -66,7 +66,7 @@ class sfp_phone(SpiderFootPlugin):
 
             for match in phonenumbers.PhoneNumberMatcher(content, region=None):
                 n = phonenumbers.format_number(match.number, phonenumbers.PhoneNumberFormat.E164)
-                evt = SpiderFootEvent("PHONE_NUMBER", n, self.__name__, event)
+                evt = NecroSpiderEvent("PHONE_NUMBER", n, self.__name__, event)
                 if event.moduleDataSource:
                     evt.moduleDataSource = event.moduleDataSource
                 else:
@@ -90,7 +90,7 @@ class sfp_phone(SpiderFootPlugin):
                 self.debug(f"No carrier information found for {eventData}")
                 return
 
-            evt = SpiderFootEvent("PROVIDER_TELCO", number_carrier, self.__name__, event)
+            evt = NecroSpiderEvent("PROVIDER_TELCO", number_carrier, self.__name__, event)
 
             if event.moduleDataSource:
                 evt.moduleDataSource = event.moduleDataSource
@@ -106,7 +106,7 @@ class sfp_phone(SpiderFootPlugin):
             #     return
 
             # if location:
-            #     evt = SpiderFootEvent("GEOINFO", location, self.__name__, event)
+            #     evt = NecroSpiderEvent("GEOINFO", location, self.__name__, event)
             #     self.notifyListeners(evt)
             # else:
             #     self.debug("No location information found for " + eventData)

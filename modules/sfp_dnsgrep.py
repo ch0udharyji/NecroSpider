@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_dnsgrep
-# Purpose:     SpiderFoot plug-in for retrieving domain names
+# Purpose:     NecroSpider plug-in for retrieving domain names
 #              from Rapid7 Sonar Project data sets using DNSGrep API.
 #              - https://opendata.rapid7.com/about/
 #              - https://blog.erbbysam.com/index.php/2019/02/09/dnsgrep/
@@ -19,10 +19,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsgrep(SpiderFootPlugin):
+class sfp_dnsgrep(NecroSpiderPlugin):
 
     meta = {
         'name': "DNSGrep",
@@ -124,7 +124,7 @@ class sfp_dnsgrep(SpiderFootPlugin):
             self.info("No DNS records found for " + eventData)
             return
 
-        evt = SpiderFootEvent('RAW_RIR_DATA', str(data), self.__name__, event)
+        evt = NecroSpiderEvent('RAW_RIR_DATA', str(data), self.__name__, event)
         self.notifyListeners(evt)
 
         domains = list()
@@ -164,7 +164,7 @@ class sfp_dnsgrep(SpiderFootPlugin):
                 self.debug(f"Host {domain} could not be resolved")
                 evt_type += "_UNRESOLVED"
 
-            evt = SpiderFootEvent(evt_type, domain, self.__name__, event)
+            evt = NecroSpiderEvent(evt_type, domain, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_dnsgrep class

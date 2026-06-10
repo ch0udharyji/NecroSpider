@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_ipinfo
-# Purpose:     SpiderFoot plug-in to identify the Geo-location of IP addresses
+# Purpose:     NecroSpider plug-in to identify the Geo-location of IP addresses
 #              identified by other modules using ipinfo.io.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -13,10 +13,10 @@
 
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_ipinfo(SpiderFootPlugin):
+class sfp_ipinfo(NecroSpiderPlugin):
 
     meta = {
         'name': "IPInfo.io",
@@ -132,7 +132,7 @@ class sfp_ipinfo(SpiderFootPlugin):
         location = ', '.join([_f for _f in [data.get('city'), data.get('region'), data.get('country')] if _f])
         self.info("Found GeoIP for " + eventData + ": " + location)
 
-        evt = SpiderFootEvent("GEOINFO", location, self.__name__, event)
+        evt = NecroSpiderEvent("GEOINFO", location, self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_ipinfo class

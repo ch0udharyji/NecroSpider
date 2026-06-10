@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_stor_db
-# Purpose:      SpiderFoot plug-in for storing events to the local SpiderFoot
+# Purpose:      NecroSpider plug-in for storing events to the local NecroSpider
 #               SQLite database.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -11,14 +11,14 @@
 # Licence:     MIT
 # -------------------------------------------------------------------------------
 
-from spiderfoot import SpiderFootPlugin
+from necrospider import NecroSpiderPlugin
 
 
-class sfp__stor_db(SpiderFootPlugin):
+class sfp__stor_db(NecroSpiderPlugin):
 
     meta = {
         'name': "Storage",
-        'summary': "Stores scan results into the back-end SpiderFoot database. You will need this."
+        'summary': "Stores scan results into the back-end NecroSpider database. You will need this."
     }
 
     _priority = 0

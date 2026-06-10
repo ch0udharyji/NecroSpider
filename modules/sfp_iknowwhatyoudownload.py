@@ -14,10 +14,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_iknowwhatyoudownload(SpiderFootPlugin):
+class sfp_iknowwhatyoudownload(NecroSpiderPlugin):
 
     meta = {
         'name': "Iknowwhatyoudownload.com",
@@ -91,7 +91,7 @@ class sfp_iknowwhatyoudownload(SpiderFootPlugin):
         res = self.sf.fetchUrl(
             f"https://api.antitor.com/history/peer/?{params}",
             timeout=self.opts['_fetchtimeout'],
-            useragent="SpiderFoot"
+            useragent="NecroSpider"
         )
 
         if res['code'] != "200":
@@ -159,7 +159,7 @@ class sfp_iknowwhatyoudownload(SpiderFootPlugin):
             download_date = d.get("endDate", "Date unknown")
             retdata.append(f"{download_name} ({download_date})")
 
-        e = SpiderFootEvent("MALICIOUS_IPADDR", "\n".join(retdata), self.__name__, event)
+        e = NecroSpiderEvent("MALICIOUS_IPADDR", "\n".join(retdata), self.__name__, event)
         self.notifyListeners(e)
 
 # End of sfp_iknowwhatyoudownload class

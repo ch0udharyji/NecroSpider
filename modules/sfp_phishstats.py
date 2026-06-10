@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:        sfp_phishstats
-# Purpose:     Spiderfoot plugin to search PhishStats API
+# Purpose:     Necrospider plugin to search PhishStats API
 #              to determine if an IP is malicious.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -18,10 +18,10 @@ import urllib.request
 
 from netaddr import IPNetwork
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_phishstats(SpiderFootPlugin):
+class sfp_phishstats(NecroSpiderPlugin):
 
     meta = {
         'name': "PhishStats",
@@ -201,23 +201,23 @@ class sfp_phishstats(SpiderFootPlugin):
             # For netblocks, we need to create the IP address event so that
             # the threat intel event is more meaningful.
             if eventName == 'NETBLOCK_OWNER':
-                pevent = SpiderFootEvent("IP_ADDRESS", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("IP_ADDRESS", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             elif eventName == 'NETBLOCK_MEMBER':
-                pevent = SpiderFootEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
+                pevent = NecroSpiderEvent("AFFILIATE_IPADDR", addr, self.__name__, event)
                 self.notifyListeners(pevent)
             else:
                 pevent = event
 
-            evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, pevent)
+            evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, pevent)
             self.notifyListeners(evt)
 
             text = f"PhishStats [{addr}]"
 
-            evt = SpiderFootEvent(blacklist_type, text, self.__name__, pevent)
+            evt = NecroSpiderEvent(blacklist_type, text, self.__name__, pevent)
             self.notifyListeners(evt)
 
-            evt = SpiderFootEvent(malicious_type, text, self.__name__, pevent)
+            evt = NecroSpiderEvent(malicious_type, text, self.__name__, pevent)
             self.notifyListeners(evt)
 
 # End of sfp_phishstats class

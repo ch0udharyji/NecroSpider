@@ -13,10 +13,10 @@
 
 import re
 
-from spiderfoot import SpiderFootEvent, SpiderFootHelpers, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderHelpers, NecroSpiderPlugin
 
 
-class sfp_pastebin(SpiderFootPlugin):
+class sfp_pastebin(NecroSpiderPlugin):
 
     meta = {
         'name': "PasteBin",
@@ -124,7 +124,7 @@ class sfp_pastebin(SpiderFootPlugin):
                 self.results[link] = True
 
             relevant_links = [
-                link for link in new_links if SpiderFootHelpers.urlBaseUrl(link).endswith(target)
+                link for link in new_links if NecroSpiderHelpers.urlBaseUrl(link).endswith(target)
             ]
 
             for link in relevant_links:
@@ -147,10 +147,10 @@ class sfp_pastebin(SpiderFootPlugin):
                 ) is None:
                     continue
 
-                evt1 = SpiderFootEvent("LEAKSITE_URL", link, self.__name__, event)
+                evt1 = NecroSpiderEvent("LEAKSITE_URL", link, self.__name__, event)
                 self.notifyListeners(evt1)
 
-                evt2 = SpiderFootEvent("LEAKSITE_CONTENT", res['content'], self.__name__, evt1)
+                evt2 = NecroSpiderEvent("LEAKSITE_CONTENT", res['content'], self.__name__, evt1)
                 self.notifyListeners(evt2)
 
 # End of sfp_pastebin class

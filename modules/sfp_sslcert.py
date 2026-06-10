@@ -12,10 +12,10 @@
 
 from urllib.parse import urlparse
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin, SpiderFootHelpers
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin, NecroSpiderHelpers
 
 
-class sfp_sslcert(SpiderFootPlugin):
+class sfp_sslcert(NecroSpiderPlugin):
 
     meta = {
         'name': "SSL Certificate Analyzer",
@@ -109,14 +109,14 @@ class sfp_sslcert(SpiderFootPlugin):
             sock = self.sf.safeSSLSocket(fqdn, port, self.opts['ssltimeout'])
             sock.do_handshake()
             dercert = sock.getpeercert(True)
-            pemcert = SpiderFootHelpers.sslDerToPem(dercert)
+            pemcert = NecroSpiderHelpers.sslDerToPem(dercert)
             cert = self.sf.parseCert(str(pemcert), fqdn, self.opts['certexpiringdays'])
         except Exception as x:
             self.info("Unable to SSL-connect to " + fqdn + " (" + str(x) + ")")
             return
 
         if eventName in ['INTERNET_NAME', 'IP_ADDRESS']:
-            evt = SpiderFootEvent('TCP_PORT_OPEN', fqdn + ':' + str(port), self.__name__, event)
+            evt = NecroSpiderEvent('TCP_PORT_OPEN', fqdn + ':' + str(port), self.__name__, event)
             self.notifyListeners(evt)
 
         if not cert.get('text'):
@@ -125,19 +125,19 @@ class sfp_sslcert(SpiderFootPlugin):
 
         # Generate the event for the raw cert (in text form)
         # Cert raw data text contains a lot of gems..
-        rawevt = SpiderFootEvent("SSL_CERTIFICATE_RAW", cert['text'], self.__name__, event)
+        rawevt = NecroSpiderEvent("SSL_CERTIFICATE_RAW", cert['text'], self.__name__, event)
         self.notifyListeners(rawevt)
 
         if cert.get('issued'):
-            evt = SpiderFootEvent('SSL_CERTIFICATE_ISSUED', cert['issued'], self.__name__, event)
+            evt = NecroSpiderEvent('SSL_CERTIFICATE_ISSUED', cert['issued'], self.__name__, event)
             self.notifyListeners(evt)
 
         if cert.get('issuer'):
-            evt = SpiderFootEvent('SSL_CERTIFICATE_ISSUER', cert['issuer'], self.__name__, event)
+            evt = NecroSpiderEvent('SSL_CERTIFICATE_ISSUER', cert['issuer'], self.__name__, event)
             self.notifyListeners(evt)
 
         if eventName != "IP_ADDRESS" and cert.get('mismatch'):
-            evt = SpiderFootEvent('SSL_CERTIFICATE_MISMATCH', ', '.join(cert.get('hosts')), self.__name__, event)
+            evt = NecroSpiderEvent('SSL_CERTIFICATE_MISMATCH', ', '.join(cert.get('hosts')), self.__name__, event)
             self.notifyListeners(evt)
 
         for san in set(cert.get('altnames', list())):
@@ -151,24 +151,24 @@ class sfp_sslcert(SpiderFootPlugin):
             else:
                 evt_type = 'CO_HOSTED_SITE'
 
-            evt = SpiderFootEvent(evt_type, domain, self.__name__, event)
+            evt = NecroSpiderEvent(evt_type, domain, self.__name__, event)
             self.notifyListeners(evt)
 
             if self.sf.isDomain(domain, self.opts['_internettlds']):
                 if evt_type == 'CO_HOSTED_SITE':
-                    evt = SpiderFootEvent('CO_HOSTED_SITE_DOMAIN', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('CO_HOSTED_SITE_DOMAIN', domain, self.__name__, event)
                     self.notifyListeners(evt)
                 else:
-                    evt = SpiderFootEvent('DOMAIN_NAME', domain, self.__name__, event)
+                    evt = NecroSpiderEvent('DOMAIN_NAME', domain, self.__name__, event)
                     self.notifyListeners(evt)
 
         if cert.get('expired'):
-            evt = SpiderFootEvent("SSL_CERTIFICATE_EXPIRED", cert.get('expirystr', 'Unknown'), self.__name__, event)
+            evt = NecroSpiderEvent("SSL_CERTIFICATE_EXPIRED", cert.get('expirystr', 'Unknown'), self.__name__, event)
             self.notifyListeners(evt)
             return
 
         if cert.get('expiring'):
-            evt = SpiderFootEvent("SSL_CERTIFICATE_EXPIRING", cert.get('expirystr', 'Unknown'), self.__name__, event)
+            evt = NecroSpiderEvent("SSL_CERTIFICATE_EXPIRING", cert.get('expirystr', 'Unknown'), self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_sslcert class

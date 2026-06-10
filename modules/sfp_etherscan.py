@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_etherscan
-# Purpose:      SpiderFoot plug-in to look up a ethereum wallet's balance by
+# Purpose:      NecroSpider plug-in to look up a ethereum wallet's balance by
 #               querying etherscan.io.
 #
 # Author:      Krishnasis Mandal <krishnasis@hotmail.com>
@@ -14,10 +14,10 @@
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_etherscan(SpiderFootPlugin):
+class sfp_etherscan(NecroSpiderPlugin):
 
     meta = {
         'name': "Etherscan",
@@ -131,10 +131,10 @@ class sfp_etherscan(SpiderFootPlugin):
         # Value returned by etherscan was too large in comparison to actual wallet balance
         balance = float(data.get('result')) / 1000000000000000000
 
-        evt = SpiderFootEvent("ETHEREUM_BALANCE", f"{str(balance)} ETH", self.__name__, event)
+        evt = NecroSpiderEvent("ETHEREUM_BALANCE", f"{str(balance)} ETH", self.__name__, event)
         self.notifyListeners(evt)
 
-        evt = SpiderFootEvent("RAW_RIR_DATA", str(data), self.__name__, event)
+        evt = NecroSpiderEvent("RAW_RIR_DATA", str(data), self.__name__, event)
         self.notifyListeners(evt)
 
 # End of sfp_etherscan class

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_dnsbrute
-# Purpose:      SpiderFoot plug-in for attempting to resolve through brute-forcing
+# Purpose:      NecroSpider plug-in for attempting to resolve through brute-forcing
 #               common hostnames.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -16,10 +16,10 @@ import random
 import threading
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_dnsbrute(SpiderFootPlugin):
+class sfp_dnsbrute(NecroSpiderPlugin):
 
     meta = {
         'name': "DNS Brute-forcer",
@@ -66,13 +66,13 @@ class sfp_dnsbrute(SpiderFootPlugin):
             self.opts[opt] = userOpts[opt]
 
         if self.opts['commons']:
-            with importlib.resources.open_text('spiderfoot.dicts', 'subdomains.txt') as f:
+            with importlib.resources.open_text('necrospider.dicts', 'subdomains.txt') as f:
                 for s in f.readlines():
                     s = s.strip()
                     self.sublist[s] = True
 
         if self.opts['top10000']:
-            with importlib.resources.open_text('spiderfoot.dicts', 'subdomains-10000.txt') as f:
+            with importlib.resources.open_text('necrospider.dicts', 'subdomains-10000.txt') as f:
                 for s in f.readlines():
                     s = s.strip()
                     self.sublist[s] = True
@@ -133,7 +133,7 @@ class sfp_dnsbrute(SpiderFootPlugin):
     def sendEvent(self, source, result):
         self.info("Found a brute-forced host: " + result)
         # Report the host
-        evt = SpiderFootEvent("INTERNET_NAME", result, self.__name__, source)
+        evt = NecroSpiderEvent("INTERNET_NAME", result, self.__name__, source)
         self.notifyListeners(evt)
 
     # Handle events sent to this module

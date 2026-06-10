@@ -13,10 +13,10 @@
 import base64
 import json
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_riskiq(SpiderFootPlugin):
+class sfp_riskiq(NecroSpiderPlugin):
 
     meta = {
         'name': "RiskIQ",
@@ -125,7 +125,7 @@ class sfp_riskiq(SpiderFootPlugin):
 
         # Be more forgiving with the timeout as some queries for subnets can be slow
         res = self.sf.fetchUrl(url, timeout=30,
-                               useragent="SpiderFoot", headers=headers,
+                               useragent="NecroSpider", headers=headers,
                                postData=post)
 
         if res['code'] in ["400", "429", "500", "403"]:
@@ -193,13 +193,13 @@ class sfp_riskiq(SpiderFootPlugin):
 
                     if self.getTarget().matches(host, includeChildren=True):
                         if self.sf.resolveHost(host) or self.sf.resolveHost6(host):
-                            e = SpiderFootEvent("INTERNET_NAME", host, self.__name__, event)
+                            e = NecroSpiderEvent("INTERNET_NAME", host, self.__name__, event)
                         else:
-                            e = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
+                            e = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", host, self.__name__, event)
                         self.notifyListeners(e)
 
                         if self.sf.isDomain(host, self.opts['_internettlds']):
-                            e = SpiderFootEvent("DOMAIN_NAME", host, self.__name__, event)
+                            e = NecroSpiderEvent("DOMAIN_NAME", host, self.__name__, event)
                             self.notifyListeners(e)
 
         if eventName == 'EMAILADDR':
@@ -214,11 +214,11 @@ class sfp_riskiq(SpiderFootPlugin):
                         t = "NETBLOCK_OWNER"
                     else:
                         t = "AFFILIATE_INTERNET_NAME"
-                    e = SpiderFootEvent(t, r['domain'], self.__name__, event)
+                    e = NecroSpiderEvent(t, r['domain'], self.__name__, event)
                     self.notifyListeners(e)
 
                     if t == "AFFILIATE_INTERNET_NAME" and self.sf.isDomain(r['domain'], self.opts['_internettlds']):
-                        evt = SpiderFootEvent("AFFILIATE_DOMAIN_NAME", r['domain'], self.__name__, event)
+                        evt = NecroSpiderEvent("AFFILIATE_DOMAIN_NAME", r['domain'], self.__name__, event)
                         self.notifyListeners(evt)
 
             return
@@ -260,18 +260,18 @@ class sfp_riskiq(SpiderFootPlugin):
                 if not self.opts['cohostsamedomain']:
                     if self.getTarget().matches(co, includeParents=True):
                         if self.sf.resolveHost(co) or self.sf.resolveHost6(co):
-                            e = SpiderFootEvent("INTERNET_NAME", co, self.__name__, event)
+                            e = NecroSpiderEvent("INTERNET_NAME", co, self.__name__, event)
                         else:
-                            e = SpiderFootEvent("INTERNET_NAME_UNRESOLVED", co, self.__name__, event)
+                            e = NecroSpiderEvent("INTERNET_NAME_UNRESOLVED", co, self.__name__, event)
                         self.notifyListeners(e)
 
                         if self.sf.isDomain(co, self.opts['_internettlds']):
-                            e = SpiderFootEvent("DOMAIN_NAME", co, self.__name__, event)
+                            e = NecroSpiderEvent("DOMAIN_NAME", co, self.__name__, event)
                             self.notifyListeners(e)
                         continue
 
                 if self.cohostcount < self.opts['maxcohost']:
-                    e = SpiderFootEvent("CO_HOSTED_SITE", co, self.__name__, event)
+                    e = NecroSpiderEvent("CO_HOSTED_SITE", co, self.__name__, event)
                     self.notifyListeners(e)
                     self.cohostcount += 1
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_spyonweb
-# Purpose:      SpiderFoot plug-in to search SpyOnWeb for hosts sharing the
+# Purpose:      NecroSpider plug-in to search SpyOnWeb for hosts sharing the
 #               same IP address, Google Analytics code, or Google Adsense code.
 #
 # Author:      <bcoles@gmail.com>
@@ -15,10 +15,10 @@ import datetime
 import json
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_spyonweb(SpiderFootPlugin):
+class sfp_spyonweb(NecroSpiderPlugin):
 
     meta = {
         'name': "SpyOnWeb",
@@ -223,14 +223,14 @@ class sfp_spyonweb(SpiderFootPlugin):
 
             if google_adsense:
                 for r in list(google_adsense.keys()):
-                    evt = SpiderFootEvent("WEB_ANALYTICS_ID", f"Google AdSense: {r}", self.__name__, event)
+                    evt = NecroSpiderEvent("WEB_ANALYTICS_ID", f"Google AdSense: {r}", self.__name__, event)
                     self.notifyListeners(evt)
 
             google_analytics = data.get('analytics')
 
             if google_analytics:
                 for r in list(google_analytics.keys()):
-                    evt = SpiderFootEvent("WEB_ANALYTICS_ID", f"Google Analytics: {r}", self.__name__, event)
+                    evt = NecroSpiderEvent("WEB_ANALYTICS_ID", f"Google Analytics: {r}", self.__name__, event)
                     self.notifyListeners(evt)
 
         # Find affiliate domains for the specified Google AdSense ID or Google Analytics ID
@@ -261,11 +261,11 @@ class sfp_spyonweb(SpiderFootPlugin):
                     self.debug("Record found too old, skipping.")
                     continue
 
-                evt = SpiderFootEvent("AFFILIATE_INTERNET_NAME", r, self.__name__, event)
+                evt = NecroSpiderEvent("AFFILIATE_INTERNET_NAME", r, self.__name__, event)
                 self.notifyListeners(evt)
 
                 if self.sf.isDomain(r, self.opts['_internettlds']):
-                    evt = SpiderFootEvent("AFFILIATE_DOMAIN_NAME", r, self.__name__, event)
+                    evt = NecroSpiderEvent("AFFILIATE_DOMAIN_NAME", r, self.__name__, event)
                     self.notifyListeners(evt)
 
         # Find co-hosts on the same IP address
@@ -291,15 +291,15 @@ class sfp_spyonweb(SpiderFootPlugin):
 
                 if not self.opts['cohostsamedomain']:
                     if self.getTarget().matches(co, includeParents=True):
-                        evt = SpiderFootEvent("INTERNET_NAME", co, self.__name__, event)
+                        evt = NecroSpiderEvent("INTERNET_NAME", co, self.__name__, event)
                         self.notifyListeners(evt)
                         if self.sf.isDomain(co, self.opts['_internettlds']):
-                            evt = SpiderFootEvent("DOMAIN_NAME", co, self.__name__, event)
+                            evt = NecroSpiderEvent("DOMAIN_NAME", co, self.__name__, event)
                             self.notifyListeners(evt)
                         continue
 
                 if self.cohostcount < self.opts['maxcohost']:
-                    evt = SpiderFootEvent("CO_HOSTED_SITE", co, self.__name__, event)
+                    evt = NecroSpiderEvent("CO_HOSTED_SITE", co, self.__name__, event)
                     self.notifyListeners(evt)
                     self.cohostcount += 1
 

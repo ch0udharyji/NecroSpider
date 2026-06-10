@@ -1,17 +1,17 @@
 ## Background
 
-SpiderFoot’s goal is to automate OSINT collection and analysis to the greatest extent possible. Since its inception, SpiderFoot has heavily focused on automating OSINT collection and entity extraction, but the automation of common analysis tasks -- beyond some reporting and visualisations -- has been left entirely to the user. The meant that the strength of SpiderFoot's data collection capabilities has sometimes been its weakness since with so much data collected, users have often needed to export it and use other tools to weed out data of interest.
+NecroSpider’s goal is to automate OSINT collection and analysis to the greatest extent possible. Since its inception, NecroSpider has heavily focused on automating OSINT collection and entity extraction, but the automation of common analysis tasks -- beyond some reporting and visualisations -- has been left entirely to the user. The meant that the strength of NecroSpider's data collection capabilities has sometimes been its weakness since with so much data collected, users have often needed to export it and use other tools to weed out data of interest.
 
 ## Introducing Correlations
 
-We started tackling this analysis gap with the launch of SpiderFoot HX in 2019 through the introduction of the "Correlations" feature. This feature was represented by some 30 "correlation rules" that ran with each scan, analyzing data and presenting results reflecting SpiderFoot's opinionated view on what may be important or interesting. Here are a few of those rules as examples:
+We started tackling this analysis gap with the launch of NecroSpider HX in 2019 through the introduction of the "Correlations" feature. This feature was represented by some 30 "correlation rules" that ran with each scan, analyzing data and presenting results reflecting NecroSpider's opinionated view on what may be important or interesting. Here are a few of those rules as examples:
 * Hosts/IPs reported as malicious by multiple data sources
 * Outlier web servers (can be an indication of shadow IT)
 * Databases exposed on the Internet
 * Open ports revealing software versions
 * and many more.
 
-With the release of SpiderFoot 4.0 we wanted to bring this capability from SpiderFoot HX to the community, but also re-imagine it at the same time so that the community might not simply run rules we provide, but also write their own correlation rules and contribute them back. We also hope that just as with modules, we see a long list of contributions made in the years ahead so that all may benefit.
+With the release of NecroSpider 4.0 we wanted to bring this capability from NecroSpider HX to the community, but also re-imagine it at the same time so that the community might not simply run rules we provide, but also write their own correlation rules and contribute them back. We also hope that just as with modules, we see a long list of contributions made in the years ahead so that all may benefit.
 
 With that said, let's get into what these rules look like and how to write one.
 
@@ -21,7 +21,7 @@ With that said, let's get into what these rules look like and how to write one.
 The rules themselves are written in YAML. Why YAML? It’s easy to read, write, allows for comments and is increasingly commonplace in many modern tools.
 
 ### Rule structure
-The simplest way to think of a SpiderFoot correlation rule is like a simple database query that consists of a few sections:
+The simplest way to think of a NecroSpider correlation rule is like a simple database query that consists of a few sections:
 1. Defining the rule itself (`id`, `version` and `meta` sections).
 2. Stating what you'd like to extract from the scan results (`collections` section).
 3. Grouping that data in some way (`aggregation` section; optional).
@@ -29,7 +29,7 @@ The simplest way to think of a SpiderFoot correlation rule is like a simple data
 4. Presenting the results (`headline` section).
 
 ### Example rule
-Here's an example rule that looks at SpiderFoot scan results for data revealing open TCP ports where the banner (the data returned upon connecting to the port) reports a software version. It does so by applying some regular expressions to the content of `TCP_PORT_OPEN_BANNER` data elements, filtering out some false positives and then grouping the results by the banner itself  so that one correlation result is created per banner revealing a version:
+Here's an example rule that looks at NecroSpider scan results for data revealing open TCP ports where the banner (the data returned upon connecting to the port) reports a software version. It does so by applying some regular expressions to the content of `TCP_PORT_OPEN_BANNER` data elements, filtering out some false positives and then grouping the results by the banner itself  so that one correlation result is created per banner revealing a version:
 
 ```yaml
 id: open_port_version
@@ -74,16 +74,16 @@ sfp_portscan_tcp    Open TCP Port Banner    SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu
 ```
 We can see above that a port was found to be open by the `sfp_portscan_tcp` module, and it happens to include a version. The correlation rule `open_port_version` picked this up and reported it. This is also visible in the web interface:
 
-<img src="https://www.spiderfoot.net/wp-content/uploads/2022/04/sf4correlations.png" />
+<img src="https://www.necrospider.net/wp-content/uploads/2022/04/sf4correlations.png" />
 
 **NOTE:** Rules will only succeed if relevant data exists in your scan results in the first place. In other words, correlation rules analyze scan data, they don't collect data from targets.
 
 ### How it works
-In short, SpiderFoot translates the YAML rules into a combination queries against the backend database of scan results and Python logic to filter and group the results, creating "correlation results" in the SpiderFoot database. These results can be viewed in the SpiderFot web interface or from the SpiderFoot CLI. You can also query them directly out of the SQLite database if you like (they are in the `tbl_scan_correlation_results` table, and the `tbl_scan_correlation_results_events` table maps the events (data elements) to the correlation result).
+In short, NecroSpider translates the YAML rules into a combination queries against the backend database of scan results and Python logic to filter and group the results, creating "correlation results" in the NecroSpider database. These results can be viewed in the SpiderFot web interface or from the NecroSpider CLI. You can also query them directly out of the SQLite database if you like (they are in the `tbl_scan_correlation_results` table, and the `tbl_scan_correlation_results_events` table maps the events (data elements) to the correlation result).
 
 ### The rules
 
-Each rule exists as a YAML file within the `/correlations` folder in the SpiderFoot installation path. Here you can see a list of rules in 4.0, which we hope to grow over time:
+Each rule exists as a YAML file within the `/correlations` folder in the NecroSpider installation path. Here you can see a list of rules in 4.0, which we hope to grow over time:
 
 ```sh
 cert_expired.yaml                    host_only_from_certificatetransparency.yaml  outlier_ipaddress.yaml
@@ -116,7 +116,7 @@ The rules themselves are broken down into the following components:
 
 ### Creating a rule
 
-To create your own rule, simply copy the `template.yaml` file in the `correlations` folder to a meaningful name that matches the ID you intend to provide it, e.g. `aws_cloud_usage.yaml` and edit the rule to fit your needs. Save it and re-start SpiderFoot for the rule to be loaded. If there are any syntax errors, SpiderFoot will abort at startup and (hopefully) give you enough information to know where the error is.
+To create your own rule, simply copy the `template.yaml` file in the `correlations` folder to a meaningful name that matches the ID you intend to provide it, e.g. `aws_cloud_usage.yaml` and edit the rule to fit your needs. Save it and re-start NecroSpider for the rule to be loaded. If there are any syntax errors, NecroSpider will abort at startup and (hopefully) give you enough information to know where the error is.
 
 The `template.yaml` file is also a good next point of reference to better understand the structure of the rules and how to use them. We also recommend taking a look through the actual rules themselves to see the concepts in practice.
 
@@ -132,10 +132,10 @@ The `template.yaml` file is also a good next point of reference to better unders
   * **description**: A longer (can be multi-paragraph) description of the rule.
   * **risk**: The risk level represented by this rule's findings. Can be `INFO`, `LOW`, `MEDIUM`, `HIGH`.
 
-**collection**: A correlation rule contains one or more `collect` blocks. Each `collect` block contains one or more `method` blocks telling SpiderFoot what criteria to use for extracting data from the database and how to filter it down. 
+**collection**: A correlation rule contains one or more `collect` blocks. Each `collect` block contains one or more `method` blocks telling NecroSpider what criteria to use for extracting data from the database and how to filter it down. 
   * **collect**: Technically, the first `method` block in each `collect` block is what actually pulls data from the database, and each subsequent `method` refines that dataset down to what you’re seeking. You may have multiple `collect` blocks overall but the rule remains that within each `collect`, the first `method` pulls data from the database and subsequent `method` blocks within the `collect` refine that data.
 
-    *  **method**: Each `method` block tells SpiderFoot how to collect and refine data. Each `collect` must contain at least one `method` block. Valid methods are `exact` for performing an exact match of the chosen `field` to the supplied `value`, or `regex` to perform regular expression matching.
+    *  **method**: Each `method` block tells NecroSpider how to collect and refine data. Each `collect` must contain at least one `method` block. Valid methods are `exact` for performing an exact match of the chosen `field` to the supplied `value`, or `regex` to perform regular expression matching.
 
     *  **field**: Each `method` block has a `field` upon which the matching should be performed. Valid fields are `type` (e.g. `INTERNET_NAME`), `module` (e.g. `sfp_whois`) and `data`, which would be the value of the data element (e.g. in case of an `INTERNET_NAME`, the `data` would be the hostname). After the first `method` block, you can also prefix the field with `source.`, `child.` or `entity.` to refer to the fields of the source, children or relevant entities of the collected data, respectively (see `multiple_malicious.yaml` and `data_from_docmeta.yaml` as examples of this approach).
 
@@ -191,4 +191,4 @@ If we were to look at `This is some web content: foo` in our rule, here are the 
 
 Notice how the `entity.type` and `entity.data` fields for "This is some web content: foo" is **not** the `LINKED_URL_INTERNAL` data element, but actually the `bar` `INTERNET_NAME` data element. This is because an `INTERNET_NAME` is an entity, but a `LINKED_URL_INTERNAL` is not.
 
-You can look in `spiderfoot/db.py` to see which data types are entities and which are not.
+You can look in `necrospider/db.py` to see which data types are entities and which are not.

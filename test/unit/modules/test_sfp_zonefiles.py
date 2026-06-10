@@ -2,7 +2,7 @@ import pytest
 import unittest
 
 from modules.sfp_zonefiles import sfp_zonefiles
-from sflib import SpiderFoot
+from sflib import NecroSpider
 
 
 @pytest.mark.usefixtures
@@ -13,7 +13,7 @@ class TestModuleZoneFiles(unittest.TestCase):
         self.assertEqual(len(module.opts), len(module.optdescs))
 
     def test_setup(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
         module = sfp_zonefiles()
         module.setup(sf, dict())
 
@@ -26,7 +26,7 @@ class TestModuleZoneFiles(unittest.TestCase):
         self.assertIsInstance(module.producedEvents(), list)
 
     def test_parseApiResponse_nonfatal_http_response_code_should_not_set_errorState(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         http_codes = ["200"]
         for code in http_codes:
@@ -38,7 +38,7 @@ class TestModuleZoneFiles(unittest.TestCase):
                 self.assertFalse(module.errorState)
 
     def test_parseApiResponse_fatal_http_response_error_code_should_set_errorState(self):
-        sf = SpiderFoot(self.default_options)
+        sf = NecroSpider(self.default_options)
 
         http_codes = ["401", "403", "404", "429", "500", "502", "503"]
         for code in http_codes:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------------
 # Name:         sfp_azureblobstorage
-# Purpose:      SpiderFoot plug-in for identifying potential Azure blobs related
+# Purpose:      NecroSpider plug-in for identifying potential Azure blobs related
 #               to the target.
 #
 # Author:      Steve Micallef <steve@binarypool.com>
@@ -15,10 +15,10 @@ import random
 import threading
 import time
 
-from spiderfoot import SpiderFootEvent, SpiderFootPlugin
+from necrospider import NecroSpiderEvent, NecroSpiderPlugin
 
 
-class sfp_azureblobstorage(SpiderFootPlugin):
+class sfp_azureblobstorage(NecroSpiderPlugin):
 
     meta = {
         'name': "Azure Blob Finder",
@@ -71,7 +71,7 @@ class sfp_azureblobstorage(SpiderFootPlugin):
         return ["CLOUD_STORAGE_BUCKET"]
 
     def checkSite(self, url):
-        res = self.sf.fetchUrl(url, timeout=10, useragent="SpiderFoot", noLog=True)
+        res = self.sf.fetchUrl(url, timeout=10, useragent="NecroSpider", noLog=True)
 
         if res['code']:
             with self.lock:
@@ -147,7 +147,7 @@ class sfp_azureblobstorage(SpiderFootPlugin):
         if eventName == "LINKED_URL_EXTERNAL":
             if ".blob.core.windows.net" in eventData:
                 b = self.sf.urlFQDN(eventData)
-                evt = SpiderFootEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
+                evt = NecroSpiderEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
                 self.notifyListeners(evt)
             return
 
@@ -170,7 +170,7 @@ class sfp_azureblobstorage(SpiderFootPlugin):
         # Batch the scans
         ret = self.batchSites(urls)
         for b in ret:
-            evt = SpiderFootEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
+            evt = NecroSpiderEvent("CLOUD_STORAGE_BUCKET", b, self.__name__, event)
             self.notifyListeners(evt)
 
 # End of sfp_azureblobstorage class
