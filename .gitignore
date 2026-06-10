@@ -105,3 +105,4 @@ cover/
 # Documentation #
 #################
 docs/_build/
+cli/target/

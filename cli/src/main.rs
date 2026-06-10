@@ -162,7 +162,6 @@ fn ensure_repo_ready() -> String {
             let stdout = String::from_utf8_lossy(&output.stdout);
             if output.status.success() && !stdout.contains("Already up to date.") {
                 println!("  \x1b[32m✔ NecroSpider has been updated successfully.\x1b[0m");
-                let _ = std::fs::remove_file(format!("{}/.python_deps_installed", repo_dir));
             }
         }
     }
@@ -227,22 +226,18 @@ fn spawn_server(mut cmd: Command, mode: &str) {
 
 fn run_python_mode() {
     let repo_dir = ensure_repo_ready();
-    let marker_file = format!("{}/.python_deps_installed", repo_dir);
-    if !Path::new(&marker_file).exists() {
-        check_and_install_python();
-        
-        let mut pip_cmd = Command::new("pip3");
-        let req_file = format!("{}/requirements.txt", repo_dir);
-        pip_cmd.args(["install", "-r", &req_file]);
-        let _ = run_installation_task(&mut pip_cmd, "Python Packages");
+    
+    check_and_install_python();
+    
+    let mut pip_cmd = Command::new("pip3");
+    let req_file = format!("{}/requirements.txt", repo_dir);
+    pip_cmd.args(["install", "-r", &req_file]);
+    let _ = run_installation_task(&mut pip_cmd, "Python Packages");
 
-        let mut npm_cmd = Command::new("npm");
-        npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
-        npm_cmd.args(["install"]);
-        let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
-        
-        let _ = File::create(marker_file);
-    }
+    let mut npm_cmd = Command::new("npm");
+    npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
+    npm_cmd.args(["install"]);
+    let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
 
     let mut sf_cmd = Command::new("python3");
     sf_cmd.current_dir(&repo_dir);
