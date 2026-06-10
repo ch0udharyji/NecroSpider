@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | NecroSpider CLI</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html" class="logo-link">
+            <img src="assets/logo.png" alt="NecroSpider" class="logo">
+        </a>
+        <div class="links">
+            <a href="docs.html" style="color: white;">Docs</a>
+            <a href="contributors.html">Contributors</a>
+            <a href="https://crates.io/crates/necrospider-cli" target="_blank">Crates.io</a>
+            <a href="https://github.com/ch0udharyji/NecroSpider" target="_blank">GitHub</a>
+            <a href="https://ch0udharyji.com" target="_blank">ch0udharyji.com</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <h1 class="page-title">Architecture & Documentation</h1>
+        
+        <div class="doc-section">
+            <h2>How It Works</h2>
+            <p>NecroSpider can be used offensively (e.g. in a red team exercise) for reconnaissance of a target or defensively to gather information about what an organization has exposed over the Internet.</p>
+            <p>The system operates on a publisher/subscriber cascade model. When a scan starts, it cascades through the modules. For example, a Domain Name target might resolve to an IP Address, triggering the Port Scanner module, which then triggers the Web Scraping module, expanding the intelligence graph exponentially.</p>
+        </div>
+
+        <div class="doc-section">
+            <h2>The Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>1. Rust TUI Launcher</h3>
+                    <p>The entry point. Built entirely in Rust using <code>crossterm</code> and <code>inquire</code>, it manages the environment setup, dynamically downloading Python dependencies or building Docker images on the fly.</p>
+                </div>
+                <div class="tech-card">
+                    <h3>2. Python 3 Backend</h3>
+                    <p>The core intelligence engine. Over 200 modules are written in Python, executing concurrently using multiprocessing for blistering fast data extraction and correlation.</p>
+                </div>
+                <div class="tech-card">
+                    <h3>3. Web UI</h3>
+                    <p>The visual graph dashboard is built with pure HTML5, vanilla CSS, and D3.js. It features a complete dark-mode overhaul with glassmorphism components.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
