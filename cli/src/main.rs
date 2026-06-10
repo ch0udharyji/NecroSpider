@@ -1,4 +1,4 @@
-use inquire::{Select, ui::{RenderConfig, Color as InquireColor, StyleSheet, Styled}};
+use inquire::{Select, Confirm, ui::{RenderConfig, Color as InquireColor, StyleSheet, Styled}};
 use std::process::{Command, Stdio};
 use std::io::{self, BufRead, BufReader};
 use std::thread;
@@ -139,17 +139,42 @@ fn check_and_install_docker() {
 }
 
 fn get_necrospider_dir() -> String {
+    if Path::new("../sf.py").exists() {
+        if let Ok(path) = std::fs::canonicalize("..") {
+            return path.to_string_lossy().into_owned();
+        }
+    }
     let home = std::env::var("HOME").expect("Could not find HOME environment variable");
-    format!("{}/.necrospider", home)
+    format!("{}/.necrospider-app", home)
 }
 
-fn ensure_repo_cloned() -> String {
+fn ensure_repo_ready() -> String {
     let repo_dir = get_necrospider_dir();
-    if !Path::new(&repo_dir).exists() {
-        println!("  \x1b[33m[!] NecroSpider not found locally. Initiating clone...\x1b[0m");
+    let git_dir = format!("{}/.git", repo_dir);
+    
+    if !Path::new(&repo_dir).exists() || !Path::new(&git_dir).exists() {
+        if !Path::new(&repo_dir).exists() {
+            println!("  \x1b[33m[!] NecroSpider not found locally. Initiating clone...\x1b[0m");
+        } else {
+            println!("  \x1b[33m[!] Invalid repository found. Re-cloning...\x1b[0m");
+            let _ = std::fs::remove_dir_all(&repo_dir);
+        }
         let mut cmd = Command::new("git");
         cmd.args(["clone", "https://github.com/ch0udharyji/NecroSpider.git", &repo_dir]);
         run_installation_task(&mut cmd, "Cloning Repository");
+    } else {
+        println!("  \x1b[90mChecking for updates...\x1b[0m");
+        let mut pull_cmd = Command::new("git");
+        pull_cmd.current_dir(&repo_dir);
+        pull_cmd.args(["pull"]);
+        if let Ok(output) = pull_cmd.output() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            if output.status.success() && !stdout.contains("Already up to date.") {
+                println!("  \x1b[32m✔ NecroSpider has been updated successfully.\x1b[0m");
+                let _ = std::fs::remove_file(format!("{}/.python_deps_installed", repo_dir));
+                let _ = std::fs::remove_file(format!("{}/.docker_img_built", repo_dir));
+            }
+        }
     }
     repo_dir
 }
@@ -211,7 +236,7 @@ fn spawn_server(mut cmd: Command, mode: &str) {
 }
 
 fn run_python_mode() {
-    let repo_dir = ensure_repo_cloned();
+    let repo_dir = ensure_repo_ready();
     let marker_file = format!("{}/.python_deps_installed", repo_dir);
     if !Path::new(&marker_file).exists() {
         check_and_install_python();
@@ -220,6 +245,11 @@ fn run_python_mode() {
         let req_file = format!("{}/requirements.txt", repo_dir);
         pip_cmd.args(["install", "-r", &req_file, "--break-system-packages"]);
         if run_installation_task(&mut pip_cmd, "Python Packages") {
+            let mut npm_cmd = Command::new("npm");
+            npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
+            npm_cmd.args(["install"]);
+            let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
+            
             let _ = File::create(marker_file);
         }
     }
@@ -232,7 +262,7 @@ fn run_python_mode() {
 }
 
 fn run_docker_mode() {
-    let repo_dir = ensure_repo_cloned();
+    let repo_dir = ensure_repo_ready();
     let marker_file = format!("{}/.docker_img_built", repo_dir);
     if !Path::new(&marker_file).exists() {
         check_and_install_docker();
@@ -251,10 +281,55 @@ fn run_docker_mode() {
     spawn_server(run_cmd, "Docker Container");
 }
 
+fn run_uninstall() {
+    let ans = Confirm::new("Are you sure you want to completely uninstall NecroSpider and delete all data?")
+        .with_default(false)
+        .prompt();
+
+    match ans {
+        Ok(true) => {
+            println!("\n  \x1b[31m[!] Initiating total uninstallation...\x1b[0m");
+            
+            let home = std::env::var("HOME").expect("Could not find HOME environment variable");
+            
+            let paths_to_remove = vec![
+                format!("{}/.necrospider", home),
+                format!("{}/.necrospider-app", home),
+                format!("{}/.necrospider_history", home),
+            ];
+
+            for p in paths_to_remove {
+                let path = Path::new(&p);
+                if path.exists() {
+                    println!("  \x1b[90mRemoving {}\x1b[0m", p);
+                    if path.is_dir() {
+                        let _ = std::fs::remove_dir_all(path);
+                    } else {
+                        let _ = std::fs::remove_file(path);
+                    }
+                }
+            }
+
+            println!("  \x1b[90mRemoving Docker image (if exists)...\x1b[0m");
+            let mut docker_cmd = Command::new("sudo");
+            docker_cmd.args(["docker", "rmi", "-f", "necrospider"]);
+            docker_cmd.stdout(Stdio::null());
+            docker_cmd.stderr(Stdio::null());
+            let _ = docker_cmd.status();
+
+            println!("  \x1b[32m✔ Uninstallation complete.\x1b[0m");
+            println!("  \x1b[90mNote: You can remove the CLI itself by running `cargo uninstall necrospider-cli`.\x1b[0m\n");
+        }
+        _ => {
+            println!("  \x1b[33mUninstallation cancelled.\x1b[0m");
+        }
+    }
+}
+
 fn main() {
     splash_screen();
 
-    let options = vec!["Python (Local)", "Docker"];
+    let options = vec!["Python (Local)", "Docker", "Uninstall"];
     
     let ans = Select::new("Engine:", options.clone())
         .with_render_config(get_render_config())
@@ -266,6 +341,8 @@ fn main() {
                 run_python_mode();
             } else if choice == "Docker" {
                 run_docker_mode();
+            } else if choice == "Uninstall" {
+                run_uninstall();
             }
         }
         Err(_) => println!("  \x1b[31m[!] Terminated.\x1b[0m"),

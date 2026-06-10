@@ -1,6 +1,6 @@
 [package]
 name = "necrospider-cli"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 description = "An advanced OSINT automation tool launcher with a stunning interactive TUI."
 license = "MIT"
