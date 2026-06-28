@@ -115,16 +115,22 @@ fn run_installation_task(cmd: &mut Command, task_name: &str) -> bool {
 }
 
 fn check_and_install_python() {
-    let python_check = Command::new("python3").arg("--version").output();
+    let py = if cfg!(target_os = "windows") { "python" } else { "python3" };
+    let python_check = Command::new(py).arg("--version").output();
     if python_check.is_err() || !python_check.unwrap().status.success() {
-        println!("  \x1b[33m[!] Python3 is not installed. Initiating setup...\x1b[0m");
-        let mut cmd = Command::new("sudo");
-        cmd.args(["apt-get", "update"]);
-        run_installation_task(&mut cmd, "System Repositories");
-        
-        let mut cmd2 = Command::new("sudo");
-        cmd2.args(["apt-get", "install", "-y", "python3", "python3-pip", "python3-venv"]);
-        run_installation_task(&mut cmd2, "Python3 & Pip");
+        println!("  \x1b[33m[!] Python is not installed. Initiating setup...\x1b[0m");
+        if cfg!(target_os = "windows") {
+            println!("  \x1b[31m[!] Please install Python manually on Windows and add it to PATH.\x1b[0m");
+            std::process::exit(1);
+        } else {
+            let mut cmd = Command::new("sudo");
+            cmd.args(["apt-get", "update"]);
+            run_installation_task(&mut cmd, "System Repositories");
+            
+            let mut cmd2 = Command::new("sudo");
+            cmd2.args(["apt-get", "install", "-y", "python3", "python3-pip", "python3-venv"]);
+            run_installation_task(&mut cmd2, "Python3 & Pip");
+        }
     }
 }
 
@@ -135,7 +141,7 @@ fn get_necrospider_dir() -> String {
             return path.to_string_lossy().into_owned();
         }
     }
-    let home = std::env::var("HOME").expect("Could not find HOME environment variable");
+    let home = std::env::var("USERPROFILE").or_else(|_| std::env::var("HOME")).expect("Could not find home directory");
     format!("{}/.necrospider-app", home)
 }
 
@@ -202,7 +208,8 @@ fn spawn_server(mut cmd: Command, mode: &str) {
         match ans {
             Ok(choice) => {
                 if choice == options[0] {
-                    let mut browser_cmd = Command::new("python3");
+                    let py = if cfg!(target_os = "windows") { "python" } else { "python3" };
+                    let mut browser_cmd = Command::new(py);
                     browser_cmd.args(["-m", "webbrowser", "http://127.0.0.1:5001"]);
                     browser_cmd.stdout(Stdio::null());
                     browser_cmd.stderr(Stdio::null());
@@ -229,17 +236,20 @@ fn run_python_mode() {
     
     check_and_install_python();
     
-    let mut pip_cmd = Command::new("pip3");
+    let pip_exe = if cfg!(target_os = "windows") { "pip" } else { "pip3" };
+    let mut pip_cmd = Command::new(pip_exe);
     let req_file = format!("{}/requirements.txt", repo_dir);
     pip_cmd.args(["install", "-r", &req_file]);
     let _ = run_installation_task(&mut pip_cmd, "Python Packages");
 
-    let mut npm_cmd = Command::new("npm");
+    let npm_exe = if cfg!(target_os = "windows") { "npm.cmd" } else { "npm" };
+    let mut npm_cmd = Command::new(npm_exe);
     npm_cmd.current_dir(format!("{}/necrospider/static", repo_dir));
     npm_cmd.args(["install"]);
     let _ = run_installation_task(&mut npm_cmd, "Web UI Assets");
 
-    let mut sf_cmd = Command::new("python3");
+    let py_exe = if cfg!(target_os = "windows") { "python" } else { "python3" };
+    let mut sf_cmd = Command::new(py_exe);
     sf_cmd.current_dir(&repo_dir);
     sf_cmd.args(["./sf.py", "-l", "127.0.0.1:5001"]);
     
@@ -256,7 +266,7 @@ fn run_uninstall() {
         Ok(true) => {
             println!("\n  \x1b[31m[!] Initiating total uninstallation...\x1b[0m");
             
-            let home = std::env::var("HOME").expect("Could not find HOME environment variable");
+            let home = std::env::var("USERPROFILE").or_else(|_| std::env::var("HOME")).expect("Could not find home directory");
             
             let paths_to_remove = vec![
                 format!("{}/.necrospider", home),
